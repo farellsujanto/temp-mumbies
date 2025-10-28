@@ -165,17 +165,17 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex justify-between text-xs text-gray-600 mb-4">
-                <span>5% Cash Back</span>
-                <span>5% to Rescues</span>
+                <span>{sliderValue}% Cash Back</span>
+                <span>{(5 - sliderValue)}% to Rescues</span>
               </div>
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-blue-600 font-medium">Your Cash Back:</span>
+                  <span className="text-blue-600 font-medium">Your Cash Back ({sliderValue}%):</span>
                   <span className="text-blue-600 font-bold">${cashbackAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-green-600 font-medium">General Donation:</span>
+                  <span className="text-green-600 font-medium">General Donation ({(5 - sliderValue)}%):</span>
                   <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
                 </div>
                 {userProfile?.attributed_rescue_id && (

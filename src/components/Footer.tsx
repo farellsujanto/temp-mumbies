@@ -1,4 +1,4 @@
-import { Heart, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -7,8 +7,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center mb-4">
-              <Heart className="h-8 w-8 text-green-600 fill-green-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">Mumbies</span>
+              <img
+                src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/Mumbies_Logo_FINAL.png"
+                alt="Mumbies"
+                className="h-8 w-auto"
+              />
             </div>
             <p className="text-gray-600 text-sm">
               Every purchase supports animal rescues and shelters. Shop with purpose.
