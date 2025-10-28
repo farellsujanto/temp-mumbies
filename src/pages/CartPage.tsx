@@ -1,18 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import Button from '../components/Button';
+import ProductCard from '../components/ProductCard';
+
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image_url: string | null;
+  brand: { name: string } | null;
+}
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, subtotal, sliderValue, setSliderValue } = useCart();
   const { user, userProfile } = useAuth();
   const [localSliderValue, setLocalSliderValue] = useState(sliderValue);
+  const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
 
   const sliderPercentage = localSliderValue / 5;
   const cashbackAmount = subtotal * (localSliderValue / 100);
   const generalDonationAmount = subtotal * ((5 - localSliderValue) / 100);
   const rescueDonationAmount = userProfile?.attributed_rescue_id ? subtotal * 0.05 : 0;
+
+  useEffect(() => {
+    loadSuggestedProducts();
+  }, [items]);
+
+  const loadSuggestedProducts = async () => {
+    const cartProductIds = items.map(item => item.product_id);
+
+    const { data } = await supabase
+      .from('products')
+      .select(`
+        id,
+        name,
+        price,
+        image_url,
+        brand:brands(name)
+      `)
+      .eq('is_active', true)
+      .not('id', 'in', `(${cartProductIds.join(',')})`)
+      .limit(4);
+
+    if (data) setSuggestedProducts(data as any);
+  };
 
   const handleCheckout = () => {
     setSliderValue(localSliderValue);
@@ -39,60 +73,79 @@ export default function CartPage() {
       <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-4">
-          {items.map((item) => (
-            <div
-              key={item.product_id}
-              className="bg-white border border-gray-200 rounded-lg p-4 flex gap-4"
-            >
-              <div className="w-24 h-24 bg-gray-100 rounded flex-shrink-0">
-                {item.image_url ? (
-                  <img
-                    src={item.image_url}
-                    alt={item.name}
-                    className="w-full h-full object-cover rounded"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    No image
+        <div className="lg:col-span-2">
+          <div className="bg-white border border-gray-200 rounded-lg divide-y">
+            {items.map((item) => (
+              <div
+                key={item.product_id}
+                className="p-3 flex gap-3 items-center hover:bg-gray-50 transition-colors"
+              >
+                <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0">
+                  {item.image_url ? (
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      No image
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-500">{item.brand_name}</p>
+                  <h3 className="font-medium text-sm leading-tight mb-1">{item.name}</h3>
+                  <p className="text-base font-bold text-green-600">
+                    ${item.price.toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1 border border-gray-300 rounded">
+                    <button
+                      onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                      className="px-2 py-1 hover:bg-gray-100 text-sm"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center text-sm">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                      className="px-2 py-1 hover:bg-gray-100 text-sm"
+                    >
+                      +
+                    </button>
                   </div>
-                )}
-              </div>
 
-              <div className="flex-1">
-                <p className="text-sm text-gray-600">{item.brand_name}</p>
-                <h3 className="font-semibold mb-2">{item.name}</h3>
-                <p className="text-lg font-bold text-green-600">
-                  ${item.price.toFixed(2)}
-                </p>
-              </div>
-
-              <div className="flex flex-col items-end justify-between">
-                <button
-                  onClick={() => removeFromCart(item.product_id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
-
-                <div className="flex items-center gap-2 border border-gray-300 rounded-lg">
                   <button
-                    onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                    className="px-3 py-1 hover:bg-gray-100"
+                    onClick={() => removeFromCart(item.product_id)}
+                    className="text-red-600 hover:text-red-700 p-1"
                   >
-                    −
-                  </button>
-                  <span className="w-8 text-center">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                    className="px-3 py-1 hover:bg-gray-100"
-                  >
-                    +
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {suggestedProducts.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4">You Might Also Like</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {suggestedProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      ...product,
+                      brand_name: product.brand?.name,
+                    }}
+                  />
+                ))}
+              </div>
             </div>
-          ))}
+          )}
         </div>
 
         <div className="lg:col-span-1">
