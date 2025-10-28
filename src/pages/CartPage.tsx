@@ -150,7 +150,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <img
-                      src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/WHS_Logo.png"
+                      src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Wisconsin%20Humane%20Society%20Assets/WHS%20Logo_Stacked.png"
                       alt="Wisconsin Humane Society"
                       className="w-10 h-10 rounded-full object-cover bg-white"
                     />
