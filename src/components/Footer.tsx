@@ -54,6 +54,7 @@ export default function Footer() {
             <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
             <ul className="space-y-2 text-sm">
               <li><a href="/account" className="text-gray-600 hover:text-green-600">My Account</a></li>
+              <li><a href="/partner/login" className="text-gray-600 hover:text-green-600">Partner Login</a></li>
               <li><a href="/help" className="text-gray-600 hover:text-green-600">Help Center</a></li>
               <li><a href="/contact" className="text-gray-600 hover:text-green-600">Contact Us</a></li>
               <li><a href="/terms" className="text-gray-600 hover:text-green-600">Terms of Service</a></li>
