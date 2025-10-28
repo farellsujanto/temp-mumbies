@@ -142,21 +142,27 @@ export default function CartPage() {
                   <span className="text-green-600 font-medium">Rescue Donation ({(5 - localSliderValue)}%):</span>
                   <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
                 </div>
-                {userProfile?.attributed_rescue_id && (
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/WHS_Logo.png"
-                        alt="Wisconsin Humane Society"
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <span className="text-green-700 font-medium text-xs">+5% Extra</span>
-                    </div>
-                    <span className="text-green-700 font-bold">${rescueDonationAmount.toFixed(2)}</span>
-                  </div>
-                )}
               </div>
             </div>
+
+            {userProfile?.attributed_rescue_id && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/WHS_Logo.png"
+                      alt="Wisconsin Humane Society"
+                      className="w-10 h-10 rounded-full object-cover bg-white"
+                    />
+                    <div>
+                      <p className="font-semibold text-green-900 text-sm">Wisconsin Humane Society</p>
+                      <p className="text-xs text-green-700">+5% Extra Impact</p>
+                    </div>
+                  </div>
+                  <span className="text-green-700 font-bold text-lg">${rescueDonationAmount.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
 
             <div className="border-t border-gray-200 pt-4 mb-6">
               <div className="flex justify-between text-lg font-bold">
