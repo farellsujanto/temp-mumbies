@@ -18,6 +18,8 @@ interface CartContextType {
   clearCart: () => void;
   subtotal: number;
   itemCount: number;
+  sliderValue: number;
+  setSliderValue: (value: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -28,9 +30,18 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [sliderValue, setSliderValue] = useState<number>(() => {
+    const saved = localStorage.getItem('mumbies_slider_value');
+    return saved ? parseFloat(saved) : 2.5;
+  });
+
   useEffect(() => {
     localStorage.setItem('mumbies_cart', JSON.stringify(items));
   }, [items]);
+
+  useEffect(() => {
+    localStorage.setItem('mumbies_slider_value', sliderValue.toString());
+  }, [sliderValue]);
 
   const addToCart = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
     setItems((current) => {
@@ -79,6 +90,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         subtotal,
         itemCount,
+        sliderValue,
+        setSliderValue,
       }}
     >
       {children}

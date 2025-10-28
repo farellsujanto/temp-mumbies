@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Edit2, Trash2 } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/Button';
 
 export default function CheckoutPage() {
-  const { items, subtotal } = useCart();
+  const { items, subtotal, sliderValue, setSliderValue, updateQuantity, removeFromCart } = useCart();
   const { userProfile } = useAuth();
-  const [sliderValue, setSliderValue] = useState(2.5);
+  const [isEditingSlider, setIsEditingSlider] = useState(false);
+  const [localSliderValue, setLocalSliderValue] = useState(sliderValue);
   const [showSuccess, setShowSuccess] = useState(false);
 
   if (items.length === 0 && !showSuccess) {
@@ -15,10 +16,16 @@ export default function CheckoutPage() {
     return null;
   }
 
-  const sliderPercentage = sliderValue / 5;
-  const cashbackAmount = subtotal * (sliderValue / 100);
-  const generalDonationAmount = subtotal * ((5 - sliderValue) / 100);
+  const currentSliderValue = isEditingSlider ? localSliderValue : sliderValue;
+  const sliderPercentage = currentSliderValue / 5;
+  const cashbackAmount = subtotal * (currentSliderValue / 100);
+  const generalDonationAmount = subtotal * ((5 - currentSliderValue) / 100);
   const rescueDonationAmount = userProfile?.attributed_rescue_id ? subtotal * 0.05 : 0;
+
+  const handleSaveSlider = () => {
+    setSliderValue(localSliderValue);
+    setIsEditingSlider(false);
+  };
 
   const handleCheckout = () => {
     setShowSuccess(true);
@@ -128,13 +135,50 @@ export default function CheckoutPage() {
 
             <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
               {items.map((item) => (
-                <div key={item.product_id} className="flex justify-between text-sm">
-                  <span className="text-gray-600">
-                    {item.name} × {item.quantity}
-                  </span>
-                  <span className="font-medium">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
+                <div key={item.product_id} className="flex items-start gap-3">
+                  <div className="w-16 h-16 bg-gray-100 rounded flex-shrink-0">
+                    {item.image_url ? (
+                      <img
+                        src={item.image_url}
+                        alt={item.name}
+                        className="w-full h-full object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        No image
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-gray-500">{item.brand_name}</p>
+                    <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                          className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 text-sm"
+                        >
+                          −
+                        </button>
+                        <span className="text-sm w-4 text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                          className="w-6 h-6 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 text-sm"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(item.product_id)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <p className="text-sm font-bold text-green-600 mt-1">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -147,35 +191,64 @@ export default function CheckoutPage() {
             </div>
 
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 mb-6">
-              <h3 className="font-bold mb-4 text-center">Choose Your Impact</h3>
-
-              <div className="mb-4">
-                <input
-                  type="range"
-                  min="0"
-                  max="5"
-                  step="0.5"
-                  value={sliderValue}
-                  onChange={(e) => setSliderValue(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
-                  style={{
-                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${sliderPercentage * 100}%, #10b981 ${sliderPercentage * 100}%, #10b981 100%)`,
-                  }}
-                />
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold">Your Impact Split</h3>
+                {!isEditingSlider && (
+                  <button
+                    onClick={() => setIsEditingSlider(true)}
+                    className="text-blue-600 hover:text-blue-700 flex items-center gap-1 text-sm"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Edit
+                  </button>
+                )}
               </div>
 
-              <div className="flex justify-between text-xs text-gray-600 mb-4">
-                <span>{sliderValue}% Cash Back</span>
-                <span>{(5 - sliderValue)}% to Rescues</span>
-              </div>
+              {isEditingSlider ? (
+                <>
+                  <div className="mb-4">
+                    <input
+                      type="range"
+                      min="0"
+                      max="5"
+                      step="0.5"
+                      value={localSliderValue}
+                      onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
+                      className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
+                      style={{
+                        background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${sliderPercentage * 100}%, #10b981 ${sliderPercentage * 100}%, #10b981 100%)`,
+                      }}
+                    />
+                  </div>
 
-              <div className="space-y-2 text-sm">
+                  <div className="flex justify-between text-xs text-gray-600 mb-4">
+                    <span>{currentSliderValue}% Cash Back</span>
+                    <span>{(5 - currentSliderValue)}% to Rescues</span>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    fullWidth
+                    onClick={handleSaveSlider}
+                  >
+                    Save Preference
+                  </Button>
+                </>
+              ) : (
+                <div className="flex justify-between text-xs text-gray-600 mb-4">
+                  <span>{currentSliderValue}% Cash Back</span>
+                  <span>{(5 - currentSliderValue)}% to Rescues</span>
+                </div>
+              )}
+
+              <div className="space-y-2 text-sm mt-4">
                 <div className="flex justify-between">
-                  <span className="text-blue-600 font-medium">Your Cash Back ({sliderValue}%):</span>
+                  <span className="text-blue-600 font-medium">Your Cash Back ({currentSliderValue}%):</span>
                   <span className="text-blue-600 font-bold">${cashbackAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-green-600 font-medium">General Donation ({(5 - sliderValue)}%):</span>
+                  <span className="text-green-600 font-medium">General Donation ({(5 - currentSliderValue)}%):</span>
                   <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
                 </div>
                 {userProfile?.attributed_rescue_id && (

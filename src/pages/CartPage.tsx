@@ -1,11 +1,23 @@
+import { useState } from 'react';
 import { Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/Button';
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQuantity, subtotal } = useCart();
-  const { user } = useAuth();
+  const { items, removeFromCart, updateQuantity, subtotal, sliderValue, setSliderValue } = useCart();
+  const { user, userProfile } = useAuth();
+  const [localSliderValue, setLocalSliderValue] = useState(sliderValue);
+
+  const sliderPercentage = localSliderValue / 5;
+  const cashbackAmount = subtotal * (localSliderValue / 100);
+  const generalDonationAmount = subtotal * ((5 - localSliderValue) / 100);
+  const rescueDonationAmount = userProfile?.attributed_rescue_id ? subtotal * 0.05 : 0;
+
+  const handleCheckout = () => {
+    setSliderValue(localSliderValue);
+    window.location.href = '/checkout';
+  };
 
   if (items.length === 0) {
     return (
@@ -98,6 +110,47 @@ export default function CartPage() {
               </div>
             </div>
 
+            <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 mb-6">
+              <h3 className="font-bold mb-4 text-center">Choose Your Impact</h3>
+
+              <div className="mb-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="0.5"
+                  value={localSliderValue}
+                  onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
+                  style={{
+                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${sliderPercentage * 100}%, #10b981 ${sliderPercentage * 100}%, #10b981 100%)`,
+                  }}
+                />
+              </div>
+
+              <div className="flex justify-between text-xs text-gray-600 mb-4">
+                <span>{localSliderValue}% Cash Back</span>
+                <span>{(5 - localSliderValue)}% to Rescues</span>
+              </div>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-blue-600 font-medium">Your Cash Back ({localSliderValue}%):</span>
+                  <span className="text-blue-600 font-bold">${cashbackAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-600 font-medium">General Donation ({(5 - localSliderValue)}%):</span>
+                  <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
+                </div>
+                {userProfile?.attributed_rescue_id && (
+                  <div className="flex justify-between pt-2 border-t border-gray-200">
+                    <span className="text-green-700 font-medium">Rescue Impact (5%):</span>
+                    <span className="text-green-700 font-bold">${rescueDonationAmount.toFixed(2)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="border-t border-gray-200 pt-4 mb-6">
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
@@ -109,7 +162,7 @@ export default function CartPage() {
               <Button
                 fullWidth
                 size="lg"
-                onClick={() => window.location.href = '/checkout'}
+                onClick={handleCheckout}
               >
                 Proceed to Checkout
               </Button>
