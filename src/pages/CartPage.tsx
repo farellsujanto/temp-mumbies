@@ -130,21 +130,28 @@ export default function CartPage() {
 
               <div className="flex justify-between text-xs text-gray-600 mb-4">
                 <span>{localSliderValue}% Cash Back</span>
-                <span>{(5 - localSliderValue)}% to Rescues</span>
+                <span>{(5 - localSliderValue)}% Rescue Donation</span>
               </div>
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-blue-600 font-medium">Your Cash Back ({localSliderValue}%):</span>
+                  <span className="text-blue-600 font-medium">Cash Back ({localSliderValue}%):</span>
                   <span className="text-blue-600 font-bold">${cashbackAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-green-600 font-medium">General Donation ({(5 - localSliderValue)}%):</span>
+                  <span className="text-green-600 font-medium">Rescue Donation ({(5 - localSliderValue)}%):</span>
                   <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
                 </div>
                 {userProfile?.attributed_rescue_id && (
-                  <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="text-green-700 font-medium">Rescue Impact (5%):</span>
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <img
+                        src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/WHS_Logo.png"
+                        alt="Wisconsin Humane Society"
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <span className="text-green-700 font-medium text-xs">+5% Extra</span>
+                    </div>
                     <span className="text-green-700 font-bold">${rescueDonationAmount.toFixed(2)}</span>
                   </div>
                 )}
