@@ -65,6 +65,8 @@ export default function HomePage() {
       .from('brands')
       .select('id, name, slug, logo_url, description')
       .eq('is_active', true)
+      .order('is_mumbies_brand', { ascending: false })
+      .order('name')
       .limit(4);
     if (data) setFeaturedBrands(data);
   };

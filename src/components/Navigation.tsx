@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ShoppingCart, Menu, X, User, Heart } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 
@@ -15,8 +15,11 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <a href="/" className="flex items-center">
-              <Heart className="h-8 w-8 text-green-600 fill-green-600" />
-              <span className="ml-2 text-2xl font-bold text-gray-900">Mumbies</span>
+              <img
+                src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/Mumbies_Logo_FINAL.png"
+                alt="Mumbies"
+                className="h-10 w-auto"
+              />
             </a>
 
             <div className="hidden md:flex items-center gap-6">
