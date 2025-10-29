@@ -14,7 +14,10 @@ import {
   CheckCircle,
   Gift,
   Send,
-  CreditCard
+  CreditCard,
+  UserPlus,
+  ExternalLink,
+  MessageSquare
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -63,7 +66,7 @@ interface Referral {
 
 interface Activity {
   id: string;
-  type: 'order' | 'referral';
+  type: 'order' | 'referral' | 'lead';
   amount: number;
   commission?: number;
   description: string;
@@ -102,6 +105,10 @@ export default function PartnerDashboardPage() {
   const [mailingState, setMailingState] = useState('');
   const [mailingZip, setMailingZip] = useState('');
   const [savingPayout, setSavingPayout] = useState(false);
+  const [customUrl, setCustomUrl] = useState('');
+  const [customReferralLink, setCustomReferralLink] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [sendingFeedback, setSendingFeedback] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -209,6 +216,26 @@ export default function PartnerDashboardPage() {
       });
     }
 
+    const { data: leads } = await supabase
+      .from('users')
+      .select('id, email, created_at, total_orders')
+      .eq('attributed_rescue_id', nonprofitId)
+      .eq('total_orders', 0)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (leads) {
+      leads.forEach((lead) => {
+        activities.push({
+          id: lead.id,
+          type: 'lead',
+          amount: 0,
+          description: `New lead registered: ${lead.email}`,
+          date: lead.created_at,
+        });
+      });
+    }
+
     const { data: qualifiedReferrals } = await supabase
       .from('nonprofit_referrals')
       .select('id, referred_email, bounty_amount, qualification_date')
@@ -230,7 +257,7 @@ export default function PartnerDashboardPage() {
     }
 
     activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setRecentActivity(activities.slice(0, 10));
+    setRecentActivity(activities.slice(0, 15));
   };
 
   const sendReferralInvite = async () => {
@@ -325,6 +352,32 @@ export default function PartnerDashboardPage() {
       alert('Error saving payout information. Please try again.');
     }
     setSavingPayout(false);
+  };
+
+  const generateCustomReferralLink = () => {
+    if (!customUrl.trim()) return;
+    const baseUrl = customUrl.startsWith('http') ? customUrl : `https://${customUrl}`;
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    const link = `${baseUrl}${separator}ref=${nonprofit?.slug || ''}`;
+    setCustomReferralLink(link);
+  };
+
+  const copyCustomLink = () => {
+    if (!customReferralLink) return;
+    navigator.clipboard.writeText(customReferralLink);
+  };
+
+  const submitFeedback = async () => {
+    if (!feedbackMessage.trim() || !nonprofit) return;
+
+    setSendingFeedback(true);
+    try {
+      alert('Thank you for your feedback! We\'ll review it shortly.');
+      setFeedbackMessage('');
+    } catch (error) {
+      alert('Error sending feedback. Please try again.');
+    }
+    setSendingFeedback(false);
   };
 
   const handleSignOut = async () => {
@@ -493,35 +546,134 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
 
-          {/* Referral Link */}
+          {/* Referral Links */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
               <LinkIcon className="h-5 w-5" />
-              Your Referral Link
+              Your Referral Links
             </h2>
-            <p className="text-gray-600 mb-4">
-              Share this link with your supporters. When they shop through it, they'll be attributed to your
-              organization for life, and you'll earn 5% on all their purchases.
-            </p>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                readOnly
-                value={`${window.location.origin}/rescues/${nonprofit.slug}`}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-              />
-              <Button onClick={copyReferralLink}>
-                {copied ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
+
+            <div className="space-y-6">
+              {/* Profile/Shop Link */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Profile & Curated Products Link
+                </label>
+                <p className="text-sm text-gray-600 mb-3">
+                  Share with supporters to see your organization and recommended products
+                </p>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${window.location.origin}/rescues/${nonprofit.slug}`}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                  />
+                  <Button onClick={copyReferralLink}>
+                    {copied ? (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* General Registration Link */}
+              <div className="pt-4 border-t border-gray-200">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <UserPlus className="h-4 w-4 inline mr-1" />
+                  Lead Registration Link
+                </label>
+                <p className="text-sm text-gray-600 mb-3">
+                  Give to new adopters so they register and get attributed to your organization
+                </p>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${window.location.origin}/?ref=${nonprofit.slug}`}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                  />
+                  <Button onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/?ref=${nonprofit.slug}`);
+                  }}>
                     <Copy className="h-4 w-4 mr-2" />
-                    Copy Link
-                  </>
-                )}
+                    Copy
+                  </Button>
+                </div>
+              </div>
+
+              {/* Custom URL Generator */}
+              <div className="pt-4 border-t border-gray-200">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <ExternalLink className="h-4 w-4 inline mr-1" />
+                  Custom URL Referral Generator
+                </label>
+                <p className="text-sm text-gray-600 mb-3">
+                  Add tracking to any URL (your website, social media, etc.)
+                </p>
+                <div className="space-y-3">
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={customUrl}
+                      onChange={(e) => setCustomUrl(e.target.value)}
+                      placeholder="yourwebsite.com/adopt"
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+                    />
+                    <Button onClick={generateCustomReferralLink}>
+                      Generate
+                    </Button>
+                  </div>
+                  {customReferralLink && (
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        readOnly
+                        value={customReferralLink}
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                      />
+                      <Button onClick={copyCustomLink}>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Feedback Widget */}
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-blue-600" />
+              Request Features or Report Bugs
+            </h2>
+            <p className="text-gray-700 mb-4 text-sm">
+              We build fast! Tell us what you need and we'll make it happen.
+            </p>
+            <div className="space-y-3">
+              <textarea
+                value={feedbackMessage}
+                onChange={(e) => setFeedbackMessage(e.target.value)}
+                placeholder="Describe a feature you'd like or a bug you found..."
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+              />
+              <Button
+                onClick={submitFeedback}
+                disabled={sendingFeedback || !feedbackMessage.trim()}
+                className="w-full"
+              >
+                {sendingFeedback ? 'Sending...' : 'Send Feedback'}
               </Button>
             </div>
           </div>
@@ -537,15 +689,17 @@ export default function PartnerDashboardPage() {
                       <div className={`p-2 rounded-full ${
                         activity.type === 'order'
                           ? 'bg-blue-100'
+                          : activity.type === 'lead'
+                          ? 'bg-green-100'
                           : 'bg-amber-100'
                       }`}>
-                        {activity.type === 'order' ? (
-                          <ShoppingBag className={`h-4 w-4 ${
-                            activity.type === 'order'
-                              ? 'text-blue-600'
-                              : 'text-amber-600'
-                          }`} />
-                        ) : (
+                        {activity.type === 'order' && (
+                          <ShoppingBag className="h-4 w-4 text-blue-600" />
+                        )}
+                        {activity.type === 'lead' && (
+                          <UserPlus className="h-4 w-4 text-green-600" />
+                        )}
+                        {activity.type === 'referral' && (
                           <Gift className="h-4 w-4 text-amber-600" />
                         )}
                       </div>
@@ -561,7 +715,7 @@ export default function PartnerDashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      {activity.type === 'order' ? (
+                      {activity.type === 'order' && (
                         <>
                           <p className="font-semibold text-green-600">
                             +${activity.commission?.toFixed(2)}
@@ -570,7 +724,13 @@ export default function PartnerDashboardPage() {
                             ${activity.amount.toFixed(2)} order
                           </p>
                         </>
-                      ) : (
+                      )}
+                      {activity.type === 'lead' && (
+                        <p className="text-sm font-medium text-green-600">
+                          New Lead
+                        </p>
+                      )}
+                      {activity.type === 'referral' && (
                         <p className="font-semibold text-amber-600">
                           +${activity.amount.toFixed(2)}
                         </p>
