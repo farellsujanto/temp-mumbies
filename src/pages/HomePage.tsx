@@ -11,6 +11,7 @@ interface Banner {
   image_url: string;
   cta_text: string | null;
   cta_link: string | null;
+  product_images?: string[];
 }
 
 interface Brand {
@@ -44,6 +45,14 @@ export default function HomePage() {
     accessories: [],
   });
 
+  const gradients = [
+    'linear-gradient(135deg, #059669 0%, #10b981 20%, #34d399 40%, #6ee7b7 60%, #a7f3d0 80%, #d1fae5 100%)',
+    'linear-gradient(135deg, #1e40af 0%, #3b82f6 20%, #60a5fa 40%, #93c5fd 60%, #bfdbfe 80%, #dbeafe 100%)',
+    'linear-gradient(135deg, #b91c1c 0%, #ef4444 20%, #f87171 40%, #fca5a5 60%, #fecaca 80%, #fee2e2 100%)',
+    'linear-gradient(135deg, #7c2d12 0%, #ea580c 20%, #fb923c 40%, #fdba74 60%, #fed7aa 80%, #ffedd5 100%)',
+    'linear-gradient(135deg, #4c1d95 0%, #7c3aed 20%, #a78bfa 40%, #c4b5fd 60%, #ddd6fe 80%, #ede9fe 100%)',
+  ];
+
   useEffect(() => {
     loadBanners();
     loadFeaturedBrands();
@@ -65,7 +74,25 @@ export default function HomePage() {
       .select('*')
       .eq('is_active', true)
       .order('sort_order');
-    if (data) setBanners(data);
+
+    if (data) {
+      const bannersWithProducts = await Promise.all(
+        data.map(async (banner) => {
+          const { data: products } = await supabase
+            .from('products')
+            .select('image_url')
+            .eq('is_active', true)
+            .not('image_url', 'is', null)
+            .limit(3);
+
+          return {
+            ...banner,
+            product_images: products?.map(p => p.image_url).filter(Boolean) || []
+          };
+        })
+      );
+      setBanners(bannersWithProducts);
+    }
   };
 
   const loadFeaturedBrands = async () => {
@@ -118,17 +145,17 @@ export default function HomePage() {
   return (
     <div>
       {banners.length > 0 && (
-        <div className="relative overflow-hidden">
-          <div className="max-w-[1920px] mx-auto relative" style={{ minHeight: '600px' }}>
+        <div className="relative overflow-hidden w-full">
+          <div className="relative w-full" style={{ minHeight: '600px' }}>
             {banners.map((banner, index) => (
               <div
                 key={banner.id}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
+                className={`absolute inset-0 w-full transition-opacity duration-1000 ${
                   index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                 }`}
               >
-                <div className="relative overflow-hidden" style={{
-                  background: 'linear-gradient(135deg, #059669 0%, #10b981 20%, #34d399 40%, #6ee7b7 60%, #a7f3d0 80%, #d1fae5 100%)',
+                <div className="relative overflow-hidden w-full" style={{
+                  background: gradients[index % gradients.length],
                 }}>
                   <div className="absolute inset-0 opacity-30" style={{
                     backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.3) 0%, transparent 50%)',
@@ -158,7 +185,7 @@ export default function HomePage() {
                               <Button
                                 onClick={() => window.location.href = banner.cta_link!}
                                 size="lg"
-                                className="bg-white text-green-700 hover:bg-gray-100 font-bold shadow-2xl text-lg px-8 py-4 transform hover:scale-105 transition-transform"
+                                className="bg-white text-gray-900 font-bold shadow-2xl text-lg px-8 py-4"
                               >
                                 {banner.cta_text}
                               </Button>
@@ -166,7 +193,7 @@ export default function HomePage() {
                                 onClick={() => window.location.href = '/rescues'}
                                 size="lg"
                                 variant="outline"
-                                className="bg-transparent border-2 border-white text-white hover:bg-white/10 font-bold text-lg px-8 py-4"
+                                className="bg-transparent border-2 border-white text-white font-bold text-lg px-8 py-4"
                               >
                                 Support Rescues
                               </Button>
@@ -176,14 +203,29 @@ export default function HomePage() {
                       </div>
 
                       <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
-                        <div className="relative">
-                          <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl transform scale-110"></div>
-                          <img
-                            src={banner.image_url}
-                            alt={banner.title}
-                            className="relative w-full max-w-lg h-auto object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
+                        {banner.product_images && banner.product_images.length > 0 ? (
+                          <div className="relative w-full max-w-2xl grid grid-cols-3 gap-4 px-8">
+                            {banner.product_images.map((img, imgIndex) => (
+                              <div key={imgIndex} className="relative">
+                                <div className="absolute inset-0 bg-white/20 rounded-2xl blur-2xl"></div>
+                                <img
+                                  src={img}
+                                  alt={`Product ${imgIndex + 1}`}
+                                  className="relative w-full h-48 object-contain drop-shadow-2xl rounded-2xl"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl transform scale-110"></div>
+                            <img
+                              src={banner.image_url}
+                              alt={banner.title}
+                              className="relative w-full max-w-lg h-auto object-contain drop-shadow-2xl"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -197,14 +239,14 @@ export default function HomePage() {
               <>
                 <button
                   onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all hover:scale-110"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 text-gray-800 p-3 rounded-full shadow-xl"
                   aria-label="Previous banner"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
                 <button
                   onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all hover:scale-110"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 text-gray-800 p-3 rounded-full shadow-xl"
                   aria-label="Next banner"
                 >
                   <ChevronRight className="h-6 w-6" />
@@ -216,7 +258,7 @@ export default function HomePage() {
                       onClick={() => setCurrentBanner(index)}
                       aria-label={`Go to banner ${index + 1}`}
                       className={`h-3 rounded-full transition-all ${
-                        index === currentBanner ? 'w-12 bg-white shadow-lg' : 'w-3 bg-white/60 hover:bg-white/80'
+                        index === currentBanner ? 'w-12 bg-white shadow-lg' : 'w-3 bg-white/60'
                       }`}
                     />
                   ))}
