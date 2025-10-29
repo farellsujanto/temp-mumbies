@@ -116,60 +116,88 @@ export default function HomePage() {
   return (
     <div>
       {banners.length > 0 && (
-        <div className="relative bg-gray-900 h-96 md:h-[500px] overflow-hidden">
-          {banners.map((banner, index) => (
-            <div
-              key={banner.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentBanner ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <img
-                src={banner.image_url}
-                alt={banner.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
-                  <h1 className="text-4xl md:text-6xl font-bold mb-4">{banner.title}</h1>
-                  {banner.subtitle && (
-                    <p className="text-xl md:text-2xl mb-6">{banner.subtitle}</p>
-                  )}
-                  {banner.cta_text && banner.cta_link && (
-                    <Button
-                      onClick={() => window.location.href = banner.cta_link!}
-                      size="lg"
-                    >
-                      {banner.cta_text}
-                    </Button>
-                  )}
+        <div className="relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {banners.map((banner, index) => (
+              <div
+                key={banner.id}
+                className={`relative transition-opacity duration-1000 ${
+                  index === currentBanner ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                }`}
+              >
+                <div className="relative rounded-3xl overflow-hidden my-6" style={{
+                  background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 25%, #ec4899 50%, #8b5cf6 75%, #1e3a8a 100%)',
+                  backgroundSize: '200% 200%',
+                }}>
+                  <div className="absolute inset-0" style={{
+                    background: 'repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px)',
+                  }}></div>
+
+                  <div className="absolute inset-0" style={{
+                    background: 'repeating-linear-gradient(0deg, rgba(16,185,129,0.15) 0px, rgba(16,185,129,0.15) 8px, rgba(59,130,246,0.15) 8px, rgba(59,130,246,0.15) 16px, rgba(236,72,153,0.15) 16px, rgba(236,72,153,0.15) 24px)',
+                    backgroundSize: '100% 24px',
+                  }}></div>
+
+                  <div className="relative grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 min-h-[400px]">
+                    <div className="text-white z-10 order-2 md:order-1">
+                      <p className="text-sm md:text-base font-medium mb-2 opacity-90">
+                        {banner.subtitle || "This deal won't last"}
+                      </p>
+                      <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
+                        {banner.title}
+                      </h1>
+                      {banner.cta_text && banner.cta_link && (
+                        <>
+                          <p className="text-lg md:text-xl mb-6 opacity-90">
+                            Shop sustainable, eco-friendly products.
+                          </p>
+                          <Button
+                            onClick={() => window.location.href = banner.cta_link!}
+                            size="lg"
+                            className="bg-white text-blue-600 hover:bg-gray-100 font-bold shadow-lg"
+                          >
+                            {banner.cta_text}
+                          </Button>
+                          <p className="text-sm mt-3 opacity-75">Terms apply.</p>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
+                      <img
+                        src={banner.image_url}
+                        alt={banner.title}
+                        className="w-full max-w-md h-auto object-contain drop-shadow-2xl"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {banners.length > 1 && (
             <>
               <button
                 onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all"
+                className="absolute left-8 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
               >
                 <ChevronLeft className="h-6 w-6 text-gray-900" />
               </button>
               <button
                 onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 transition-all"
+                className="absolute right-8 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
               >
                 <ChevronRight className="h-6 w-6 text-gray-900" />
               </button>
 
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-2 z-20">
                 {banners.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentBanner(index)}
                     className={`h-2 rounded-full transition-all ${
-                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-50'
+                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-60'
                     }`}
                   />
                 ))}
