@@ -17,6 +17,7 @@ import PartnerApplyPage from './pages/PartnerApplyPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import { ImpactPage } from './pages/ImpactPage';
+import LeadRegistrationPage from './pages/LeadRegistrationPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/register" element={<LeadRegistrationPage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/login" element={<LoginPage />} />

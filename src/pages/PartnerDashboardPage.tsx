@@ -680,11 +680,11 @@ export default function PartnerDashboardPage() {
                     <input
                       type="text"
                       readOnly
-                      value={`${window.location.origin}/?ref=${nonprofit.slug}`}
+                      value={`${window.location.origin}/register?ref=${nonprofit.slug}`}
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
                     />
                     <Button onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/?ref=${nonprofit.slug}`);
+                      navigator.clipboard.writeText(`${window.location.origin}/register?ref=${nonprofit.slug}`);
                     }}>
                       <Copy className="h-4 w-4 mr-2" />
                       Copy
