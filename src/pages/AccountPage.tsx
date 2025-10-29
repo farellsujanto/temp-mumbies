@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Package, DollarSign, Heart, TrendingUp, Copy, Lock, LogOut } from 'lucide-react';
+import { Package, DollarSign, Heart, TrendingUp, Copy, Lock, LogOut, Settings, Gift, Building2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import Button from '../components/Button';
@@ -183,7 +183,7 @@ export default function AccountPage() {
           onClick={() => window.location.href = '/account/settings'}
           className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
         >
-          <div className="text-2xl mb-2">⚙️</div>
+          <Settings className="h-6 w-6 text-gray-400 mb-2" />
           <h3 className="font-bold mb-1 text-sm">Account Settings</h3>
           <p className="text-xs text-gray-600">Manage your personal details</p>
         </button>
@@ -192,13 +192,13 @@ export default function AccountPage() {
           onClick={() => window.location.href = '/account/orders'}
           className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
         >
-          <div className="text-2xl mb-2">📦</div>
+          <Package className="h-6 w-6 text-gray-400 mb-2" />
           <h3 className="font-bold mb-1 text-sm">Order History</h3>
           <p className="text-xs text-gray-600">Review previous orders</p>
         </button>
 
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-2xl mb-2">🎁</div>
+          <Gift className="h-6 w-6 text-gray-400 mb-2" />
           <h3 className="font-bold mb-1 text-sm">Refer a Friend</h3>
           <p className="text-xs text-gray-600 mb-3">Give $40, Get $40</p>
           {userProfile?.referral_code ? (
@@ -212,7 +212,7 @@ export default function AccountPage() {
         </div>
 
         <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-2xl mb-2">🏢</div>
+          <Building2 className="h-6 w-6 text-gray-400 mb-2" />
           <h3 className="font-bold mb-1 text-sm">Refer a Nonprofit</h3>
           {userProfile?.nonprofit_referral_access ? (
             <>
