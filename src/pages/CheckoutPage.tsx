@@ -222,22 +222,26 @@ export default function CheckoutPage() {
                   <div className="mb-4">
                     <input
                       type="range"
-                      min="0"
-                      max="5"
+                      min="1"
+                      max="4"
                       step="0.5"
                       value={localSliderValue}
                       onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
                       className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
                       style={{
-                        background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${sliderPercentage * 100}%, #10b981 ${sliderPercentage * 100}%, #10b981 100%)`,
+                        background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((localSliderValue - 1) / 3) * 100}%, #10b981 ${((localSliderValue - 1) / 3) * 100}%, #10b981 100%)`,
                       }}
                     />
                   </div>
 
                   <div className="flex justify-between text-xs text-gray-600 mb-4">
-                    <span>{currentSliderValue}% Cash Back</span>
-                    <span>{(5 - currentSliderValue)}% Rescue Donation</span>
+                    <span>{currentSliderValue}% Cash Back (min 1%)</span>
+                    <span>{(5 - currentSliderValue)}% Rescue Donation (min 1%)</span>
                   </div>
+
+                  <p className="text-xs text-gray-600 mb-4 text-center">
+                    Minimum 1% for both ensures your cashback keeps growing and rescues always get support
+                  </p>
 
                   <Button
                     variant="outline"

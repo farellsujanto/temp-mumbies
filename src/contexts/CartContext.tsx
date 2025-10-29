@@ -32,7 +32,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const [sliderValue, setSliderValue] = useState<number>(() => {
     const saved = localStorage.getItem('mumbies_slider_value');
-    return saved ? parseFloat(saved) : 2.5;
+    const value = saved ? parseFloat(saved) : 2.5;
+    // Ensure minimum of 1% for both cashback and donation (max 4%, min 1%)
+    return Math.min(Math.max(value, 1), 4);
   });
 
   useEffect(() => {
