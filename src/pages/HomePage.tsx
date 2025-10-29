@@ -459,7 +459,7 @@ export default function HomePage() {
               <div className="h-48 bg-gradient-to-br from-green-500 to-green-600 relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/10"></div>
                 <img
-                  src="https://images.pexels.com/photos/4198019/pexels-photo-4198019.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440"
                   alt="Mumbies Essentials"
                   className="w-full h-full object-cover opacity-90"
                 />
