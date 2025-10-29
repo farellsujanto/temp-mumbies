@@ -44,6 +44,7 @@ export default function HomePage() {
     toys: [],
     accessories: [],
   });
+  const [newArrivalProducts, setNewArrivalProducts] = useState<Product[]>([]);
 
   const gradients = [
     'linear-gradient(135deg, #059669 0%, #10b981 20%, #34d399 40%, #6ee7b7 60%, #a7f3d0 80%, #d1fae5 100%)',
@@ -57,6 +58,7 @@ export default function HomePage() {
     loadBanners();
     loadFeaturedBrands();
     loadCategoryProducts();
+    loadNewArrivals();
   }, []);
 
   useEffect(() => {
@@ -140,6 +142,30 @@ export default function HomePage() {
     }
 
     setCategoryProducts(results);
+  };
+
+  const loadNewArrivals = async () => {
+    const { data } = await supabase
+      .from('products')
+      .select(`
+        id,
+        name,
+        price,
+        base_price,
+        has_variants,
+        image_url,
+        tags,
+        promotional_deal,
+        brand:brands(name)
+      `)
+      .eq('is_active', true)
+      .not('image_url', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(2);
+
+    if (data) {
+      setNewArrivalProducts(data as any);
+    }
   };
 
   return (
@@ -368,14 +394,37 @@ export default function HomePage() {
             </div>
             <div className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl p-8 min-h-[400px] flex items-center justify-center">
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[-5deg]">
-                  <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
-                  <p className="text-sm font-semibold">New Product</p>
-                </div>
-                <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[5deg] mt-8">
-                  <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
-                  <p className="text-sm font-semibold">Hot Deal</p>
-                </div>
+                {newArrivalProducts.length >= 2 ? (
+                  <>
+                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[-5deg]">
+                      <img
+                        src={newArrivalProducts[0].image_url || ''}
+                        alt={newArrivalProducts[0].name}
+                        className="w-32 h-32 object-contain rounded-lg mb-2"
+                      />
+                      <p className="text-sm font-semibold truncate">{newArrivalProducts[0].name}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[5deg] mt-8">
+                      <img
+                        src={newArrivalProducts[1].image_url || ''}
+                        alt={newArrivalProducts[1].name}
+                        className="w-32 h-32 object-contain rounded-lg mb-2"
+                      />
+                      <p className="text-sm font-semibold truncate">{newArrivalProducts[1].name}</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[-5deg]">
+                      <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
+                      <p className="text-sm font-semibold">New Product</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[5deg] mt-8">
+                      <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
+                      <p className="text-sm font-semibold">Hot Deal</p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
