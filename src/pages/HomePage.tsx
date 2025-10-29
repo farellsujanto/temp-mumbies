@@ -103,7 +103,7 @@ export default function HomePage() {
         `)
         .eq('is_active', true)
         .eq('category', category)
-        .limit(4);
+        .limit(8);
 
       if (data) {
         results[category] = data as any;
