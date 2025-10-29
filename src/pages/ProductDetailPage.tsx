@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { ShoppingCart, ChevronLeft, Sparkles, RefreshCw, Calendar } from 'lucide-react';
+import { ShoppingCart, ChevronLeft, Sparkles, RefreshCw, Calendar, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
 import Button from '../components/Button';
@@ -68,6 +68,8 @@ export default function ProductDetailPage() {
   const [sameBrandPage, setSameBrandPage] = useState(0);
   const [sameBrandHasMore, setSameBrandHasMore] = useState(true);
   const [sameBrandLoading, setSameBrandLoading] = useState(false);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
   const sameBrandObserverRef = useRef<IntersectionObserver | null>(null);
   const sameBrandSentinelRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
@@ -95,9 +97,24 @@ export default function ProductDetailPage() {
       if (data) {
         loadSameBrandProducts(data.brand?.id, data.id);
         loadRecommendedProducts(data.category, data.tags, data.id);
+        loadReviewStats(data.id);
       }
     }
     setLoading(false);
+  };
+
+  const loadReviewStats = async (productId: string) => {
+    const { data: reviews } = await supabase
+      .from('product_reviews')
+      .select('rating')
+      .eq('product_id', productId)
+      .eq('is_approved', true);
+
+    if (reviews && reviews.length > 0) {
+      const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+      setReviewCount(reviews.length);
+      setAverageRating(avgRating);
+    }
   };
 
   const loadVariants = async () => {
@@ -346,6 +363,26 @@ export default function ProductDetailPage() {
           )}
 
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+
+          {reviewCount > 0 && (
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-5 w-5 ${
+                      star <= Math.round(averageRating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-gray-600 font-medium">
+                {averageRating.toFixed(1)} ({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})
+              </span>
+            </div>
+          )}
 
           {product.tags && product.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
