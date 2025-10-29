@@ -1088,52 +1088,41 @@ export default function PartnerDashboardPage() {
             <h3 className="text-lg font-semibold mb-4">Your Referrals</h3>
             {referrals.length > 0 ? (
               <div className="space-y-3">
-                {referrals.map((referral) => (
-                  <div
-                    key={referral.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium">{referral.referred_email}</p>
-                      <p className="text-sm text-gray-600">
-                        Status: {referral.status === 'pending' && 'Pending signup'}
-                        {referral.status === 'active' && referral.total_sales === 0 && 'No sales yet'}
-                        {referral.status === 'active' && referral.total_sales > 0 && 'Made sales'}
-                        {referral.status === 'qualified' && 'Qualified for bounty!'}
-                        {referral.status === 'paid' && 'Bounty paid'}
-                      </p>
-                      {referral.status === 'active' && referral.total_sales > 0 && (
+                {referrals.map((referral) => {
+                  const qualifyByDate = new Date(new Date(referral.created_at).getTime() + 180 * 24 * 60 * 60 * 1000);
+
+                  return (
+                    <div
+                      key={referral.id}
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                    >
+                      <div className="flex-1">
+                        <p className="font-medium">{referral.referred_email}</p>
                         <p className="text-sm text-gray-600">
-                          Sales: ${referral.total_sales.toFixed(2)} / $500
+                          Status: {referral.status === 'pending' && ''}
+                          {referral.status === 'active' && ''}
+                          {referral.status === 'qualified' && 'Qualified for bounty!'}
+                          {referral.status === 'paid' && 'Bounty paid'}
                         </p>
-                      )}
-                      {referral.status === 'active' && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Qualify by: {new Date(new Date(referral.created_at).getTime() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
-                            month: 'numeric',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </p>
-                      )}
+                      </div>
+                      <div className="text-right">
+                        {referral.status === 'qualified' || referral.status === 'paid' ? (
+                          <p className="text-lg font-bold text-amber-600">
+                            ${referral.bounty_amount.toFixed(2)}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-gray-500">
+                            {qualifyByDate.toLocaleDateString('en-US', {
+                              month: 'numeric',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-right">
-                      {referral.status === 'qualified' || referral.status === 'paid' ? (
-                        <p className="text-lg font-bold text-amber-600">
-                          ${referral.bounty_amount.toFixed(2)}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-gray-500">
-                          {new Date(referral.created_at).toLocaleDateString('en-US', {
-                            month: 'numeric',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
