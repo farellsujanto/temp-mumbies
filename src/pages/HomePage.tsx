@@ -104,10 +104,11 @@ export default function HomePage() {
         `)
         .eq('is_active', true)
         .eq('category', category)
-        .limit(8);
+        .limit(20);
 
       if (data) {
-        results[category] = data as any;
+        const shuffled = [...data].sort(() => Math.random() - 0.5);
+        results[category] = shuffled.slice(0, 8) as any;
       }
     }
 
