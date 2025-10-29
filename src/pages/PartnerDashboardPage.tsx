@@ -796,10 +796,10 @@ export default function PartnerDashboardPage() {
             </div>
 
             {/* Activity Stream */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 flex flex-col" style={{ height: '100%' }}>
               <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
               {recentActivity.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-3 overflow-y-auto pr-2" style={{ maxHeight: '600px' }}>
                   {recentActivity.map((activity) => (
                     <div key={activity.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                       <div className="flex items-center gap-3">
