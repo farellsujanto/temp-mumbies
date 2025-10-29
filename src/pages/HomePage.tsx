@@ -287,42 +287,83 @@ export default function HomePage() {
         </div>
       )}
 
-      <div className="bg-gray-50 py-12 mb-16">
+      <div className="bg-gray-50 py-16 mb-16">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="flex items-start gap-4">
-              <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <Heart className="h-6 w-6 text-green-600" />
+            <a
+              href="/rescues"
+              className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+            >
+              <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/20"></div>
+                <img
+                  src="https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Rescue Stories"
+                  className="w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute bottom-4 left-4">
+                  <Heart className="h-10 w-10 text-white" />
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Support Rescues</h3>
-                <p className="text-gray-600 text-sm">
-                  5% of every purchase goes directly to your chosen animal rescue organization
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors">
+                  Rescue Stories
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Meet our partner rescues and discover the incredible work they do to save and care for animals in need.
                 </p>
               </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <Award className="h-6 w-6 text-blue-600" />
+            </a>
+
+            <a
+              href="/brands/mumbies"
+              className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+            >
+              <div className="h-48 bg-gradient-to-br from-green-500 to-green-600 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/10"></div>
+                <img
+                  src="https://images.pexels.com/photos/4198019/pexels-photo-4198019.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Mumbies Essentials"
+                  className="w-full h-full object-cover opacity-90"
+                />
+                <div className="absolute bottom-4 left-4">
+                  <Award className="h-10 w-10 text-white" />
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Quality Products</h3>
-                <p className="text-gray-600 text-sm">
-                  Curated selection of natural, sustainable, and premium pet products
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 group-hover:text-green-600 transition-colors">
+                  Mumbies Essentials
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Our curated line of high-quality, value-driven pet essentials. Premium products at prices that make sense.
                 </p>
               </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="h-6 w-6 text-orange-600" />
+            </a>
+
+            <a
+              href="/shop?filter=new"
+              className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+            >
+              <div className="h-48 bg-gradient-to-br from-orange-500 to-orange-600 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/10"></div>
+                <img
+                  src="https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Emerging Brands"
+                  className="w-full h-full object-cover opacity-90"
+                />
+                <div className="absolute bottom-4 left-4">
+                  <TrendingUp className="h-10 w-10 text-white" />
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Track Your Impact</h3>
-                <p className="text-gray-600 text-sm">
-                  See exactly how your purchases are making a difference for animals in need
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2 group-hover:text-orange-600 transition-colors">
+                  Emerging Brands
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Discover innovative pet brands pushing boundaries. Be the first to try the latest and greatest products.
                 </p>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </div>
