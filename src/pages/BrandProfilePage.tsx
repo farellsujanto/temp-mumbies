@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { ExternalLink, MapPin, Factory, ChevronLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -38,9 +38,19 @@ export default function BrandProfilePage() {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (slug) loadBrand();
+    if (slug) {
+      setPage(0);
+      setHasMore(true);
+      setProducts([]);
+      loadBrand();
+    }
   }, [slug]);
 
   const loadBrand = async () => {
@@ -60,7 +70,12 @@ export default function BrandProfilePage() {
     setLoading(false);
   };
 
-  const loadProducts = async (brandId: string) => {
+  const loadProducts = async (brandId: string, page = 0, append = false) => {
+    if (productsLoading) return;
+
+    setProductsLoading(true);
+    const pageSize = 12;
+
     const { data } = await supabase
       .from('products')
       .select(`
@@ -75,12 +90,47 @@ export default function BrandProfilePage() {
       `)
       .eq('brand_id', brandId)
       .eq('is_active', true)
-      .limit(12);
+      .range(page * pageSize, (page + 1) * pageSize - 1)
+      .order('created_at', { ascending: false });
 
     if (data) {
-      setProducts(data as any);
+      if (append) {
+        setProducts(prev => [...prev, ...(data as any)]);
+      } else {
+        setProducts(data as any);
+      }
+      setHasMore(data.length === pageSize);
     }
+    setProductsLoading(false);
   };
+
+  const loadMore = useCallback(() => {
+    if (!brand?.id || !hasMore || productsLoading) return;
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadProducts(brand.id, nextPage, true);
+  }, [brand, page, hasMore, productsLoading]);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !productsLoading) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observerRef.current.observe(sentinelRef.current);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [loadMore, hasMore, productsLoading]);
 
   if (loading) {
     return (
@@ -217,15 +267,20 @@ export default function BrandProfilePage() {
           <div>
             <h2 className="text-2xl font-bold mb-6">Products from {brand.name}</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <ProductCard
-                  key={product.id}
+                  key={`${product.id}-${index}`}
                   product={{
                     ...product,
                     brand_name: brand.name,
                   }}
                 />
               ))}
+            </div>
+            <div ref={sentinelRef} className="h-10 flex items-center justify-center mt-6">
+              {productsLoading && (
+                <div className="text-gray-500">Loading more products...</div>
+              )}
             </div>
           </div>
         )}

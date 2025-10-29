@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShoppingCart, ChevronLeft, Sparkles, RefreshCw, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -60,11 +60,42 @@ export default function ProductDetailPage() {
   const [recommendedProducts, setRecommendedProducts] = useState<RelatedProduct[]>([]);
   const [purchaseType, setPurchaseType] = useState<'one-time' | 'subscription'>('one-time');
   const [subscriptionFrequency, setSubscriptionFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | 'bimonthly'>('monthly');
+  const [sameBrandPage, setSameBrandPage] = useState(0);
+  const [sameBrandHasMore, setSameBrandHasMore] = useState(true);
+  const [sameBrandLoading, setSameBrandLoading] = useState(false);
+  const sameBrandObserverRef = useRef<IntersectionObserver | null>(null);
+  const sameBrandSentinelRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
-    if (id) loadProduct();
+    if (id) {
+      setSameBrandPage(0);
+      setSameBrandHasMore(true);
+      setSameBrandProducts([]);
+      loadProduct();
+    }
   }, [id]);
+
+  useEffect(() => {
+    if (!sameBrandSentinelRef.current) return;
+
+    sameBrandObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && sameBrandHasMore && !sameBrandLoading) {
+          loadMoreSameBrand();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    sameBrandObserverRef.current.observe(sameBrandSentinelRef.current);
+
+    return () => {
+      if (sameBrandObserverRef.current) {
+        sameBrandObserverRef.current.disconnect();
+      }
+    };
+  }, [loadMoreSameBrand, sameBrandHasMore, sameBrandLoading]);
 
   const loadProduct = async () => {
     const { data, error } = await supabase
@@ -108,8 +139,12 @@ export default function ProductDetailPage() {
     }
   };
 
-  const loadSameBrandProducts = async (brandId: string | undefined, currentProductId: string) => {
+  const loadSameBrandProducts = async (brandId: string | undefined, currentProductId: string, page = 0, append = false) => {
     if (!brandId) return;
+    if (sameBrandLoading) return;
+
+    setSameBrandLoading(true);
+    const pageSize = 8;
 
     const { data } = await supabase
       .from('products')
@@ -124,13 +159,26 @@ export default function ProductDetailPage() {
       .eq('brand_id', brandId)
       .eq('is_active', true)
       .neq('id', currentProductId)
-      .limit(8);
+      .range(page * pageSize, (page + 1) * pageSize - 1)
+      .order('created_at', { ascending: false });
 
     if (data) {
-      const shuffled = [...data].sort(() => Math.random() - 0.5);
-      setSameBrandProducts(shuffled.slice(0, 4) as any);
+      if (append) {
+        setSameBrandProducts(prev => [...prev, ...(data as any)]);
+      } else {
+        setSameBrandProducts(data as any);
+      }
+      setSameBrandHasMore(data.length === pageSize);
     }
+    setSameBrandLoading(false);
   };
+
+  const loadMoreSameBrand = useCallback(() => {
+    if (!product?.brand?.id || !sameBrandHasMore || sameBrandLoading) return;
+    const nextPage = sameBrandPage + 1;
+    setSameBrandPage(nextPage);
+    loadSameBrandProducts(product.brand.id, product.id, nextPage, true);
+  }, [product, sameBrandPage, sameBrandHasMore, sameBrandLoading]);
 
   const loadRecommendedProducts = async (category: string | null, tags: string[], currentProductId: string) => {
     const { data } = await supabase
@@ -450,15 +498,20 @@ export default function ProductDetailPage() {
             )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {sameBrandProducts.map((relatedProduct) => (
+            {sameBrandProducts.map((relatedProduct, index) => (
               <ProductCard
-                key={relatedProduct.id}
+                key={`${relatedProduct.id}-${index}`}
                 product={{
                   ...relatedProduct,
                   brand_name: relatedProduct.brand?.name,
                 }}
               />
             ))}
+          </div>
+          <div ref={sameBrandSentinelRef} className="h-10 flex items-center justify-center mt-4">
+            {sameBrandLoading && (
+              <div className="text-gray-500">Loading more products...</div>
+            )}
           </div>
         </div>
       )}
