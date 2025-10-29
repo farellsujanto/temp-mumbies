@@ -11,6 +11,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import AccountPage from './pages/AccountPage';
 import RescuesPage from './pages/RescuesPage';
 import RescueProfilePage from './pages/RescueProfilePage';
+import BrandsPage from './pages/BrandsPage';
 import BrandProfilePage from './pages/BrandProfilePage';
 import PartnerApplyPage from './pages/PartnerApplyPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
@@ -33,6 +34,7 @@ function App() {
               <Route path="/account" element={<AccountPage />} />
               <Route path="/rescues" element={<RescuesPage />} />
               <Route path="/rescues/:slug" element={<RescueProfilePage />} />
+              <Route path="/brands" element={<BrandsPage />} />
               <Route path="/brands/:slug" element={<BrandProfilePage />} />
               <Route path="/partner/apply" element={<PartnerApplyPage />} />
               <Route path="/partner/login" element={<PartnerLoginPage />} />
