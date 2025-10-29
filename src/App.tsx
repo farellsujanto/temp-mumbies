@@ -15,6 +15,7 @@ import BrandProfilePage from './pages/BrandProfilePage';
 import PartnerApplyPage from './pages/PartnerApplyPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import PartnerDashboardPage from './pages/PartnerDashboardPage';
+import { ImpactPage } from './pages/ImpactPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/partner/apply" element={<PartnerApplyPage />} />
               <Route path="/partner/login" element={<PartnerLoginPage />} />
               <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
+              <Route path="/impact" element={<ImpactPage />} />
             </Routes>
           </Layout>
         </CartProvider>
