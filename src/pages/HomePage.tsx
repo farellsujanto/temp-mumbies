@@ -262,16 +262,19 @@ export default function HomePage() {
           </div>
 
           {categoryProducts[activeCategory].length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {categoryProducts[activeCategory].map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={{
-                    ...product,
-                    brand_name: product.brand?.name,
-                  }}
-                />
-              ))}
+            <div className="overflow-x-auto pb-4 -mx-4 px-4">
+              <div className="flex gap-6 min-w-max">
+                {categoryProducts[activeCategory].slice(0, 8).map((product) => (
+                  <div key={product.id} className="w-64 flex-shrink-0">
+                    <ProductCard
+                      product={{
+                        ...product,
+                        brand_name: product.brand?.name,
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="text-center py-12 text-gray-500">
