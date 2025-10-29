@@ -17,7 +17,8 @@ import {
   CreditCard,
   UserPlus,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  Calculator
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -133,6 +134,9 @@ export default function PartnerDashboardPage() {
   const [submittingProduct, setSubmittingProduct] = useState(false);
   const [productSubmissions, setProductSubmissions] = useState<any[]>([]);
   const [productSubmitted, setProductSubmitted] = useState(false);
+  const [adoptionsPerYear, setAdoptionsPerYear] = useState(100);
+  const [conversionRate, setConversionRate] = useState(50);
+  const [avgMonthlySpend, setAvgMonthlySpend] = useState(100);
 
   useEffect(() => {
     if (!user) {
@@ -990,6 +994,192 @@ export default function PartnerDashboardPage() {
                 >
                   {sendingFeedback ? 'Sending...' : 'Send Feedback'}
                 </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Revenue Calculator */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
+            <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+              <Calculator className="h-6 w-6 text-green-600" />
+              Revenue Projection Calculator
+            </h2>
+            <p className="text-gray-700 mb-6 text-sm">
+              Model your potential recurring revenue based on adoptions and customer conversion rates.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white rounded-lg p-4 border border-green-200">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Annual Adoptions
+                </label>
+                <input
+                  type="number"
+                  value={adoptionsPerYear}
+                  onChange={(e) => setAdoptionsPerYear(Math.max(0, parseInt(e.target.value) || 0))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-lg font-bold text-center mb-3"
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="500"
+                  step="10"
+                  value={adoptionsPerYear}
+                  onChange={(e) => setAdoptionsPerYear(parseInt(e.target.value))}
+                  className="w-full"
+                />
+                <p className="text-xs text-gray-600 text-center mt-2">
+                  Dogs/cats you adopt out per year
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg p-4 border border-green-200">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Conversion Rate: {conversionRate}%
+                </label>
+                <div className="flex items-center justify-center mb-3">
+                  <span className="text-3xl font-bold text-green-600">{conversionRate}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  value={conversionRate}
+                  onChange={(e) => setConversionRate(parseInt(e.target.value))}
+                  className="w-full"
+                />
+                <p className="text-xs text-gray-600 text-center mt-2">
+                  Adopters who become Mumbies customers
+                </p>
+              </div>
+
+              <div className="bg-white rounded-lg p-4 border border-green-200">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Avg Monthly Spend
+                </label>
+                <div className="relative mb-3">
+                  <span className="absolute left-4 top-2 text-lg font-bold text-gray-500">$</span>
+                  <input
+                    type="number"
+                    value={avgMonthlySpend}
+                    onChange={(e) => setAvgMonthlySpend(Math.max(0, parseInt(e.target.value) || 0))}
+                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg text-lg font-bold text-center"
+                  />
+                </div>
+                <input
+                  type="range"
+                  min="25"
+                  max="300"
+                  step="25"
+                  value={avgMonthlySpend}
+                  onChange={(e) => setAvgMonthlySpend(parseInt(e.target.value))}
+                  className="w-full"
+                />
+                <p className="text-xs text-gray-600 text-center mt-2">
+                  Average customer monthly spend
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-6 border-2 border-green-300">
+              <h3 className="text-lg font-bold mb-4 text-center">5-Year Revenue Projection</h3>
+              <p className="text-xs text-gray-600 text-center mb-6">
+                Assumes 10% annual churn rate (customers who stop shopping)
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b-2 border-gray-200">
+                      <th className="text-left py-2 px-3 text-sm font-semibold text-gray-700">Year</th>
+                      <th className="text-right py-2 px-3 text-sm font-semibold text-gray-700">New Customers</th>
+                      <th className="text-right py-2 px-3 text-sm font-semibold text-gray-700">Active Customers</th>
+                      <th className="text-right py-2 px-3 text-sm font-semibold text-gray-700">Monthly Sales</th>
+                      <th className="text-right py-2 px-3 text-sm font-semibold text-gray-700">Monthly Commission (5%)</th>
+                      <th className="text-right py-2 px-3 text-sm font-semibold text-gray-700">Annual Commission</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(() => {
+                      const newCustomersPerYear = Math.floor(adoptionsPerYear * (conversionRate / 100));
+                      const projections = [];
+                      let cumulativeCustomers = 0;
+
+                      for (let year = 1; year <= 5; year++) {
+                        cumulativeCustomers += newCustomersPerYear;
+                        const retentionRate = Math.pow(0.9, year - 1);
+                        const activeCustomers = Math.floor(cumulativeCustomers * retentionRate);
+                        const monthlySales = activeCustomers * avgMonthlySpend;
+                        const monthlyCommission = monthlySales * 0.05;
+                        const annualCommission = monthlyCommission * 12;
+
+                        projections.push({
+                          year,
+                          newCustomers: newCustomersPerYear,
+                          activeCustomers,
+                          monthlySales,
+                          monthlyCommission,
+                          annualCommission
+                        });
+                      }
+
+                      return projections.map((proj) => (
+                        <tr key={proj.year} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-3 font-semibold">Year {proj.year}</td>
+                          <td className="py-3 px-3 text-right text-gray-700">
+                            +{proj.newCustomers.toLocaleString()}
+                          </td>
+                          <td className="py-3 px-3 text-right font-semibold text-blue-600">
+                            {proj.activeCustomers.toLocaleString()}
+                          </td>
+                          <td className="py-3 px-3 text-right text-gray-700">
+                            ${proj.monthlySales.toLocaleString()}
+                          </td>
+                          <td className="py-3 px-3 text-right font-bold text-green-600">
+                            ${proj.monthlyCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td className="py-3 px-3 text-right font-bold text-green-700 text-lg">
+                            ${proj.annualCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      ));
+                    })()}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-green-100 border-t-2 border-green-300">
+                      <td colSpan={5} className="py-3 px-3 text-right font-bold text-gray-900">
+                        5-Year Total Commission:
+                      </td>
+                      <td className="py-3 px-3 text-right font-bold text-green-700 text-xl">
+                        ${(() => {
+                          const newCustomersPerYear = Math.floor(adoptionsPerYear * (conversionRate / 100));
+                          let total = 0;
+                          let cumulativeCustomers = 0;
+
+                          for (let year = 1; year <= 5; year++) {
+                            cumulativeCustomers += newCustomersPerYear;
+                            const retentionRate = Math.pow(0.9, year - 1);
+                            const activeCustomers = Math.floor(cumulativeCustomers * retentionRate);
+                            const monthlySales = activeCustomers * avgMonthlySpend;
+                            const monthlyCommission = monthlySales * 0.05;
+                            const annualCommission = monthlyCommission * 12;
+                            total += annualCommission;
+                          }
+
+                          return total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        })()}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-gray-700">
+                  <strong>How this works:</strong> Each year you add new customers (based on your adoptions × conversion rate).
+                  The model assumes 10% annual churn, meaning 90% of customers continue shopping each year. Your commission is 5% of all monthly sales from active customers.
+                </p>
               </div>
             </div>
           </div>
