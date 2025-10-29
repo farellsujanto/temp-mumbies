@@ -283,6 +283,36 @@ export default function HomePage() {
           )}
         </section>
 
+        <section className="mb-16">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <p className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Ends Tonight</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">The New Arrivals Sale</h2>
+              <p className="text-xl text-gray-700 mb-6">
+                Find a new favorite with up to EXTRA 25% off 200+ of our latest launches
+              </p>
+              <Button
+                size="lg"
+                onClick={() => window.location.href = '/shop?filter=new'}
+              >
+                Start Saving
+              </Button>
+            </div>
+            <div className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl p-8 min-h-[400px] flex items-center justify-center">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[-5deg]">
+                  <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
+                  <p className="text-sm font-semibold">New Product</p>
+                </div>
+                <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[5deg] mt-8">
+                  <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
+                  <p className="text-sm font-semibold">Hot Deal</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {featuredBrands.length > 0 && (
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Featured Brands</h2>
