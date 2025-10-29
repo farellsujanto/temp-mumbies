@@ -181,8 +181,9 @@ export default function HomePage() {
                   <button
                     key={index}
                     onClick={() => setCurrentBanner(index)}
+                    aria-label={`Go to banner ${index + 1}`}
                     className={`h-2 rounded-full transition-all ${
-                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-60'
+                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white/60 hover:bg-white/80'
                     }`}
                   />
                 ))}
