@@ -129,7 +129,6 @@ export default function PartnerDashboardPage() {
   const [website, setWebsite] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [productUrl, setProductUrl] = useState('');
-  const [productName, setProductName] = useState('');
   const [productNotes, setProductNotes] = useState('');
   const [submittingProduct, setSubmittingProduct] = useState(false);
   const [productSubmissions, setProductSubmissions] = useState<any[]>([]);
@@ -469,14 +468,13 @@ export default function PartnerDashboardPage() {
           nonprofit_id: nonprofit.id,
           submitted_by_user_id: user.id,
           product_url: productUrl,
-          product_name: productName || null,
+          product_name: null,
           notes: productNotes || null,
           status: 'pending'
         });
 
       setProductSubmitted(true);
       setProductUrl('');
-      setProductName('');
       setProductNotes('');
       await loadProductSubmissions(nonprofit.id);
 
@@ -892,18 +890,6 @@ export default function PartnerDashboardPage() {
                       value={productUrl}
                       onChange={(e) => setProductUrl(e.target.value)}
                       placeholder="https://example.com/product"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Product Name (optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={productName}
-                      onChange={(e) => setProductName(e.target.value)}
-                      placeholder="e.g., Natural Dog Food"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg"
                     />
                   </div>
