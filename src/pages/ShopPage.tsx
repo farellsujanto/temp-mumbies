@@ -12,6 +12,8 @@ interface Product {
   tags: string[];
   category: string | null;
   brand: { id: string; name: string } | null;
+  review_count?: number;
+  average_rating?: number;
 }
 
 interface Brand {
@@ -112,7 +114,33 @@ export default function ShopPage() {
         );
       }
 
-      setProducts(filtered);
+      // Fetch review stats for each product
+      const productsWithReviews = await Promise.all(
+        filtered.map(async (product: any) => {
+          const { data: reviewStats } = await supabase
+            .from('product_reviews')
+            .select('rating')
+            .eq('product_id', product.id)
+            .eq('is_approved', true);
+
+          if (reviewStats && reviewStats.length > 0) {
+            const avgRating = reviewStats.reduce((sum, r) => sum + r.rating, 0) / reviewStats.length;
+            return {
+              ...product,
+              review_count: reviewStats.length,
+              average_rating: avgRating,
+            };
+          }
+          return product;
+        })
+      );
+
+      // Sort by rating if selected
+      if (sortBy === 'rating') {
+        productsWithReviews.sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0));
+      }
+
+      setProducts(productsWithReviews);
     }
     setLoading(false);
   };
@@ -277,6 +305,7 @@ export default function ShopPage() {
               <option value="name">Name: A-Z</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
             </select>
           </div>
 

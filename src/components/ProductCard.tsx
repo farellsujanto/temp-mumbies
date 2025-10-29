@@ -1,4 +1,4 @@
-import { ShoppingCart, RefreshCw } from 'lucide-react';
+import { ShoppingCart, RefreshCw, Star } from 'lucide-react';
 import Badge from './Badge';
 import Button from './Button';
 import { useCart } from '../contexts/CartContext';
@@ -17,6 +17,8 @@ interface ProductCardProps {
     tags: string[];
     inventory_status?: string;
     promotional_deal?: string | null;
+    review_count?: number;
+    average_rating?: number;
   };
 }
 
@@ -78,6 +80,26 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.tags.slice(0, 2).map((tag) => (
               <Badge key={tag} type={tag} size="sm" />
             ))}
+          </div>
+        )}
+
+        {product.review_count && product.review_count > 0 && (
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className={`h-4 w-4 ${
+                    star <= Math.round(product.average_rating || 0)
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-sm text-gray-600">
+              {product.average_rating?.toFixed(1)} ({product.review_count})
+            </span>
           </div>
         )}
 
