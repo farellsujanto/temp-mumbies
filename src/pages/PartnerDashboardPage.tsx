@@ -55,9 +55,19 @@ interface Referral {
   referral_code: string;
   status: string;
   signup_date: string | null;
+  qualification_date: string | null;
   total_sales: number;
   bounty_amount: number;
   created_at: string;
+}
+
+interface Activity {
+  id: string;
+  type: 'order' | 'referral';
+  amount: number;
+  commission?: number;
+  description: string;
+  date: string;
 }
 
 interface Product {
@@ -74,6 +84,7 @@ export default function PartnerDashboardPage() {
   const [nonprofit, setNonprofit] = useState<NonprofitData | null>(null);
   const [curatedProducts, setCuratedProducts] = useState<Product[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'profile'>('overview');
   const [copied, setCopied] = useState(false);
@@ -122,6 +133,7 @@ export default function PartnerDashboardPage() {
     setNonprofit(nonprofitData);
     loadCuratedProducts(nonprofitData.id);
     loadReferrals(nonprofitData.id);
+    loadRecentActivity(nonprofitData.id);
 
     setPayoutMethod(nonprofitData.payout_method || '');
     setPayoutEmail(nonprofitData.payout_email || '');
@@ -170,6 +182,55 @@ export default function PartnerDashboardPage() {
     if (data) {
       setReferrals(data);
     }
+  };
+
+  const loadRecentActivity = async (nonprofitId: string) => {
+    const activities: Activity[] = [];
+
+    const { data: orders } = await supabase
+      .from('orders')
+      .select('id, order_number, subtotal, created_at')
+      .eq('attributed_rescue_id', nonprofitId)
+      .eq('status', 'completed')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (orders) {
+      orders.forEach((order) => {
+        const commission = order.subtotal * 0.05;
+        activities.push({
+          id: order.id,
+          type: 'order',
+          amount: order.subtotal,
+          commission,
+          description: `Order ${order.order_number}`,
+          date: order.created_at,
+        });
+      });
+    }
+
+    const { data: qualifiedReferrals } = await supabase
+      .from('nonprofit_referrals')
+      .select('id, referred_email, bounty_amount, qualification_date')
+      .eq('referrer_nonprofit_id', nonprofitId)
+      .in('status', ['qualified', 'paid'])
+      .not('qualification_date', 'is', null)
+      .order('qualification_date', { ascending: false });
+
+    if (qualifiedReferrals) {
+      qualifiedReferrals.forEach((referral) => {
+        activities.push({
+          id: referral.id,
+          type: 'referral',
+          amount: referral.bounty_amount,
+          description: `Referral bounty for ${referral.referred_email}`,
+          date: referral.qualification_date!,
+        });
+      });
+    }
+
+    activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    setRecentActivity(activities.slice(0, 10));
   };
 
   const sendReferralInvite = async () => {
@@ -465,14 +526,66 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
 
-          {/* Recent Activity Placeholder */}
+          {/* Recent Activity */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-            <div className="text-center py-8 text-gray-500">
-              <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-              <p>No recent activity yet</p>
-              <p className="text-sm">Share your referral link to start earning!</p>
-            </div>
+            {recentActivity.length > 0 ? (
+              <div className="space-y-3">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-full ${
+                        activity.type === 'order'
+                          ? 'bg-blue-100'
+                          : 'bg-amber-100'
+                      }`}>
+                        {activity.type === 'order' ? (
+                          <ShoppingBag className={`h-4 w-4 ${
+                            activity.type === 'order'
+                              ? 'text-blue-600'
+                              : 'text-amber-600'
+                          }`} />
+                        ) : (
+                          <Gift className="h-4 w-4 text-amber-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{activity.description}</p>
+                        <p className="text-sm text-gray-600">
+                          {new Date(activity.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      {activity.type === 'order' ? (
+                        <>
+                          <p className="font-semibold text-green-600">
+                            +${activity.commission?.toFixed(2)}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            ${activity.amount.toFixed(2)} order
+                          </p>
+                        </>
+                      ) : (
+                        <p className="font-semibold text-amber-600">
+                          +${activity.amount.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p>No recent activity yet</p>
+                <p className="text-sm">Share your referral link to start earning!</p>
+              </div>
+            )}
           </div>
         </div>
       )}
