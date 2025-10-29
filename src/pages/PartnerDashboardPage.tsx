@@ -273,7 +273,13 @@ export default function PartnerDashboardPage() {
 
     const { data: orders, error: ordersError } = await supabase
       .from('orders')
-      .select('id, order_number, subtotal, created_at')
+      .select(`
+        id,
+        order_number,
+        subtotal,
+        created_at,
+        user:users (email)
+      `)
       .eq('attributed_rescue_id', nonprofitId)
       .in('status', ['completed', 'delivered'])
       .order('created_at', { ascending: false })
@@ -282,14 +288,15 @@ export default function PartnerDashboardPage() {
     console.log('Orders query:', { orders, ordersError, nonprofitId });
 
     if (orders) {
-      orders.forEach((order) => {
+      orders.forEach((order: any) => {
         const commission = order.subtotal * 0.05;
+        const userEmail = order.user?.email || 'Unknown';
         activities.push({
           id: order.id,
           type: 'order',
           amount: order.subtotal,
           commission,
-          description: `Order ${order.order_number}`,
+          description: `Order from ${userEmail}`,
           date: order.created_at,
         });
       });
