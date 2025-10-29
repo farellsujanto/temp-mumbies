@@ -1,13 +1,34 @@
-import { useState } from 'react';
-import { Search, ShoppingCart, Menu, X, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
+import { supabase } from '../lib/supabase';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+  const [isPartner, setIsPartner] = useState(false);
   const { user } = useAuth();
   const { itemCount } = useCart();
+
+  useEffect(() => {
+    if (user) {
+      checkPartnerStatus();
+    }
+  }, [user]);
+
+  const checkPartnerStatus = async () => {
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('nonprofits')
+      .select('id')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+
+    setIsPartner(!!data);
+  };
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -53,13 +74,47 @@ export default function Navigation() {
 
           <div className="flex items-center gap-4">
             {user ? (
-              <a
-                href="/account"
-                className="flex items-center gap-2 text-gray-700 hover:text-green-600"
-              >
-                <User className="h-5 w-5" />
-                <span className="hidden lg:inline">Account</span>
-              </a>
+              <div className="relative">
+                <button
+                  onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                  className="flex items-center gap-2 text-gray-700 hover:text-green-600"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="hidden lg:inline">Account</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+
+                {accountDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <a
+                      href="/account"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
+                      onClick={() => setAccountDropdownOpen(false)}
+                    >
+                      My Account
+                    </a>
+                    {isPartner && (
+                      <a
+                        href="/partner/dashboard"
+                        className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
+                        onClick={() => setAccountDropdownOpen(false)}
+                      >
+                        Partner Dashboard
+                      </a>
+                    )}
+                    <hr className="my-2" />
+                    <button
+                      onClick={() => {
+                        setAccountDropdownOpen(false);
+                        window.location.href = '/logout';
+                      }}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <a
                 href="/login"
