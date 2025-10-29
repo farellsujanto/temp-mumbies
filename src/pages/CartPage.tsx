@@ -166,19 +166,23 @@ export default function CartPage() {
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 mb-6">
               <h3 className="font-bold mb-4 text-center">Choose Your Impact</h3>
 
-              <div className="mb-4 px-2">
-                <input
-                  type="range"
-                  min="1"
-                  max="4"
-                  step="0.5"
-                  value={localSliderValue}
-                  onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
-                  style={{
-                    background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((localSliderValue - 1) / 3) * 100}%, #10b981 ${((localSliderValue - 1) / 3) * 100}%, #10b981 100%)`,
-                  }}
-                />
+              <div className="mb-4 relative">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
+                <div className="px-3">
+                  <input
+                    type="range"
+                    min="1"
+                    max="4"
+                    step="0.5"
+                    value={localSliderValue}
+                    onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
+                    className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((localSliderValue - 1) / 3) * 100}%, #10b981 ${((localSliderValue - 1) / 3) * 100}%, #10b981 100%)`,
+                    }}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-between text-xs text-gray-600 mb-4">
