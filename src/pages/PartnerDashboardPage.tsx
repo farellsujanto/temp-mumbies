@@ -555,7 +555,16 @@ export default function PartnerDashboardPage() {
               </div>
             )}
             <div>
-              <h1 className="text-2xl font-bold">{nonprofit.organization_name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">{nonprofit.organization_name}</h1>
+                <button
+                  onClick={() => navigate(`/rescues/${nonprofit.slug}`)}
+                  className="text-gray-400 hover:text-green-600 transition-colors"
+                  title="View public profile"
+                >
+                  <ExternalLink className="h-5 w-5" />
+                </button>
+              </div>
               <p className="text-gray-600">Partner Dashboard</p>
             </div>
           </div>
