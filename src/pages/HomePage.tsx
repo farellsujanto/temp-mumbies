@@ -30,16 +30,24 @@ interface Product {
   brand: { name: string } | null;
 }
 
+type Category = 'food' | 'treats' | 'toys' | 'accessories';
+
 export default function HomePage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [featuredBrands, setFeaturedBrands] = useState<Brand[]>([]);
-  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
+  const [activeCategory, setActiveCategory] = useState<Category>('food');
+  const [categoryProducts, setCategoryProducts] = useState<Record<Category, Product[]>>({
+    food: [],
+    treats: [],
+    toys: [],
+    accessories: [],
+  });
 
   useEffect(() => {
     loadBanners();
     loadFeaturedBrands();
-    loadPopularProducts();
+    loadCategoryProducts();
   }, []);
 
   useEffect(() => {
@@ -71,20 +79,36 @@ export default function HomePage() {
     if (data) setFeaturedBrands(data);
   };
 
-  const loadPopularProducts = async () => {
-    const { data } = await supabase
-      .from('products')
-      .select(`
-        id,
-        name,
-        price,
-        image_url,
-        tags,
-        brand:brands(name)
-      `)
-      .eq('is_active', true)
-      .limit(8);
-    if (data) setPopularProducts(data as any);
+  const loadCategoryProducts = async () => {
+    const categories: Category[] = ['food', 'treats', 'toys', 'accessories'];
+    const results: Record<Category, Product[]> = {
+      food: [],
+      treats: [],
+      toys: [],
+      accessories: [],
+    };
+
+    for (const category of categories) {
+      const { data } = await supabase
+        .from('products')
+        .select(`
+          id,
+          name,
+          price,
+          image_url,
+          tags,
+          brand:brands(name)
+        `)
+        .eq('is_active', true)
+        .eq('category', category)
+        .limit(8);
+
+      if (data) {
+        results[category] = data as any;
+      }
+    }
+
+    setCategoryProducts(results);
   };
 
   return (
@@ -174,8 +198,8 @@ export default function HomePage() {
             </p>
           </div>
           <div className="text-center">
-            <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="h-8 w-8 text-purple-600" />
+            <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="h-8 w-8 text-orange-600" />
             </div>
             <h3 className="text-xl font-bold mb-2">Track Your Impact</h3>
             <p className="text-gray-600">
@@ -183,6 +207,51 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+
+        <section className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold">Trending Products</h2>
+            <Button variant="outline" onClick={() => window.location.href = '/shop'}>
+              View All
+            </Button>
+          </div>
+
+          <div className="border-b border-gray-200 mb-8">
+            <div className="flex space-x-8">
+              {(['food', 'treats', 'toys', 'accessories'] as Category[]).map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`pb-4 px-1 text-lg font-medium border-b-2 transition-colors ${
+                    activeCategory === category
+                      ? 'border-green-600 text-green-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {categoryProducts[activeCategory].length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {categoryProducts[activeCategory].map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    ...product,
+                    brand_name: product.brand?.name,
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-gray-500">
+              <p>No products available in this category yet.</p>
+            </div>
+          )}
+        </section>
 
         {featuredBrands.length > 0 && (
           <section className="mb-16">
@@ -212,28 +281,6 @@ export default function HomePage() {
                     </p>
                   )}
                 </a>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {popularProducts.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold">Popular Products</h2>
-              <Button variant="outline" onClick={() => window.location.href = '/shop'}>
-                View All
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {popularProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={{
-                    ...product,
-                    brand_name: product.brand?.name,
-                  }}
-                />
               ))}
             </div>
           </section>
