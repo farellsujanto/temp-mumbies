@@ -163,56 +163,54 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <button
           onClick={() => window.location.href = '/account/settings'}
-          className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow text-left"
+          className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
         >
           <div className="text-2xl mb-2">⚙️</div>
-          <h3 className="font-bold mb-1">Account Settings</h3>
-          <p className="text-sm text-gray-600">Manage your personal details</p>
+          <h3 className="font-bold mb-1 text-sm">Account Settings</h3>
+          <p className="text-xs text-gray-600">Manage your personal details</p>
         </button>
 
         <button
           onClick={() => window.location.href = '/account/orders'}
-          className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow text-left"
+          className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow text-left"
         >
           <div className="text-2xl mb-2">📦</div>
-          <h3 className="font-bold mb-1">Order History</h3>
-          <p className="text-sm text-gray-600">Review previous orders</p>
+          <h3 className="font-bold mb-1 text-sm">Order History</h3>
+          <p className="text-xs text-gray-600">Review previous orders</p>
         </button>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="text-2xl mb-2">🎁</div>
-          <h3 className="font-bold mb-2">Refer a Friend</h3>
-          <p className="text-xs text-gray-600 mb-3">Give $5, Get $5</p>
+          <h3 className="font-bold mb-1 text-sm">Refer a Friend</h3>
+          <p className="text-xs text-gray-600 mb-3">Give $40, Get $40</p>
           {userProfile?.referral_code ? (
             <Button variant="outline" size="sm" onClick={handleCopyReferralCode} fullWidth>
               <Copy className="h-4 w-4 mr-2" />
               {copied ? 'Copied!' : 'Copy Link'}
             </Button>
           ) : (
-            <p className="text-sm text-gray-500">Code generating...</p>
+            <p className="text-xs text-gray-500">Code generating...</p>
           )}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="text-2xl mb-2">🏢</div>
-          <h3 className="font-bold mb-2">Refer a Nonprofit</h3>
+          <h3 className="font-bold mb-1 text-sm">Refer a Nonprofit</h3>
           {userProfile?.nonprofit_referral_access ? (
             <>
-              <p className="text-xs text-gray-600 mb-3">Earn $500 per qualified referral</p>
+              <p className="text-xs text-gray-600 mb-3">Earn $1000 per qualified referral</p>
               <Button variant="outline" size="sm" fullWidth>
                 View Details
               </Button>
             </>
           ) : (
             <>
-              <div className="flex items-center gap-2 text-gray-400 mb-2">
-                <Lock className="h-4 w-4" />
-                <span className="text-xs">Access Required</span>
-              </div>
+              <p className="text-xs text-gray-600 mb-3">Earn $1000</p>
               <Button variant="ghost" size="sm" fullWidth>
+                <Lock className="h-3 w-3 mr-1" />
                 Request Access
               </Button>
             </>
