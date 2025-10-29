@@ -121,6 +121,14 @@ export default function PartnerLoginPage() {
           </div>
         </div>
 
+        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm font-medium text-blue-900 mb-2">Demo Account</p>
+          <div className="text-xs text-blue-800 space-y-1">
+            <p><strong>Email:</strong> demo@partner.com</p>
+            <p><strong>Password:</strong> demo123</p>
+          </div>
+        </div>
+
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate('/')}
