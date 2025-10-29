@@ -277,7 +277,7 @@ export default function PartnerDashboardPage() {
       .eq('attributed_rescue_id', nonprofitId)
       .in('status', ['completed', 'delivered'])
       .order('created_at', { ascending: false })
-      .limit(10);
+      .limit(20);
 
     if (orders) {
       orders.forEach((order) => {
@@ -299,7 +299,7 @@ export default function PartnerDashboardPage() {
       .eq('attributed_rescue_id', nonprofitId)
       .eq('total_orders', 0)
       .order('created_at', { ascending: false })
-      .limit(10);
+      .limit(20);
 
     if (leads) {
       leads.forEach((lead) => {
@@ -334,7 +334,7 @@ export default function PartnerDashboardPage() {
     }
 
     activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setRecentActivity(activities.slice(0, 15));
+    setRecentActivity(activities.slice(0, 20));
   };
 
   const copyReferralLink = () => {
