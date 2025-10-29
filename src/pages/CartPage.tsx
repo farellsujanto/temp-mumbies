@@ -166,7 +166,7 @@ export default function CartPage() {
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 mb-6">
               <h3 className="font-bold mb-4 text-center">Choose Your Impact</h3>
 
-              <div className="mb-4">
+              <div className="mb-4 px-2">
                 <input
                   type="range"
                   min="1"
@@ -182,13 +182,9 @@ export default function CartPage() {
               </div>
 
               <div className="flex justify-between text-xs text-gray-600 mb-4">
-                <span>{localSliderValue}% Cash Back (min 1%)</span>
-                <span>{(5 - localSliderValue)}% Rescue Donation (min 1%)</span>
+                <span>{localSliderValue}% Cash Back</span>
+                <span>{(5 - localSliderValue)}% Rescue Donation</span>
               </div>
-
-              <p className="text-xs text-gray-600 mb-4 text-center">
-                Minimum 1% for both ensures your cashback keeps growing and rescues always get support
-              </p>
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
