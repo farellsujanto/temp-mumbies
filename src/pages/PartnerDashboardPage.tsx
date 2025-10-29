@@ -13,7 +13,8 @@ import {
   Copy,
   CheckCircle,
   Gift,
-  Send
+  Send,
+  CreditCard
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -36,6 +37,16 @@ interface NonprofitData {
   status: string;
   location_city: string | null;
   location_state: string | null;
+  payout_method: string | null;
+  payout_email: string | null;
+  bank_account_name: string | null;
+  bank_routing_number: string | null;
+  bank_account_number: string | null;
+  mailing_address_line1: string | null;
+  mailing_address_line2: string | null;
+  mailing_address_city: string | null;
+  mailing_address_state: string | null;
+  mailing_address_zip: string | null;
 }
 
 interface Referral {
@@ -69,6 +80,17 @@ export default function PartnerDashboardPage() {
   const [referralCopied, setReferralCopied] = useState(false);
   const [referralEmail, setReferralEmail] = useState('');
   const [sendingReferral, setSendingReferral] = useState(false);
+  const [payoutMethod, setPayoutMethod] = useState<string>('');
+  const [payoutEmail, setPayoutEmail] = useState('');
+  const [bankAccountName, setBankAccountName] = useState('');
+  const [bankRoutingNumber, setBankRoutingNumber] = useState('');
+  const [bankAccountNumber, setBankAccountNumber] = useState('');
+  const [mailingLine1, setMailingLine1] = useState('');
+  const [mailingLine2, setMailingLine2] = useState('');
+  const [mailingCity, setMailingCity] = useState('');
+  const [mailingState, setMailingState] = useState('');
+  const [mailingZip, setMailingZip] = useState('');
+  const [savingPayout, setSavingPayout] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -100,6 +122,18 @@ export default function PartnerDashboardPage() {
     setNonprofit(nonprofitData);
     loadCuratedProducts(nonprofitData.id);
     loadReferrals(nonprofitData.id);
+
+    setPayoutMethod(nonprofitData.payout_method || '');
+    setPayoutEmail(nonprofitData.payout_email || '');
+    setBankAccountName(nonprofitData.bank_account_name || '');
+    setBankRoutingNumber(nonprofitData.bank_routing_number || '');
+    setBankAccountNumber(nonprofitData.bank_account_number || '');
+    setMailingLine1(nonprofitData.mailing_address_line1 || '');
+    setMailingLine2(nonprofitData.mailing_address_line2 || '');
+    setMailingCity(nonprofitData.mailing_address_city || '');
+    setMailingState(nonprofitData.mailing_address_state || '');
+    setMailingZip(nonprofitData.mailing_address_zip || '');
+
     setLoading(false);
   };
 
@@ -171,6 +205,65 @@ export default function PartnerDashboardPage() {
     navigator.clipboard.writeText(link);
     setReferralCopied(true);
     setTimeout(() => setReferralCopied(false), 2000);
+  };
+
+  const savePayoutInfo = async () => {
+    if (!nonprofit) return;
+
+    setSavingPayout(true);
+    try {
+      const updates: any = {
+        payout_method: payoutMethod || null,
+        payout_info_updated_at: new Date().toISOString(),
+      };
+
+      if (payoutMethod === 'paypal') {
+        updates.payout_email = payoutEmail;
+        updates.bank_account_name = null;
+        updates.bank_routing_number = null;
+        updates.bank_account_number = null;
+        updates.mailing_address_line1 = null;
+        updates.mailing_address_line2 = null;
+        updates.mailing_address_city = null;
+        updates.mailing_address_state = null;
+        updates.mailing_address_zip = null;
+      } else if (payoutMethod === 'bank_transfer') {
+        updates.payout_email = payoutEmail;
+        updates.bank_account_name = bankAccountName;
+        updates.bank_routing_number = bankRoutingNumber;
+        updates.bank_account_number = bankAccountNumber;
+        updates.mailing_address_line1 = null;
+        updates.mailing_address_line2 = null;
+        updates.mailing_address_city = null;
+        updates.mailing_address_state = null;
+        updates.mailing_address_zip = null;
+      } else if (payoutMethod === 'check') {
+        updates.payout_email = payoutEmail;
+        updates.bank_account_name = null;
+        updates.bank_routing_number = null;
+        updates.bank_account_number = null;
+        updates.mailing_address_line1 = mailingLine1;
+        updates.mailing_address_line2 = mailingLine2;
+        updates.mailing_address_city = mailingCity;
+        updates.mailing_address_state = mailingState;
+        updates.mailing_address_zip = mailingZip;
+      }
+
+      const { error } = await supabase
+        .from('nonprofits')
+        .update(updates)
+        .eq('id', nonprofit.id);
+
+      if (!error) {
+        alert('Payout information saved successfully!');
+        loadPartnerData();
+      } else {
+        alert('Error saving payout information. Please try again.');
+      }
+    } catch (error) {
+      alert('Error saving payout information. Please try again.');
+    }
+    setSavingPayout(false);
   };
 
   const handleSignOut = async () => {
@@ -277,7 +370,7 @@ export default function PartnerDashboardPage() {
             }`}
           >
             <Settings className="h-5 w-5 inline mr-2" />
-            Profile Settings
+            Settings
           </button>
         </div>
       </div>
@@ -595,54 +688,302 @@ export default function PartnerDashboardPage() {
 
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-xl font-bold mb-6">Profile Information</h2>
+        <div className="space-y-6">
+          {/* Profile Information */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-6">Profile Information</h2>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Organization Name
-              </label>
-              <input
-                type="text"
-                value={nonprofit.organization_name}
-                disabled
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  City
+                  Organization Name
                 </label>
                 <input
                   type="text"
-                  value={nonprofit.location_city || ''}
+                  value={nonprofit.organization_name}
                   disabled
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  State
-                </label>
-                <input
-                  type="text"
-                  value={nonprofit.location_state || ''}
-                  disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                />
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    value={nonprofit.location_city || ''}
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    State
+                  </label>
+                  <input
+                    type="text"
+                    value={nonprofit.location_state || ''}
+                    disabled
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+                <p className="text-sm text-blue-900">
+                  <strong>Need to update your profile?</strong> Contact support at{' '}
+                  <a href="mailto:partners@mumbies.com" className="underline">
+                    partners@mumbies.com
+                  </a>
+                </p>
               </div>
             </div>
+          </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
-              <p className="text-sm text-blue-900">
-                <strong>Need to update your profile?</strong> Contact support at{' '}
-                <a href="mailto:partners@mumbies.com" className="underline">
-                  partners@mumbies.com
-                </a>
-              </p>
+          {/* Payout Settings */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <CreditCard className="h-6 w-6 text-green-600" />
+              <h2 className="text-xl font-bold">Payout Information</h2>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              Set up how you'd like to receive your commission and referral earnings.
+            </p>
+
+            <div className="space-y-6">
+              {/* Payout Method Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Payout Method
+                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      name="payout_method"
+                      value="paypal"
+                      checked={payoutMethod === 'paypal'}
+                      onChange={(e) => setPayoutMethod(e.target.value)}
+                      className="w-4 h-4 text-green-600"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">PayPal</div>
+                      <div className="text-sm text-gray-600">Fast and easy payments to your PayPal account</div>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      name="payout_method"
+                      value="bank_transfer"
+                      checked={payoutMethod === 'bank_transfer'}
+                      onChange={(e) => setPayoutMethod(e.target.value)}
+                      className="w-4 h-4 text-green-600"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">Bank Transfer (ACH)</div>
+                      <div className="text-sm text-gray-600">Direct deposit to your bank account</div>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                    <input
+                      type="radio"
+                      name="payout_method"
+                      value="check"
+                      checked={payoutMethod === 'check'}
+                      onChange={(e) => setPayoutMethod(e.target.value)}
+                      className="w-4 h-4 text-green-600"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">Check (Mail)</div>
+                      <div className="text-sm text-gray-600">Physical check mailed to your address</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* PayPal Fields */}
+              {payoutMethod === 'paypal' && (
+                <div className="space-y-4 pt-4 border-t border-gray-200">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      PayPal Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={payoutEmail}
+                      onChange={(e) => setPayoutEmail(e.target.value)}
+                      placeholder="your@paypal.com"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Bank Transfer Fields */}
+              {payoutMethod === 'bank_transfer' && (
+                <div className="space-y-4 pt-4 border-t border-gray-200">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Notification Email
+                    </label>
+                    <input
+                      type="email"
+                      value={payoutEmail}
+                      onChange={(e) => setPayoutEmail(e.target.value)}
+                      placeholder="finance@organization.org"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Account Holder Name
+                    </label>
+                    <input
+                      type="text"
+                      value={bankAccountName}
+                      onChange={(e) => setBankAccountName(e.target.value)}
+                      placeholder="Organization Legal Name"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Routing Number
+                      </label>
+                      <input
+                        type="text"
+                        value={bankRoutingNumber}
+                        onChange={(e) => setBankRoutingNumber(e.target.value)}
+                        placeholder="123456789"
+                        maxLength={9}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Account Number
+                      </label>
+                      <input
+                        type="text"
+                        value={bankAccountNumber}
+                        onChange={(e) => setBankAccountNumber(e.target.value)}
+                        placeholder="Account number"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Check Fields */}
+              {payoutMethod === 'check' && (
+                <div className="space-y-4 pt-4 border-t border-gray-200">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Notification Email
+                    </label>
+                    <input
+                      type="email"
+                      value={payoutEmail}
+                      onChange={(e) => setPayoutEmail(e.target.value)}
+                      placeholder="finance@organization.org"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mailing Address
+                    </label>
+                    <input
+                      type="text"
+                      value={mailingLine1}
+                      onChange={(e) => setMailingLine1(e.target.value)}
+                      placeholder="Street address"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3"
+                    />
+                    <input
+                      type="text"
+                      value={mailingLine2}
+                      onChange={(e) => setMailingLine2(e.target.value)}
+                      placeholder="Apt, Suite, etc. (optional)"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        value={mailingCity}
+                        onChange={(e) => setMailingCity(e.target.value)}
+                        placeholder="City"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        State
+                      </label>
+                      <input
+                        type="text"
+                        value={mailingState}
+                        onChange={(e) => setMailingState(e.target.value)}
+                        placeholder="State"
+                        maxLength={2}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ZIP Code
+                      </label>
+                      <input
+                        type="text"
+                        value={mailingZip}
+                        onChange={(e) => setMailingZip(e.target.value)}
+                        placeholder="ZIP"
+                        maxLength={10}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Save Button */}
+              {payoutMethod && (
+                <div className="pt-4">
+                  <Button
+                    onClick={savePayoutInfo}
+                    disabled={savingPayout}
+                    className="w-full"
+                  >
+                    {savingPayout ? 'Saving...' : 'Save Payout Information'}
+                  </Button>
+                  {nonprofit.payout_method && (
+                    <p className="text-sm text-gray-600 mt-3 text-center">
+                      Current method: <strong>{nonprofit.payout_method.replace('_', ' ').toUpperCase()}</strong>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {!payoutMethod && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-sm text-amber-900">
+                    <strong>Important:</strong> You must set up payout information before you can receive earnings.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
