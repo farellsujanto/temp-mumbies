@@ -128,6 +128,11 @@ export default function PartnerDashboardPage() {
   const [contactEmail, setContactEmail] = useState('');
   const [website, setWebsite] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
+  const [productUrl, setProductUrl] = useState('');
+  const [productName, setProductName] = useState('');
+  const [productNotes, setProductNotes] = useState('');
+  const [submittingProduct, setSubmittingProduct] = useState(false);
+  const [productSubmissions, setProductSubmissions] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -169,6 +174,7 @@ export default function PartnerDashboardPage() {
     loadCuratedProducts(nonprofitData.id);
     loadReferrals(nonprofitData.id);
     loadRecentActivity(nonprofitData.id);
+    loadProductSubmissions(nonprofitData.id);
 
     setPayoutMethod(nonprofitData.payout_method || '');
     setPayoutEmail(nonprofitData.payout_email || '');
@@ -247,6 +253,18 @@ export default function PartnerDashboardPage() {
 
     if (data) {
       setReferrals(data);
+    }
+  };
+
+  const loadProductSubmissions = async (nonprofitId: string) => {
+    const { data } = await supabase
+      .from('product_submissions')
+      .select('*')
+      .eq('nonprofit_id', nonprofitId)
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      setProductSubmissions(data);
     }
   };
 
@@ -437,6 +455,33 @@ export default function PartnerDashboardPage() {
     } catch (error) {
       alert('Error removing product. Please try again.');
     }
+  };
+
+  const submitProductUrl = async () => {
+    if (!productUrl.trim() || !nonprofit || !user) return;
+
+    setSubmittingProduct(true);
+    try {
+      await supabase
+        .from('product_submissions')
+        .insert({
+          nonprofit_id: nonprofit.id,
+          submitted_by_user_id: user.id,
+          product_url: productUrl,
+          product_name: productName || null,
+          notes: productNotes || null,
+          status: 'pending'
+        });
+
+      alert('Product submitted! We\'ll review it and add it to the catalog soon.');
+      setProductUrl('');
+      setProductName('');
+      setProductNotes('');
+      await loadProductSubmissions(nonprofit.id);
+    } catch (error) {
+      alert('Error submitting product. Please try again.');
+    }
+    setSubmittingProduct(false);
   };
 
   const saveProfileInformation = async () => {
@@ -802,6 +847,89 @@ export default function PartnerDashboardPage() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Product URL Submission Widget */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+              <Package className="h-5 w-5 text-green-600" />
+              Know a Product You Want to See on Mumbies?
+            </h2>
+            <p className="text-gray-700 mb-4 text-sm">
+              Submit a URL here and we'll review it for addition to our catalog.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Product URL *
+                </label>
+                <input
+                  type="url"
+                  value={productUrl}
+                  onChange={(e) => setProductUrl(e.target.value)}
+                  placeholder="https://example.com/product"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Product Name (optional)
+                </label>
+                <input
+                  type="text"
+                  value={productName}
+                  onChange={(e) => setProductName(e.target.value)}
+                  placeholder="e.g., Natural Dog Food"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Notes (optional)
+                </label>
+                <textarea
+                  value={productNotes}
+                  onChange={(e) => setProductNotes(e.target.value)}
+                  placeholder="Why would this be a great addition?"
+                  rows={2}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+                />
+              </div>
+              <Button
+                onClick={submitProductUrl}
+                disabled={submittingProduct || !productUrl.trim()}
+                className="w-full"
+              >
+                {submittingProduct ? 'Submitting...' : 'Submit Product'}
+              </Button>
+            </div>
+
+            {productSubmissions.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-green-200">
+                <h3 className="font-semibold mb-3">Your Submissions</h3>
+                <div className="space-y-2">
+                  {productSubmissions.slice(0, 5).map((submission) => (
+                    <div key={submission.id} className="bg-white rounded-lg p-3 text-sm">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{submission.product_name || 'Product'}</p>
+                          <p className="text-xs text-gray-600 truncate">{submission.product_url}</p>
+                        </div>
+                        <span className={`flex-shrink-0 px-2 py-1 rounded text-xs font-medium ${
+                          submission.status === 'approved'
+                            ? 'bg-green-100 text-green-700'
+                            : submission.status === 'rejected'
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {submission.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Quick Feedback Widget */}
