@@ -8,6 +8,8 @@ interface ProductCardProps {
     id: string;
     name: string;
     price: number;
+    base_price?: number | null;
+    has_variants?: boolean;
     image_url: string | null;
     brand_name?: string;
     tags: string[];
@@ -72,11 +74,21 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         <div className="flex items-center justify-between">
           <span className="text-xl font-bold text-gray-900">
-            ${product.price.toFixed(2)}
+            {product.has_variants && product.base_price ? (
+              <>From ${product.base_price.toFixed(2)}</>
+            ) : (
+              <>${product.price.toFixed(2)}</>
+            )}
           </span>
-          <Button size="sm" onClick={handleAddToCart}>
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
+          {product.has_variants ? (
+            <Button size="sm" onClick={() => window.location.href = `/product/${product.id}`}>
+              Select
+            </Button>
+          ) : (
+            <Button size="sm" onClick={handleAddToCart}>
+              <ShoppingCart className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

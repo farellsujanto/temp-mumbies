@@ -6,11 +6,23 @@ import { useCart } from '../contexts/CartContext';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
 
+interface ProductVariant {
+  id: string;
+  variant_name: string;
+  variant_type: string;
+  price: number;
+  sku: string | null;
+  image_url: string | null;
+  sort_order: number;
+}
+
 interface Product {
   id: string;
   name: string;
   description: string | null;
   price: number;
+  base_price: number | null;
+  has_variants: boolean;
   image_url: string | null;
   additional_images: string[];
   tags: string[];
@@ -28,6 +40,8 @@ interface Product {
 export default function ProductDetailPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
+  const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
@@ -51,20 +65,42 @@ export default function ProductDetailPage() {
       console.error('Error loading product:', error);
     } else {
       setProduct(data);
+
+      if (data?.has_variants) {
+        loadVariants();
+      }
     }
     setLoading(false);
   };
 
+  const loadVariants = async () => {
+    const { data } = await supabase
+      .from('product_variants')
+      .select('*')
+      .eq('product_id', id)
+      .eq('is_active', true)
+      .order('sort_order');
+
+    if (data && data.length > 0) {
+      setVariants(data);
+      setSelectedVariant(data[0]);
+    }
+  };
+
   const handleAddToCart = () => {
     if (product) {
+      const price = product.has_variants && selectedVariant ? selectedVariant.price : product.price;
+      const variantName = selectedVariant ? selectedVariant.variant_name : null;
+      const productName = variantName ? `${product.name} - ${variantName}` : product.name;
+
       addToCart(
         {
-          id: product.id,
+          id: selectedVariant?.id || product.id,
           product_id: product.id,
-          name: product.name,
+          name: productName,
           brand_name: product.brand?.name || 'Unknown',
-          price: product.price,
-          image_url: product.image_url,
+          price: price,
+          image_url: selectedVariant?.image_url || product.image_url,
         },
         quantity
       );
@@ -139,8 +175,37 @@ export default function ProductDetailPage() {
           )}
 
           <div className="text-4xl font-bold text-green-600 mb-6">
-            ${product.price.toFixed(2)}
+            {product.has_variants && selectedVariant ? (
+              <>${selectedVariant.price.toFixed(2)}</>
+            ) : product.has_variants && product.base_price ? (
+              <>From ${product.base_price.toFixed(2)}</>
+            ) : (
+              <>${product.price.toFixed(2)}</>
+            )}
           </div>
+
+          {product.has_variants && variants.length > 0 && (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select {variants[0].variant_type}
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {variants.map((variant) => (
+                  <button
+                    key={variant.id}
+                    onClick={() => setSelectedVariant(variant)}
+                    className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
+                      selectedVariant?.id === variant.id
+                        ? 'border-green-600 bg-green-50 text-green-700'
+                        : 'border-gray-300 hover:border-green-600'
+                    }`}
+                  >
+                    {variant.variant_name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {product.inventory_status === 'low_stock' && (
             <div className="bg-orange-50 text-orange-700 px-4 py-3 rounded-lg mb-6">

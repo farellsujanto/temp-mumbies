@@ -95,6 +95,8 @@ export default function HomePage() {
           id,
           name,
           price,
+          base_price,
+          has_variants,
           image_url,
           tags,
           brand:brands(name)
