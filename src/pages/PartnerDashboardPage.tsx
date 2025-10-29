@@ -1089,7 +1089,14 @@ export default function PartnerDashboardPage() {
             {referrals.length > 0 ? (
               <div className="space-y-3">
                 {referrals.map((referral) => {
-                  const qualifyByDate = new Date(new Date(referral.created_at).getTime() + 180 * 24 * 60 * 60 * 1000);
+                  const signupDate = new Date(referral.created_at);
+                  const qualifyByDate = new Date(signupDate.getTime() + 180 * 24 * 60 * 60 * 1000);
+
+                  let statusText = '';
+                  if (referral.status === 'pending') statusText = 'Pending';
+                  else if (referral.status === 'active') statusText = 'Active';
+                  else if (referral.status === 'qualified') statusText = 'Qualified for bounty!';
+                  else if (referral.status === 'paid') statusText = 'Bounty paid';
 
                   return (
                     <div
@@ -1099,11 +1106,17 @@ export default function PartnerDashboardPage() {
                       <div className="flex-1">
                         <p className="font-medium">{referral.referred_email}</p>
                         <p className="text-sm text-gray-600">
-                          Status: {referral.status === 'pending' && ''}
-                          {referral.status === 'active' && ''}
-                          {referral.status === 'qualified' && 'Qualified for bounty!'}
-                          {referral.status === 'paid' && 'Bounty paid'}
+                          Status: {statusText}
                         </p>
+                        {(referral.status === 'pending' || referral.status === 'active') && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Signed up: {signupDate.toLocaleDateString('en-US', {
+                              month: 'numeric',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </p>
+                        )}
                       </div>
                       <div className="text-right">
                         {referral.status === 'qualified' || referral.status === 'paid' ? (
