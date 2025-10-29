@@ -1090,13 +1090,23 @@ export default function PartnerDashboardPage() {
                       <p className="font-medium">{referral.referred_email}</p>
                       <p className="text-sm text-gray-600">
                         Status: {referral.status === 'pending' && 'Pending signup'}
-                        {referral.status === 'active' && 'Active - tracking sales'}
+                        {referral.status === 'active' && referral.total_sales === 0 && 'No sales yet'}
+                        {referral.status === 'active' && referral.total_sales > 0 && 'Made sales'}
                         {referral.status === 'qualified' && 'Qualified for bounty!'}
                         {referral.status === 'paid' && 'Bounty paid'}
                       </p>
-                      {referral.status === 'active' && (
+                      {referral.status === 'active' && referral.total_sales > 0 && (
                         <p className="text-sm text-gray-600">
                           Sales: ${referral.total_sales.toFixed(2)} / $500
+                        </p>
+                      )}
+                      {referral.status === 'active' && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Qualify by: {new Date(new Date(referral.created_at).getTime() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', {
+                            month: 'numeric',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
                         </p>
                       )}
                     </div>
@@ -1107,7 +1117,11 @@ export default function PartnerDashboardPage() {
                         </p>
                       ) : (
                         <p className="text-sm text-gray-500">
-                          {new Date(referral.created_at).toLocaleDateString()}
+                          {new Date(referral.created_at).toLocaleDateString('en-US', {
+                            month: 'numeric',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
                         </p>
                       )}
                     </div>
