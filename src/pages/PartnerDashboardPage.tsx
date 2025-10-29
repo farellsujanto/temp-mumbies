@@ -624,7 +624,7 @@ export default function PartnerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Total Sales</span>
+                <span className="text-gray-600 text-sm">Sales</span>
                 <ShoppingBag className="h-5 w-5 text-blue-600" />
               </div>
               <p className="text-3xl font-bold">
@@ -634,7 +634,7 @@ export default function PartnerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Attributed Customers</span>
+                <span className="text-gray-600 text-sm">Customers</span>
                 <Users className="h-5 w-5 text-amber-600" />
               </div>
               <p className="text-3xl font-bold">
@@ -644,7 +644,7 @@ export default function PartnerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Lead Registrations</span>
+                <span className="text-gray-600 text-sm">Leads</span>
                 <UserPlus className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold">
@@ -654,7 +654,7 @@ export default function PartnerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Commission Rate</span>
+                <span className="text-gray-600 text-sm">Commission</span>
                 <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold">5%</p>
@@ -728,11 +728,11 @@ export default function PartnerDashboardPage() {
                     <input
                       type="text"
                       readOnly
-                      value={`${window.location.origin}/register?ref=${nonprofit.slug}`}
+                      value={`${window.location.origin}/lead-registration?ref=${nonprofit.slug}`}
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
                     />
                     <Button onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/register?ref=${nonprofit.slug}`);
+                      navigator.clipboard.writeText(`${window.location.origin}/lead-registration?ref=${nonprofit.slug}`);
                     }}>
                       <Copy className="h-4 w-4 mr-2" />
                       Copy
