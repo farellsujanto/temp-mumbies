@@ -82,7 +82,7 @@ export default function HomePage() {
         let product_image = '';
 
         if (banner.title.toLowerCase().includes('mumbies')) {
-          product_image = 'https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440';
+          product_image = 'https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box_NoBackground.png?v=1761567120&width=800';
         }
 
         return {
@@ -219,15 +219,13 @@ export default function HomePage() {
 
                       <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
                         {banner.product_images && banner.product_images.length > 0 ? (
-                          <div className="relative w-full max-w-md px-8">
-                            <div className="relative">
-                              <div className="absolute inset-0 bg-white/20 rounded-2xl blur-3xl"></div>
-                              <img
-                                src={banner.product_images[0]}
-                                alt={banner.title}
-                                className="relative w-full h-auto object-contain drop-shadow-2xl rounded-2xl"
-                              />
-                            </div>
+                          <div className="relative w-full px-8" style={{ maxHeight: '300px' }}>
+                            <img
+                              src={banner.product_images[0]}
+                              alt={banner.title}
+                              className="relative w-full h-auto object-contain drop-shadow-2xl"
+                              style={{ maxHeight: '300px' }}
+                            />
                           </div>
                         ) : (
                           <div className="relative">
