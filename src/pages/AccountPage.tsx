@@ -61,6 +61,7 @@ export default function AccountPage() {
               return (
                 <button
                   key={tab.id}
+                  data-tab={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                     activeTab === tab.id
