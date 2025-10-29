@@ -112,36 +112,59 @@ export default function AccountPage() {
         </div>
       </div>
 
-      {attributedRescue && (
-        <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="bg-green-600 rounded-full p-3">
-              <Heart className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Your Attributed Rescue
-              </h3>
-              <p className="text-gray-700 mb-4">
-                <strong>{attributedRescue.organization_name}</strong> receives 5% of all your
-                purchases for life!
-              </p>
-              <p className="text-2xl font-bold text-green-600 mb-4">
-                ${(userProfile?.total_rescue_donations || 0).toFixed(2)} donated to date
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => window.location.href = `/rescues/${attributedRescue.slug}`}
-              >
-                View Rescue Profile
-              </Button>
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
+        {attributedRescue ? (
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6">
+            <div className="flex items-start gap-4">
+              <div className="bg-green-600 rounded-full p-3">
+                <Heart className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Your Attributed Rescue
+                </h3>
+                <p className="text-gray-700 mb-4">
+                  <strong>{attributedRescue.organization_name}</strong> receives 5% of all your
+                  purchases for life!
+                </p>
+                <p className="text-2xl font-bold text-green-600 mb-4">
+                  ${(userProfile?.total_rescue_donations || 0).toFixed(2)} donated to date
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.href = `/rescues/${attributedRescue.slug}`}
+                >
+                  View Rescue Profile
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="text-lg font-bold mb-4">Community Impact</h3>
+            <p className="text-gray-600 mb-4">
+              Your general donations through the checkout slider
+            </p>
+            <p className="text-3xl font-bold text-green-600 mb-2">
+              ${(userProfile?.total_general_donations || 0).toFixed(2)}
+            </p>
+            <p className="text-sm text-gray-500">
+              Distributed to all partner rescues
+            </p>
+          </div>
+        )}
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
         <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-bold mb-4">Latest Order</h3>
+          <p className="text-gray-600 mb-4">No orders yet</p>
+          <Button variant="outline" onClick={() => window.location.href = '/shop'}>
+            Start Shopping
+          </Button>
+        </div>
+      </div>
+
+      {attributedRescue && (
+        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
           <h3 className="text-lg font-bold mb-4">Community Impact</h3>
           <p className="text-gray-600 mb-4">
             Your general donations through the checkout slider
@@ -153,15 +176,7 @@ export default function AccountPage() {
             Distributed to all partner rescues
           </p>
         </div>
-
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-bold mb-4">Latest Order</h3>
-          <p className="text-gray-600 mb-4">No orders yet</p>
-          <Button variant="outline" onClick={() => window.location.href = '/shop'}>
-            Start Shopping
-          </Button>
-        </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <button
