@@ -154,7 +154,7 @@ export default function HomePage() {
                           <Button
                             onClick={() => window.location.href = banner.cta_link!}
                             size="lg"
-                            className="bg-white text-gray-900 hover:bg-gray-100 font-bold shadow-lg"
+                            className="bg-green-600 text-white hover:bg-green-700 font-bold shadow-lg"
                           >
                             {banner.cta_text}
                           </Button>
