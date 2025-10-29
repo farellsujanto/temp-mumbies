@@ -11,7 +11,9 @@ import {
   LogOut,
   Heart,
   Copy,
-  CheckCircle
+  CheckCircle,
+  Gift,
+  Send
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,12 +26,27 @@ interface NonprofitData {
   slug: string;
   logo_url: string | null;
   referral_code: string | null;
+  referral_link: string | null;
   total_attributed_customers: number;
   total_sales: number;
   total_commissions_earned: number;
+  total_referral_earnings: number;
+  active_referrals_count: number;
+  qualified_referrals_count: number;
   status: string;
   location_city: string | null;
   location_state: string | null;
+}
+
+interface Referral {
+  id: string;
+  referred_email: string;
+  referral_code: string;
+  status: string;
+  signup_date: string | null;
+  total_sales: number;
+  bounty_amount: number;
+  created_at: string;
 }
 
 interface Product {
@@ -45,9 +62,13 @@ export default function PartnerDashboardPage() {
   const { user } = useAuth();
   const [nonprofit, setNonprofit] = useState<NonprofitData | null>(null);
   const [curatedProducts, setCuratedProducts] = useState<Product[]>([]);
+  const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'profile'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'profile'>('overview');
   const [copied, setCopied] = useState(false);
+  const [referralCopied, setReferralCopied] = useState(false);
+  const [referralEmail, setReferralEmail] = useState('');
+  const [sendingReferral, setSendingReferral] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -78,6 +99,7 @@ export default function PartnerDashboardPage() {
 
     setNonprofit(nonprofitData);
     loadCuratedProducts(nonprofitData.id);
+    loadReferrals(nonprofitData.id);
     setLoading(false);
   };
 
@@ -102,6 +124,53 @@ export default function PartnerDashboardPage() {
       const products = data.map((item: any) => item.products).filter(Boolean);
       setCuratedProducts(products as any);
     }
+  };
+
+  const loadReferrals = async (nonprofitId: string) => {
+    const { data } = await supabase
+      .from('nonprofit_referrals')
+      .select('*')
+      .eq('referrer_nonprofit_id', nonprofitId)
+      .order('created_at', { ascending: false });
+
+    if (data) {
+      setReferrals(data);
+    }
+  };
+
+  const sendReferralInvite = async () => {
+    if (!nonprofit || !referralEmail.trim()) return;
+
+    setSendingReferral(true);
+    try {
+      const { error } = await supabase
+        .from('nonprofit_referrals')
+        .insert({
+          referrer_nonprofit_id: nonprofit.id,
+          referred_email: referralEmail.trim(),
+          referral_code: '',
+        });
+
+      if (!error) {
+        setReferralEmail('');
+        loadReferrals(nonprofit.id);
+        loadPartnerData();
+        alert('Referral invite sent!');
+      } else {
+        alert('Error sending referral. Please try again.');
+      }
+    } catch (error) {
+      alert('Error sending referral. Please try again.');
+    }
+    setSendingReferral(false);
+  };
+
+  const copyPartnerReferralLink = () => {
+    if (!nonprofit?.referral_link) return;
+    const link = `${window.location.origin}/partner/apply?ref=${nonprofit.referral_link}`;
+    navigator.clipboard.writeText(link);
+    setReferralCopied(true);
+    setTimeout(() => setReferralCopied(false), 2000);
   };
 
   const handleSignOut = async () => {
@@ -184,6 +253,22 @@ export default function PartnerDashboardPage() {
             Curated Products
           </button>
           <button
+            onClick={() => setActiveTab('referrals')}
+            className={`flex-1 px-6 py-4 font-medium transition-colors ${
+              activeTab === 'referrals'
+                ? 'text-green-600 border-b-2 border-green-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Gift className="h-5 w-5 inline mr-2" />
+            Refer Partners
+            {nonprofit.active_referrals_count > 0 && (
+              <span className="ml-2 bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-bold">
+                {nonprofit.active_referrals_count}
+              </span>
+            )}
+          </button>
+          <button
             onClick={() => setActiveTab('profile')}
             className={`flex-1 px-6 py-4 font-medium transition-colors ${
               activeTab === 'profile'
@@ -201,7 +286,7 @@ export default function PartnerDashboardPage() {
       {activeTab === 'overview' && (
         <div className="space-y-8">
           {/* Stats Grid */}
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-5 gap-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-600 text-sm">Total Earnings</span>
@@ -238,6 +323,19 @@ export default function PartnerDashboardPage() {
                 <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold">5%</p>
+            </div>
+
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
+                <Gift className="h-5 w-5 text-amber-600" />
+              </div>
+              <p className="text-3xl font-bold text-amber-700">
+                ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
+              </p>
+              <p className="text-xs text-amber-700 mt-1">
+                {nonprofit.qualified_referrals_count || 0} qualified
+              </p>
             </div>
           </div>
 
@@ -282,6 +380,181 @@ export default function PartnerDashboardPage() {
               <p>No recent activity yet</p>
               <p className="text-sm">Share your referral link to start earning!</p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Referrals Tab */}
+      {activeTab === 'referrals' && (
+        <div className="space-y-6">
+          {/* Referral Program Info */}
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6">
+            <div className="flex items-start gap-4">
+              <div className="bg-amber-100 rounded-full p-3">
+                <Gift className="h-6 w-6 text-amber-700" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Earn $1,000 Per Referral</h2>
+                <p className="text-gray-700 mb-4">
+                  Refer other animal rescues and nonprofits to Mumbies. When they sign up and make $500 in sales within their first 6 months, you earn a $1,000 bounty!
+                </p>
+                <div className="bg-white rounded-lg p-4 border border-amber-200">
+                  <h3 className="font-semibold text-gray-900 mb-3">How it works:</h3>
+                  <ol className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <span className="font-bold text-amber-600 min-w-[20px]">1.</span>
+                      <span>Share your unique referral link or send an email invite</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="font-bold text-amber-600 min-w-[20px]">2.</span>
+                      <span>They apply and get approved as a partner</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="font-bold text-amber-600 min-w-[20px]">3.</span>
+                      <span>When they reach $500 in sales within 6 months, you get $1,000!</span>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Referral Actions */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Share Link */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <LinkIcon className="h-5 w-5" />
+                Your Referral Link
+              </h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Share this link with other rescues and nonprofits
+              </p>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/partner/apply?ref=${nonprofit.referral_link || ''}`}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                />
+                <Button onClick={copyPartnerReferralLink}>
+                  {referralCopied ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Send Invite */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <Send className="h-5 w-5" />
+                Send Invite
+              </h3>
+              <p className="text-gray-600 text-sm mb-4">
+                Send a direct referral invite to an organization
+              </p>
+              <div className="flex gap-3">
+                <input
+                  type="email"
+                  placeholder="partner@example.org"
+                  value={referralEmail}
+                  onChange={(e) => setReferralEmail(e.target.value)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+                <Button
+                  onClick={sendReferralInvite}
+                  disabled={sendingReferral || !referralEmail.trim()}
+                >
+                  {sendingReferral ? 'Sending...' : 'Send'}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Referral Stats */}
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="text-sm text-gray-600 mb-1">Total Referrals</div>
+              <div className="text-3xl font-bold">{referrals.length}</div>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="text-sm text-gray-600 mb-1">Active Referrals</div>
+              <div className="text-3xl font-bold text-blue-600">{nonprofit.active_referrals_count || 0}</div>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="text-sm text-gray-600 mb-1">Qualified & Paid</div>
+              <div className="text-3xl font-bold text-green-600">{nonprofit.qualified_referrals_count || 0}</div>
+            </div>
+          </div>
+
+          {/* Referral List */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="text-lg font-bold mb-4">Your Referrals</h3>
+            {referrals.length > 0 ? (
+              <div className="space-y-3">
+                {referrals.map((referral) => (
+                  <div key={referral.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900">{referral.referred_email}</div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          Code: {referral.referral_code} • Invited {new Date(referral.created_at).toLocaleDateString()}
+                        </div>
+                        {referral.signup_date && (
+                          <div className="text-sm text-gray-600">
+                            Signed up: {new Date(referral.signup_date).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="inline-block">
+                          {referral.status === 'pending' && (
+                            <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                              Pending
+                            </span>
+                          )}
+                          {referral.status === 'signed_up' && (
+                            <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                              Signed Up
+                            </span>
+                          )}
+                          {referral.status === 'qualified' && (
+                            <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                              Qualified
+                            </span>
+                          )}
+                          {referral.status === 'paid' && (
+                            <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-medium">
+                              Paid
+                            </span>
+                          )}
+                        </div>
+                        {referral.status !== 'pending' && (
+                          <div className="text-sm text-gray-600 mt-1">
+                            ${referral.total_sales.toFixed(2)} / $500
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Gift className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p>No referrals yet</p>
+                <p className="text-sm">Start referring other nonprofits to earn bounties!</p>
+              </div>
+            )}
           </div>
         </div>
       )}
