@@ -54,6 +54,10 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedBundle, setSelectedBundle] = useState<string>('');
+  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
+  const [availableBundles, setAvailableBundles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [sameBrandProducts, setSameBrandProducts] = useState<RelatedProduct[]>([]);
@@ -66,36 +70,6 @@ export default function ProductDetailPage() {
   const sameBrandObserverRef = useRef<IntersectionObserver | null>(null);
   const sameBrandSentinelRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
-
-  useEffect(() => {
-    if (id) {
-      setSameBrandPage(0);
-      setSameBrandHasMore(true);
-      setSameBrandProducts([]);
-      loadProduct();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (!sameBrandSentinelRef.current) return;
-
-    sameBrandObserverRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && sameBrandHasMore && !sameBrandLoading) {
-          loadMoreSameBrand();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    sameBrandObserverRef.current.observe(sameBrandSentinelRef.current);
-
-    return () => {
-      if (sameBrandObserverRef.current) {
-        sameBrandObserverRef.current.disconnect();
-      }
-    };
-  }, [loadMoreSameBrand, sameBrandHasMore, sameBrandLoading]);
 
   const loadProduct = async () => {
     const { data, error } = await supabase
@@ -135,9 +109,61 @@ export default function ProductDetailPage() {
 
     if (data && data.length > 0) {
       setVariants(data);
-      setSelectedVariant(data[0]);
+
+      // Parse variants to extract sizes and bundles
+      const sizes = new Set<string>();
+      const bundles = new Set<string>();
+
+      data.forEach(v => {
+        // Extract size and bundle from variant_name (e.g., "Small - Single Unit")
+        const parts = v.variant_name.split(' - ');
+        if (parts.length === 2) {
+          sizes.add(parts[0]);
+          bundles.add(parts[1]);
+        } else if (parts.length === 1) {
+          // Handle single-dimension variants like "Variety Pack"
+          sizes.add(parts[0]);
+        }
+      });
+
+      const sizesArray = Array.from(sizes);
+      const bundlesArray = Array.from(bundles);
+
+      setAvailableSizes(sizesArray);
+      setAvailableBundles(bundlesArray);
+
+      // Set default selections
+      if (sizesArray.length > 0) setSelectedSize(sizesArray[0]);
+      if (bundlesArray.length > 0) setSelectedBundle(bundlesArray[0]);
+
+      // Find and set the matching variant
+      if (sizesArray.length > 0 && bundlesArray.length > 0) {
+        const defaultVariant = data.find(v =>
+          v.variant_name === `${sizesArray[0]} - ${bundlesArray[0]}`
+        );
+        if (defaultVariant) setSelectedVariant(defaultVariant);
+      } else if (sizesArray.length > 0) {
+        const defaultVariant = data.find(v => v.variant_name === sizesArray[0]);
+        if (defaultVariant) setSelectedVariant(defaultVariant);
+      }
     }
   };
+
+  // Update selected variant when size or bundle changes
+  useEffect(() => {
+    if (selectedSize && selectedBundle && variants.length > 0) {
+      const variantName = `${selectedSize} - ${selectedBundle}`;
+      const matchingVariant = variants.find(v => v.variant_name === variantName);
+      if (matchingVariant) {
+        setSelectedVariant(matchingVariant);
+      }
+    } else if (selectedSize && !selectedBundle && variants.length > 0) {
+      const matchingVariant = variants.find(v => v.variant_name === selectedSize);
+      if (matchingVariant) {
+        setSelectedVariant(matchingVariant);
+      }
+    }
+  }, [selectedSize, selectedBundle, variants]);
 
   const loadSameBrandProducts = async (brandId: string | undefined, currentProductId: string, page = 0, append = false) => {
     if (!brandId) return;
@@ -232,6 +258,36 @@ export default function ProductDetailPage() {
     }
   };
 
+  useEffect(() => {
+    if (id) {
+      setSameBrandPage(0);
+      setSameBrandHasMore(true);
+      setSameBrandProducts([]);
+      loadProduct();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (!sameBrandSentinelRef.current) return;
+
+    sameBrandObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && sameBrandHasMore && !sameBrandLoading) {
+          loadMoreSameBrand();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    sameBrandObserverRef.current.observe(sameBrandSentinelRef.current);
+
+    return () => {
+      if (sameBrandObserverRef.current) {
+        sameBrandObserverRef.current.disconnect();
+      }
+    };
+  }, [loadMoreSameBrand, sameBrandHasMore, sameBrandLoading]);
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
@@ -309,25 +365,63 @@ export default function ProductDetailPage() {
           </div>
 
           {product.has_variants && variants.length > 0 && (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select {variants[0].variant_type}
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {variants.map((variant) => (
-                  <button
-                    key={variant.id}
-                    onClick={() => setSelectedVariant(variant)}
-                    className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
-                      selectedVariant?.id === variant.id
-                        ? 'border-green-600 bg-green-50 text-green-700'
-                        : 'border-gray-300 hover:border-green-600'
-                    }`}
-                  >
-                    {variant.variant_name}
-                  </button>
-                ))}
-              </div>
+            <div className="space-y-6 mb-6">
+              {availableSizes.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Size: <span className="text-gray-900 font-semibold">{selectedSize}</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-6 py-3 border-2 rounded-lg font-semibold transition-all ${
+                          selectedSize === size
+                            ? 'border-black bg-black text-white'
+                            : 'border-gray-300 hover:border-gray-400 bg-white text-gray-900'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {availableBundles.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Bundle: <span className="text-gray-900 font-semibold">{selectedBundle}</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {availableBundles.map((bundle) => {
+                      // Check if this bundle exists for the selected size
+                      const variantExists = variants.some(v =>
+                        v.variant_name === `${selectedSize} - ${bundle}`
+                      );
+                      const isVarietyPack = bundle === 'Variety Pack - All Sizes';
+
+                      return (
+                        <button
+                          key={bundle}
+                          onClick={() => setSelectedBundle(bundle)}
+                          disabled={!variantExists && !isVarietyPack}
+                          className={`px-6 py-3 border-2 rounded-lg font-semibold transition-all ${
+                            selectedBundle === bundle
+                              ? 'border-black bg-black text-white'
+                              : variantExists || isVarietyPack
+                              ? 'border-gray-300 hover:border-gray-400 bg-white text-gray-900'
+                              : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                          }`}
+                        >
+                          {bundle}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
