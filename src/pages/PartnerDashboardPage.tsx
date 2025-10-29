@@ -211,7 +211,7 @@ export default function PartnerDashboardPage() {
       .from('orders')
       .select('id, order_number, subtotal, created_at')
       .eq('attributed_rescue_id', nonprofitId)
-      .eq('status', 'completed')
+      .in('status', ['completed', 'delivered'])
       .order('created_at', { ascending: false })
       .limit(10);
 
