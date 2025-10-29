@@ -181,21 +181,13 @@ export default function HomePage() {
                             <p className="text-xl md:text-2xl text-white/90 font-medium leading-relaxed max-w-xl">
                               Shop sustainable, eco-friendly products that make a difference for pets and the planet.
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                            <div className="pt-4">
                               <Button
                                 onClick={() => window.location.href = banner.cta_link!}
                                 size="lg"
-                                className="bg-white text-gray-900 font-bold shadow-2xl text-lg px-8 py-4"
-                              >
-                                {banner.cta_text}
-                              </Button>
-                              <Button
-                                onClick={() => window.location.href = '/rescues'}
-                                size="lg"
-                                variant="outline"
                                 className="bg-transparent border-2 border-white text-white font-bold text-lg px-8 py-4"
                               >
-                                Support Rescues
+                                {banner.cta_text}
                               </Button>
                             </div>
                           </>
