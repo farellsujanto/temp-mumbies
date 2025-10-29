@@ -216,10 +216,10 @@ export default function ProductDetailPage() {
       <div className="grid md:grid-cols-2 gap-12">
         <div>
           <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
-            {product.image_url ? (
+            {(selectedVariant?.image_url || product.image_url) ? (
               <img
-                src={product.image_url}
-                alt={product.name}
+                src={selectedVariant?.image_url || product.image_url}
+                alt={selectedVariant ? `${product.name} - ${selectedVariant.variant_name}` : product.name}
                 className="w-full h-full object-cover"
               />
             ) : (
