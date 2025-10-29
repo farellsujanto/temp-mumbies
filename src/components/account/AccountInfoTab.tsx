@@ -36,9 +36,6 @@ export default function AccountInfoTab() {
   };
 
   const totalDonated = (userProfile?.total_rescue_donations || 0) + (userProfile?.total_general_donations || 0);
-  const avgSavingsPerOrder = userProfile?.total_orders
-    ? ((userProfile?.total_spent || 0) * 0.10) / userProfile.total_orders
-    : 0;
 
   return (
     <div className="space-y-8">
@@ -57,7 +54,7 @@ export default function AccountInfoTab() {
 
       <div>
         <h2 className="text-xl font-bold mb-4">Your Savings</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-50 rounded-lg p-6 text-center">
             <div className="text-4xl font-bold text-gray-900 mb-2">
               {userProfile?.total_orders || 0}
@@ -77,13 +74,6 @@ export default function AccountInfoTab() {
             </div>
             <p className="text-sm text-gray-600">Total Donated</p>
           </button>
-
-          <div className="bg-gray-50 rounded-lg p-6 text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-2">
-              ${avgSavingsPerOrder.toFixed(2)}
-            </div>
-            <p className="text-sm text-gray-600">Avg Savings Per Order</p>
-          </div>
 
           <div className="bg-gray-50 rounded-lg p-6 text-center">
             <div className="text-4xl font-bold text-gray-900 mb-2">

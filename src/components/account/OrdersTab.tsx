@@ -7,8 +7,8 @@ interface Order {
   id: string;
   order_number: string;
   status: string;
-  total: number;
-  donation_amount: number;
+  subtotal: number;
+  general_donation_amount: number;
   created_at: string;
 }
 
@@ -92,7 +92,7 @@ export default function OrdersTab() {
                   </div>
                   <div className="flex items-center gap-1">
                     <DollarSign className="h-4 w-4" />
-                    ${order.total.toFixed(2)}
+                    ${order.subtotal.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -101,12 +101,12 @@ export default function OrdersTab() {
               </span>
             </div>
 
-            {order.donation_amount > 0 && (
+            {order.general_donation_amount > 0 && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                 <div className="flex items-center gap-2 text-green-700">
                   <Truck className="h-5 w-5" />
                   <span className="font-medium">
-                    ${order.donation_amount.toFixed(2)} donated to rescue dogs with this order
+                    ${order.general_donation_amount.toFixed(2)} donated to rescue dogs with this order
                   </span>
                 </div>
               </div>
