@@ -154,7 +154,7 @@ export default function HomePage() {
                           <Button
                             onClick={() => window.location.href = banner.cta_link!}
                             size="lg"
-                            className="bg-white text-blue-600 hover:bg-gray-100 font-bold shadow-lg"
+                            className="bg-white text-gray-900 hover:bg-gray-100 font-bold shadow-lg"
                           >
                             {banner.cta_text}
                           </Button>
@@ -176,67 +176,63 @@ export default function HomePage() {
             ))}
 
             {banners.length > 1 && (
-              <>
-                <button
-                  onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
-                >
-                  <ChevronLeft className="h-6 w-6 text-gray-900" />
-                </button>
-                <button
-                  onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
-                >
-                  <ChevronRight className="h-6 w-6 text-gray-900" />
-                </button>
-
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                  {banners.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentBanner(index)}
-                      className={`h-2 rounded-full transition-all ${
-                        index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-60'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </>
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                {banners.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentBanner(index)}
+                    className={`h-2 rounded-full transition-all ${
+                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-60'
+                    }`}
+                  />
+                ))}
+              </div>
             )}
           </div>
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <div className="text-center">
-            <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <Heart className="h-8 w-8 text-green-600" />
+      <div className="bg-gray-50 py-12 mb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="flex items-start gap-4">
+              <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <Heart className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-1">Support Rescues</h3>
+                <p className="text-gray-600 text-sm">
+                  5% of every purchase goes directly to your chosen animal rescue organization
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-2">Support Rescues</h3>
-            <p className="text-gray-600">
-              5% of every purchase goes directly to your chosen animal rescue organization
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <Award className="h-8 w-8 text-blue-600" />
+            <div className="flex items-start gap-4">
+              <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <Award className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-1">Quality Products</h3>
+                <p className="text-gray-600 text-sm">
+                  Curated selection of natural, sustainable, and premium pet products
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-2">Quality Products</h3>
-            <p className="text-gray-600">
-              Curated selection of natural, sustainable, and premium pet products
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="h-8 w-8 text-orange-600" />
+            <div className="flex items-start gap-4">
+              <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="h-6 w-6 text-orange-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-1">Track Your Impact</h3>
+                <p className="text-gray-600 text-sm">
+                  See exactly how your purchases are making a difference for animals in need
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-2">Track Your Impact</h3>
-            <p className="text-gray-600">
-              See exactly how your purchases are making a difference for animals in need
-            </p>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
@@ -265,7 +261,7 @@ export default function HomePage() {
           </div>
 
           {categoryProducts[activeCategory].length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {categoryProducts[activeCategory].map((product) => (
                 <ProductCard
                   key={product.id}
