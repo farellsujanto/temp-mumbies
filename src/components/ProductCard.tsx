@@ -1,4 +1,4 @@
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, RefreshCw } from 'lucide-react';
 import Badge from './Badge';
 import Button from './Button';
 import { useCart } from '../contexts/CartContext';
@@ -10,6 +10,8 @@ interface ProductCardProps {
     price: number;
     base_price?: number | null;
     has_variants?: boolean;
+    is_subscription_available?: boolean;
+    subscription_discount?: number;
     image_url: string | null;
     brand_name?: string;
     tags: string[];
@@ -45,6 +47,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               No image
+            </div>
+          )}
+          {product.is_subscription_available && (
+            <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1 font-semibold">
+              <RefreshCw className="h-3 w-3" />
+              Save {product.subscription_discount || 10}%
             </div>
           )}
           {product.inventory_status === 'low_stock' && (

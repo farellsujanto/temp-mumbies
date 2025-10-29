@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ShoppingCart, ChevronLeft, Sparkles } from 'lucide-react';
+import { ShoppingCart, ChevronLeft, Sparkles, RefreshCw, Calendar } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
 import Button from '../components/Button';
@@ -24,6 +24,8 @@ interface Product {
   price: number;
   base_price: number | null;
   has_variants: boolean;
+  is_subscription_available: boolean;
+  subscription_discount: number;
   image_url: string | null;
   additional_images: string[];
   tags: string[];
@@ -56,6 +58,8 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [sameBrandProducts, setSameBrandProducts] = useState<RelatedProduct[]>([]);
   const [recommendedProducts, setRecommendedProducts] = useState<RelatedProduct[]>([]);
+  const [purchaseType, setPurchaseType] = useState<'one-time' | 'subscription'>('one-time');
+  const [subscriptionFrequency, setSubscriptionFrequency] = useState<'weekly' | 'biweekly' | 'monthly' | 'bimonthly'>('monthly');
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -285,6 +289,95 @@ export default function ProductDetailPage() {
             </div>
           )}
 
+          {product.is_subscription_available && (
+            <div className="mb-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <RefreshCw className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-bold text-gray-900">Subscribe & Save {product.subscription_discount}%</h3>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setPurchaseType('one-time')}
+                    className={`flex-1 px-4 py-3 border-2 rounded-lg font-medium transition-all ${
+                      purchaseType === 'one-time'
+                        ? 'border-green-600 bg-green-50 text-green-700'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="text-sm">One-time Purchase</div>
+                    <div className="text-lg font-bold mt-1">
+                      ${(product.has_variants && selectedVariant ? selectedVariant.price : product.price).toFixed(2)}
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setPurchaseType('subscription')}
+                    className={`flex-1 px-4 py-3 border-2 rounded-lg font-medium transition-all relative ${
+                      purchaseType === 'subscription'
+                        ? 'border-blue-600 bg-blue-50 text-blue-700'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+                      SAVE {product.subscription_discount}%
+                    </div>
+                    <div className="text-sm">Subscribe & Save</div>
+                    <div className="text-lg font-bold mt-1">
+                      ${((product.has_variants && selectedVariant ? selectedVariant.price : product.price) * (1 - product.subscription_discount / 100)).toFixed(2)}
+                    </div>
+                  </button>
+                </div>
+
+                {purchaseType === 'subscription' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Delivery Frequency
+                    </label>
+                    <select
+                      value={subscriptionFrequency}
+                      onChange={(e) => setSubscriptionFrequency(e.target.value as any)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg font-medium"
+                    >
+                      <option value="weekly">Every Week</option>
+                      <option value="biweekly">Every 2 Weeks</option>
+                      <option value="monthly">Every Month</option>
+                      <option value="bimonthly">Every 2 Months</option>
+                    </select>
+                    <p className="text-xs text-gray-600 mt-2">
+                      Cancel or modify anytime from your account. Skip or pause deliveries when needed.
+                    </p>
+                  </div>
+                )}
+
+                {purchaseType === 'subscription' && (
+                  <div className="bg-white rounded-lg p-4 border border-blue-200">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-gray-600">Regular Price:</span>
+                      <span className="text-sm line-through text-gray-500">
+                        ${(product.has_variants && selectedVariant ? selectedVariant.price : product.price).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-gray-600">Subscription Discount:</span>
+                      <span className="text-sm font-semibold text-blue-600">
+                        -${((product.has_variants && selectedVariant ? selectedVariant.price : product.price) * (product.subscription_discount / 100)).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+                      <span className="font-semibold text-gray-900">Your Price:</span>
+                      <span className="text-xl font-bold text-blue-600">
+                        ${((product.has_variants && selectedVariant ? selectedVariant.price : product.price) * (1 - product.subscription_discount / 100)).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Quantity
@@ -305,9 +398,9 @@ export default function ProductDetailPage() {
                   +
                 </button>
               </div>
-              <Button size="lg" onClick={handleAddToCart}>
+              <Button size="lg" onClick={handleAddToCart} className="flex-1">
                 <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
+                {purchaseType === 'subscription' ? 'Subscribe Now' : 'Add to Cart'}
               </Button>
             </div>
           </div>
