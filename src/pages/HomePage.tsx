@@ -116,16 +116,16 @@ export default function HomePage() {
   return (
     <div>
       {banners.length > 0 && (
-        <div className="relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden my-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style={{ minHeight: '430px' }}>
             {banners.map((banner, index) => (
               <div
                 key={banner.id}
-                className={`relative transition-opacity duration-1000 ${
-                  index === currentBanner ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                 }`}
               >
-                <div className="relative rounded-3xl overflow-hidden my-6" style={{
+                <div className="relative rounded-3xl overflow-hidden" style={{
                   background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 25%, #ec4899 50%, #8b5cf6 75%, #1e3a8a 100%)',
                   backgroundSize: '200% 200%',
                 }}>
@@ -174,36 +174,36 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+
+            {banners.length > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
+                >
+                  <ChevronLeft className="h-6 w-6 text-gray-900" />
+                </button>
+                <button
+                  onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
+                >
+                  <ChevronRight className="h-6 w-6 text-gray-900" />
+                </button>
+
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                  {banners.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentBanner(index)}
+                      className={`h-2 rounded-full transition-all ${
+                        index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-60'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-
-          {banners.length > 1 && (
-            <>
-              <button
-                onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
-                className="absolute left-8 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
-              >
-                <ChevronLeft className="h-6 w-6 text-gray-900" />
-              </button>
-              <button
-                onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
-                className="absolute right-8 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-100 rounded-full p-3 transition-all shadow-lg z-20"
-              >
-                <ChevronRight className="h-6 w-6 text-gray-900" />
-              </button>
-
-              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {banners.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentBanner(index)}
-                    className={`h-2 rounded-full transition-all ${
-                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white bg-opacity-60'
-                    }`}
-                  />
-                ))}
-              </div>
-            </>
-          )}
         </div>
       )}
 
