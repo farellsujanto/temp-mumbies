@@ -78,21 +78,18 @@ export default function HomePage() {
       .order('sort_order');
 
     if (data) {
-      const bannersWithProducts = await Promise.all(
-        data.map(async (banner) => {
-          const { data: products } = await supabase
-            .from('products')
-            .select('image_url')
-            .eq('is_active', true)
-            .not('image_url', 'is', null)
-            .limit(3);
+      const bannersWithProducts = data.map((banner) => {
+        let product_image = '';
 
-          return {
-            ...banner,
-            product_images: products?.map(p => p.image_url).filter(Boolean) || []
-          };
-        })
-      );
+        if (banner.title.toLowerCase().includes('mumbies')) {
+          product_image = 'https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440';
+        }
+
+        return {
+          ...banner,
+          product_images: product_image ? [product_image] : []
+        };
+      });
       setBanners(bannersWithProducts);
     }
   };
@@ -222,17 +219,15 @@ export default function HomePage() {
 
                       <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
                         {banner.product_images && banner.product_images.length > 0 ? (
-                          <div className="relative w-full max-w-2xl grid grid-cols-3 gap-4 px-8">
-                            {banner.product_images.map((img, imgIndex) => (
-                              <div key={imgIndex} className="relative">
-                                <div className="absolute inset-0 bg-white/20 rounded-2xl blur-2xl"></div>
-                                <img
-                                  src={img}
-                                  alt={`Product ${imgIndex + 1}`}
-                                  className="relative w-full h-48 object-contain drop-shadow-2xl rounded-2xl"
-                                />
-                              </div>
-                            ))}
+                          <div className="relative w-full max-w-md px-8">
+                            <div className="relative">
+                              <div className="absolute inset-0 bg-white/20 rounded-2xl blur-3xl"></div>
+                              <img
+                                src={banner.product_images[0]}
+                                alt={banner.title}
+                                className="relative w-full h-auto object-contain drop-shadow-2xl rounded-2xl"
+                              />
+                            </div>
                           </div>
                         ) : (
                           <div className="relative">
