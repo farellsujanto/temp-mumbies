@@ -99,6 +99,7 @@ export default function HomePage() {
           has_variants,
           image_url,
           tags,
+          promotional_deal,
           brand:brands(name)
         `)
         .eq('is_active', true)

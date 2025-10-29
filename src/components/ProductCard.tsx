@@ -14,6 +14,7 @@ interface ProductCardProps {
     brand_name?: string;
     tags: string[];
     inventory_status?: string;
+    promotional_deal?: string | null;
   };
 }
 
@@ -72,22 +73,31 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        <div className="flex items-center justify-between">
-          <span className="text-xl font-bold text-gray-900">
-            {product.has_variants && product.base_price ? (
-              <>From ${product.base_price.toFixed(2)}</>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xl font-bold text-gray-900">
+              {product.has_variants && product.base_price ? (
+                <>From ${product.base_price.toFixed(2)}</>
+              ) : (
+                <>${product.price.toFixed(2)}</>
+              )}
+            </span>
+            {product.has_variants ? (
+              <Button size="sm" onClick={() => window.location.href = `/product/${product.id}`}>
+                Select
+              </Button>
             ) : (
-              <>${product.price.toFixed(2)}</>
+              <Button size="sm" onClick={handleAddToCart}>
+                <ShoppingCart className="h-4 w-4" />
+              </Button>
             )}
-          </span>
-          {product.has_variants ? (
-            <Button size="sm" onClick={() => window.location.href = `/product/${product.id}`}>
-              Select
-            </Button>
-          ) : (
-            <Button size="sm" onClick={handleAddToCart}>
-              <ShoppingCart className="h-4 w-4" />
-            </Button>
+          </div>
+          {product.promotional_deal && (
+            <div className="bg-orange-50 border border-orange-200 rounded px-2 py-1">
+              <p className="text-xs font-semibold text-orange-700 text-center">
+                {product.promotional_deal}
+              </p>
+            </div>
           )}
         </div>
       </div>
