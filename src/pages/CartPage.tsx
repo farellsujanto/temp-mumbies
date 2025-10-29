@@ -166,23 +166,32 @@ export default function CartPage() {
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 mb-6">
               <h3 className="font-bold mb-4 text-center">Choose Your Impact</h3>
 
-              <div className="mb-4 relative">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
-                <div className="px-3">
-                  <input
-                    type="range"
-                    min="1"
-                    max="4"
-                    step="0.5"
-                    value={localSliderValue}
-                    onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
-                    className="w-full h-2 bg-gradient-to-r from-blue-200 to-green-200 rounded-lg appearance-none cursor-pointer slider"
+              <div className="mb-4 relative" style={{ height: '32px' }}>
+                <div className="absolute top-1/2 -translate-y-1/2 w-full h-2 bg-gray-200 rounded-lg overflow-hidden">
+                  <div
+                    className="absolute inset-0 transition-all duration-150"
                     style={{
-                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((localSliderValue - 1) / 3) * 100}%, #10b981 ${((localSliderValue - 1) / 3) * 100}%, #10b981 100%)`,
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(localSliderValue / 5) * 100}%, #10b981 ${(localSliderValue / 5) * 100}%, #10b981 100%)`,
                     }}
                   />
                 </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="4"
+                  step="0.5"
+                  value={localSliderValue}
+                  onChange={(e) => setLocalSliderValue(parseFloat(e.target.value))}
+                  className="absolute top-0 w-full h-full opacity-0 cursor-pointer"
+                  style={{ zIndex: 10 }}
+                />
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-white border-4 border-green-500 rounded-full shadow-lg pointer-events-none transition-all duration-150"
+                  style={{
+                    left: `calc(${((localSliderValue - 1) / 3) * 100}%)`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                />
               </div>
 
               <div className="flex justify-between text-xs text-gray-600 mb-4">
