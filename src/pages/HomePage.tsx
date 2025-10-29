@@ -138,7 +138,7 @@ export default function HomePage() {
                     backgroundSize: '100% 24px',
                   }}></div>
 
-                  <div className="relative grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 min-h-[400px]">
+                  <div className="relative grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 h-[500px]">
                     <div className="text-white z-10 order-2 md:order-1">
                       <p className="text-sm md:text-base font-medium mb-2 opacity-90">
                         {banner.subtitle || "This deal won't last"}
@@ -193,7 +193,7 @@ export default function HomePage() {
       )}
 
       <div className="bg-gray-50 py-12 mb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex items-start gap-4">
               <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
@@ -232,7 +232,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
