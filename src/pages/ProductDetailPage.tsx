@@ -6,6 +6,7 @@ import { useCart } from '../contexts/CartContext';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
 import ProductCard from '../components/ProductCard';
+import ProductReviews from '../components/ProductReviews';
 
 interface ProductVariant {
   id: string;
@@ -609,6 +610,10 @@ export default function ProductDetailPage() {
           </div>
         </div>
       )}
+
+      <div className="mt-16 pt-16 border-t border-gray-200">
+        <ProductReviews productId={product.id} />
+      </div>
 
       {recommendedProducts.length > 0 && (
         <div className="mt-16 pt-16 border-t border-gray-200">
