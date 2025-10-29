@@ -127,7 +127,7 @@ export default function HomePage() {
                   index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                 }`}
               >
-                <div className="relative rounded-3xl overflow-hidden" style={{
+                <div className="relative rounded-t-3xl rounded-b-3xl overflow-hidden" style={{
                   background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 25%, #ec4899 50%, #8b5cf6 75%, #1e3a8a 100%)',
                   backgroundSize: '200% 200%',
                 }}>
