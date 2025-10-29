@@ -133,6 +133,7 @@ export default function PartnerDashboardPage() {
   const [productNotes, setProductNotes] = useState('');
   const [submittingProduct, setSubmittingProduct] = useState(false);
   const [productSubmissions, setProductSubmissions] = useState<any[]>([]);
+  const [productSubmitted, setProductSubmitted] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -473,11 +474,15 @@ export default function PartnerDashboardPage() {
           status: 'pending'
         });
 
-      alert('Product submitted! We\'ll review it and add it to the catalog soon.');
+      setProductSubmitted(true);
       setProductUrl('');
       setProductName('');
       setProductNotes('');
       await loadProductSubmissions(nonprofit.id);
+
+      setTimeout(() => {
+        setProductSubmitted(false);
+      }, 3000);
     } catch (error) {
       alert('Error submitting product. Please try again.');
     }
@@ -849,113 +854,134 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
 
-          {/* Product URL Submission Widget */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-              <Package className="h-5 w-5 text-green-600" />
-              Know a Product You Want to See on Mumbies?
-            </h2>
-            <p className="text-gray-700 mb-4 text-sm">
-              Submit a URL here and we'll review it for addition to our catalog.
-            </p>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product URL *
-                </label>
-                <input
-                  type="url"
-                  value={productUrl}
-                  onChange={(e) => setProductUrl(e.target.value)}
-                  placeholder="https://example.com/product"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Name (optional)
-                </label>
-                <input
-                  type="text"
-                  value={productName}
-                  onChange={(e) => setProductName(e.target.value)}
-                  placeholder="e.g., Natural Dog Food"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Notes (optional)
-                </label>
-                <textarea
-                  value={productNotes}
-                  onChange={(e) => setProductNotes(e.target.value)}
-                  placeholder="Why would this be a great addition?"
-                  rows={2}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
-                />
-              </div>
-              <Button
-                onClick={submitProductUrl}
-                disabled={submittingProduct || !productUrl.trim()}
-                className="w-full"
-              >
-                {submittingProduct ? 'Submitting...' : 'Submit Product'}
-              </Button>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Product URL Submission Widget */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <Package className="h-5 w-5 text-green-600" />
+                Know a Product You Want to See on Mumbies?
+              </h2>
+              <p className="text-gray-700 mb-4 text-sm">
+                Submit a URL here and we'll review it for addition to our catalog.
+              </p>
+
+              {productSubmitted ? (
+                <div className="space-y-4">
+                  <div className="bg-white border-2 border-green-300 rounded-lg p-6 text-center">
+                    <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                    <h3 className="font-bold text-lg mb-2">Submission Received!</h3>
+                    <p className="text-gray-700 text-sm mb-4">
+                      We'll review it and add it to the catalog soon.
+                    </p>
+                    <Button
+                      onClick={() => setProductSubmitted(false)}
+                      className="w-full"
+                    >
+                      Submit Another Product
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Product URL *
+                    </label>
+                    <input
+                      type="url"
+                      value={productUrl}
+                      onChange={(e) => setProductUrl(e.target.value)}
+                      placeholder="https://example.com/product"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Product Name (optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={productName}
+                      onChange={(e) => setProductName(e.target.value)}
+                      placeholder="e.g., Natural Dog Food"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Notes (optional)
+                    </label>
+                    <textarea
+                      value={productNotes}
+                      onChange={(e) => setProductNotes(e.target.value)}
+                      placeholder="Why would this be a great addition?"
+                      rows={2}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+                    />
+                  </div>
+                  <Button
+                    onClick={submitProductUrl}
+                    disabled={submittingProduct || !productUrl.trim()}
+                    className="w-full"
+                  >
+                    {submittingProduct ? 'Submitting...' : 'Submit Product'}
+                  </Button>
+                </div>
+              )}
+
+              {productSubmissions.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-green-200">
+                  <h3 className="font-semibold mb-3">Your Submissions</h3>
+                  <div className="space-y-2">
+                    {productSubmissions.slice(0, 5).map((submission) => (
+                      <div key={submission.id} className="bg-white rounded-lg p-3 text-sm">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{submission.product_name || 'Product'}</p>
+                            <p className="text-xs text-gray-600 truncate">{submission.product_url}</p>
+                          </div>
+                          <span className={`flex-shrink-0 px-2 py-1 rounded text-xs font-medium ${
+                            submission.status === 'approved'
+                              ? 'bg-green-100 text-green-700'
+                              : submission.status === 'rejected'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-amber-100 text-amber-700'
+                          }`}>
+                            {submission.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {productSubmissions.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-green-200">
-                <h3 className="font-semibold mb-3">Your Submissions</h3>
-                <div className="space-y-2">
-                  {productSubmissions.slice(0, 5).map((submission) => (
-                    <div key={submission.id} className="bg-white rounded-lg p-3 text-sm">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{submission.product_name || 'Product'}</p>
-                          <p className="text-xs text-gray-600 truncate">{submission.product_url}</p>
-                        </div>
-                        <span className={`flex-shrink-0 px-2 py-1 rounded text-xs font-medium ${
-                          submission.status === 'approved'
-                            ? 'bg-green-100 text-green-700'
-                            : submission.status === 'rejected'
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-amber-100 text-amber-700'
-                        }`}>
-                          {submission.status}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            {/* Quick Feedback Widget */}
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <MessageSquare className="h-5 w-5 text-blue-600" />
+                Request Features or Report Bugs
+              </h2>
+              <p className="text-gray-700 mb-4 text-sm">
+                We build fast! Tell us what you need and we'll make it happen.
+              </p>
+              <div className="space-y-3">
+                <textarea
+                  value={feedbackMessage}
+                  onChange={(e) => setFeedbackMessage(e.target.value)}
+                  placeholder="Describe a feature you'd like or a bug you found..."
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
+                />
+                <Button
+                  onClick={submitFeedback}
+                  disabled={sendingFeedback || !feedbackMessage.trim()}
+                  className="w-full"
+                >
+                  {sendingFeedback ? 'Sending...' : 'Send Feedback'}
+                </Button>
               </div>
-            )}
-          </div>
-
-          {/* Quick Feedback Widget */}
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-blue-600" />
-              Request Features or Report Bugs
-            </h2>
-            <p className="text-gray-700 mb-4 text-sm">
-              We build fast! Tell us what you need and we'll make it happen.
-            </p>
-            <div className="space-y-3">
-              <textarea
-                value={feedbackMessage}
-                onChange={(e) => setFeedbackMessage(e.target.value)}
-                placeholder="Describe a feature you'd like or a bug you found..."
-                rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none"
-              />
-              <Button
-                onClick={submitFeedback}
-                disabled={sendingFeedback || !feedbackMessage.trim()}
-                className="w-full"
-              >
-                {sendingFeedback ? 'Sending...' : 'Send Feedback'}
-              </Button>
             </div>
           </div>
         </div>
