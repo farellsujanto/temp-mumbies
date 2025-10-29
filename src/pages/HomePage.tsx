@@ -118,8 +118,8 @@ export default function HomePage() {
   return (
     <div>
       {banners.length > 0 && (
-        <div className="relative overflow-hidden my-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" style={{ minHeight: '430px' }}>
+        <div className="relative overflow-hidden">
+          <div className="max-w-[1920px] mx-auto relative" style={{ minHeight: '600px' }}>
             {banners.map((banner, index) => (
               <div
                 key={banner.id}
@@ -127,69 +127,101 @@ export default function HomePage() {
                   index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                 }`}
               >
-                <div className="relative rounded-t-3xl rounded-b-3xl overflow-hidden" style={{
-                  background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 25%, #ec4899 50%, #8b5cf6 75%, #1e3a8a 100%)',
-                  backgroundSize: '200% 200%',
+                <div className="relative overflow-hidden" style={{
+                  background: 'linear-gradient(135deg, #059669 0%, #10b981 20%, #34d399 40%, #6ee7b7 60%, #a7f3d0 80%, #d1fae5 100%)',
                 }}>
-                  <div className="absolute inset-0" style={{
-                    background: 'repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px)',
+                  <div className="absolute inset-0 opacity-30" style={{
+                    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.3) 0%, transparent 50%)',
                   }}></div>
 
-                  <div className="absolute inset-0" style={{
-                    background: 'repeating-linear-gradient(0deg, rgba(16,185,129,0.15) 0px, rgba(16,185,129,0.15) 8px, rgba(59,130,246,0.15) 8px, rgba(59,130,246,0.15) 16px, rgba(236,72,153,0.15) 16px, rgba(236,72,153,0.15) 24px)',
-                    backgroundSize: '100% 24px',
+                  <div className="absolute inset-0 opacity-10" style={{
+                    backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23000000" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
                   }}></div>
 
-                  <div className="relative grid md:grid-cols-2 gap-8 items-center p-8 md:p-12 h-[500px]">
-                    <div className="text-white z-10 order-2 md:order-1">
-                      <p className="text-sm md:text-base font-medium mb-2 opacity-90">
-                        {banner.subtitle || "This deal won't last"}
-                      </p>
-                      <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-                        {banner.title}
-                      </h1>
-                      {banner.cta_text && banner.cta_link && (
-                        <>
-                          <p className="text-lg md:text-xl mb-6 opacity-90">
-                            Shop sustainable, eco-friendly products.
-                          </p>
-                          <Button
-                            onClick={() => window.location.href = banner.cta_link!}
-                            size="lg"
-                            className="bg-green-600 text-white hover:bg-green-700 font-bold shadow-lg"
-                          >
-                            {banner.cta_text}
-                          </Button>
-                          <p className="text-sm mt-3 opacity-75">Terms apply.</p>
-                        </>
-                      )}
-                    </div>
+                  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid md:grid-cols-2 gap-12 items-center py-16 md:py-20 min-h-[600px]">
+                      <div className="text-white z-10 order-2 md:order-1 space-y-6">
+                        <div className="inline-block">
+                          <span className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold tracking-wide uppercase">
+                            {banner.subtitle || "Limited Time Offer"}
+                          </span>
+                        </div>
+                        <h1 className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight">
+                          {banner.title}
+                        </h1>
+                        {banner.cta_text && banner.cta_link && (
+                          <>
+                            <p className="text-xl md:text-2xl text-white/90 font-medium leading-relaxed max-w-xl">
+                              Shop sustainable, eco-friendly products that make a difference for pets and the planet.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                              <Button
+                                onClick={() => window.location.href = banner.cta_link!}
+                                size="lg"
+                                className="bg-white text-green-700 hover:bg-gray-100 font-bold shadow-2xl text-lg px-8 py-4 transform hover:scale-105 transition-transform"
+                              >
+                                {banner.cta_text}
+                              </Button>
+                              <Button
+                                onClick={() => window.location.href = '/rescues'}
+                                size="lg"
+                                variant="outline"
+                                className="bg-transparent border-2 border-white text-white hover:bg-white/10 font-bold text-lg px-8 py-4"
+                              >
+                                Support Rescues
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </div>
 
-                    <div className="relative z-10 order-1 md:order-2 flex items-center justify-center h-full">
-                      <img
-                        src={banner.image_url}
-                        alt={banner.title}
-                        className="w-full max-w-md h-full max-h-[450px] object-contain drop-shadow-2xl"
-                      />
+                      <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl transform scale-110"></div>
+                          <img
+                            src={banner.image_url}
+                            alt={banner.title}
+                            className="relative w-full max-w-lg h-auto object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
                 </div>
               </div>
             ))}
 
             {banners.length > 1 && (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {banners.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentBanner(index)}
-                    aria-label={`Go to banner ${index + 1}`}
-                    className={`h-2 rounded-full transition-all ${
-                      index === currentBanner ? 'w-8 bg-white' : 'w-2 bg-white/60 hover:bg-white/80'
-                    }`}
-                  />
-                ))}
-              </div>
+              <>
+                <button
+                  onClick={() => setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all hover:scale-110"
+                  aria-label="Previous banner"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  onClick={() => setCurrentBanner((prev) => (prev + 1) % banners.length)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-xl transition-all hover:scale-110"
+                  aria-label="Next banner"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+                  {banners.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentBanner(index)}
+                      aria-label={`Go to banner ${index + 1}`}
+                      className={`h-3 rounded-full transition-all ${
+                        index === currentBanner ? 'w-12 bg-white shadow-lg' : 'w-3 bg-white/60 hover:bg-white/80'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
