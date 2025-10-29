@@ -241,7 +241,7 @@ export default function CheckoutPage() {
                     <div
                       className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-white border-4 border-green-500 rounded-full shadow-lg pointer-events-none transition-all duration-150"
                       style={{
-                        left: `calc(${((localSliderValue - 1) / 3) * 100}%)`,
+                        left: `${(localSliderValue / 5) * 100}%`,
                         transform: 'translate(-50%, -50%)',
                       }}
                     />
