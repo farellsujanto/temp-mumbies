@@ -40,6 +40,10 @@ interface NonprofitData {
   status: string;
   location_city: string | null;
   location_state: string | null;
+  mission_statement: string | null;
+  contact_name: string | null;
+  contact_email: string | null;
+  website: string | null;
   payout_method: string | null;
   payout_email: string | null;
   bank_account_name: string | null;
@@ -79,6 +83,11 @@ interface Product {
   price: number;
   image_url: string | null;
   brand: { name: string } | null;
+  category?: string | null;
+}
+
+interface AvailableProduct extends Product {
+  brand_id: string | null;
 }
 
 export default function PartnerDashboardPage() {
@@ -110,6 +119,15 @@ export default function PartnerDashboardPage() {
   const [customReferralLink, setCustomReferralLink] = useState('');
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [sendingFeedback, setSendingFeedback] = useState(false);
+  const [availableProducts, setAvailableProducts] = useState<AvailableProduct[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [savingProducts, setSavingProducts] = useState(false);
+  const [organizationName, setOrganizationName] = useState('');
+  const [missionStatement, setMissionStatement] = useState('');
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [website, setWebsite] = useState('');
+  const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -162,6 +180,11 @@ export default function PartnerDashboardPage() {
     setMailingCity(nonprofitData.mailing_address_city || '');
     setMailingState(nonprofitData.mailing_address_state || '');
     setMailingZip(nonprofitData.mailing_address_zip || '');
+    setOrganizationName(nonprofitData.organization_name || '');
+    setMissionStatement(nonprofitData.mission_statement || '');
+    setContactName(nonprofitData.contact_name || '');
+    setContactEmail(nonprofitData.contact_email || '');
+    setWebsite(nonprofitData.website || '');
 
     setLoading(false);
   };
@@ -176,19 +199,42 @@ export default function PartnerDashboardPage() {
           name,
           price,
           image_url,
+          category,
           brand:brands (
             name
           )
         )
       `)
       .eq('nonprofit_id', nonprofitId)
-      .limit(6);
+      .order('sort_order', { ascending: true });
 
     if (data) {
       const products = data
         .map((item: any) => item.products)
         .filter((p: any) => p !== null);
       setCuratedProducts(products);
+    }
+  };
+
+  const loadAvailableProducts = async () => {
+    const { data } = await supabase
+      .from('products')
+      .select(`
+        id,
+        name,
+        price,
+        image_url,
+        category,
+        brand_id,
+        brand:brands (
+          name
+        )
+      `)
+      .eq('is_active', true)
+      .order('name');
+
+    if (data) {
+      setAvailableProducts(data);
     }
   };
 
@@ -357,6 +403,64 @@ export default function PartnerDashboardPage() {
       alert('Error sending feedback. Please try again.');
     }
     setSendingFeedback(false);
+  };
+
+  const addCuratedProduct = async (product: AvailableProduct) => {
+    if (!nonprofit || curatedProducts.length >= 10) return;
+
+    try {
+      await supabase
+        .from('nonprofit_curated_products')
+        .insert({
+          nonprofit_id: nonprofit.id,
+          product_id: product.id,
+          sort_order: curatedProducts.length
+        });
+
+      await loadCuratedProducts(nonprofit.id);
+    } catch (error) {
+      alert('Error adding product. Please try again.');
+    }
+  };
+
+  const removeCuratedProduct = async (productId: string) => {
+    if (!nonprofit) return;
+
+    try {
+      await supabase
+        .from('nonprofit_curated_products')
+        .delete()
+        .eq('nonprofit_id', nonprofit.id)
+        .eq('product_id', productId);
+
+      await loadCuratedProducts(nonprofit.id);
+    } catch (error) {
+      alert('Error removing product. Please try again.');
+    }
+  };
+
+  const saveProfileInformation = async () => {
+    if (!nonprofit) return;
+
+    setSavingProfile(true);
+    try {
+      await supabase
+        .from('nonprofits')
+        .update({
+          organization_name: organizationName,
+          mission_statement: missionStatement,
+          contact_name: contactName,
+          contact_email: contactEmail,
+          website: website
+        })
+        .eq('id', nonprofit.id);
+
+      alert('Profile information saved successfully!');
+      await loadPartnerData();
+    } catch (error) {
+      alert('Error saving profile information. Please try again.');
+    }
+    setSavingProfile(false);
   };
 
   if (loading) {
@@ -877,22 +981,127 @@ export default function PartnerDashboardPage() {
       {/* Products Tab */}
       {activeTab === 'products' && (
         <div className="space-y-6">
+          {/* Your Curated Products (10 slots) */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Your Curated Products</h2>
+            <h2 className="text-xl font-bold mb-4">Your Curated Products (Top 10)</h2>
             <p className="text-gray-600 mb-6">
-              These are the products featured on your profile page. Contact us to add or remove products.
+              Select up to 10 products to feature on your profile page. These products will be highlighted when supporters visit your profile.
             </p>
-            {curatedProducts.length > 0 ? (
-              <div className="grid md:grid-cols-3 gap-6">
-                {curatedProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+            <div className="grid md:grid-cols-5 gap-4 mb-8">
+              {[...Array(10)].map((_, index) => {
+                const product = curatedProducts[index];
+                return (
+                  <div
+                    key={index}
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 aspect-square flex flex-col items-center justify-center relative"
+                  >
+                    {product ? (
+                      <>
+                        <button
+                          onClick={() => removeCuratedProduct(product.id)}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors text-xs font-bold"
+                        >
+                          ×
+                        </button>
+                        <img
+                          src={product.image_url || 'https://via.placeholder.com/150'}
+                          alt={product.name}
+                          className="w-full h-24 object-cover rounded mb-2"
+                        />
+                        <p className="text-xs font-medium text-center line-clamp-2">{product.name}</p>
+                        <p className="text-xs text-gray-600">${product.price}</p>
+                      </>
+                    ) : (
+                      <>
+                        <Package className="h-8 w-8 text-gray-300 mb-2" />
+                        <p className="text-xs text-gray-400 text-center">Slot {index + 1}</p>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Browse All Products */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Browse Products</h2>
+            <p className="text-gray-600 mb-4">
+              Search and select products to add to your curated list.
+            </p>
+
+            <div className="mb-6">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products by name..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+
+            {availableProducts.length === 0 && (
+              <div className="text-center py-4">
+                <Button onClick={loadAvailableProducts}>
+                  Load Available Products
+                </Button>
               </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                <Package className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                <p>No curated products yet</p>
-                <p className="text-sm">Contact us to add products to your profile</p>
+            )}
+
+            {availableProducts.length > 0 && (
+              <div className="grid md:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto">
+                {availableProducts
+                  .filter(p =>
+                    !searchQuery ||
+                    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    p.brand?.name.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((product) => {
+                    const isAlreadyAdded = curatedProducts.some(cp => cp.id === product.id);
+                    const canAdd = curatedProducts.length < 10 && !isAlreadyAdded;
+
+                    return (
+                      <div
+                        key={product.id}
+                        className={`border rounded-lg p-4 ${
+                          isAlreadyAdded ? 'border-green-300 bg-green-50' : 'border-gray-200'
+                        }`}
+                      >
+                        <img
+                          src={product.image_url || 'https://via.placeholder.com/150'}
+                          alt={product.name}
+                          className="w-full h-32 object-cover rounded mb-3"
+                        />
+                        <p className="font-medium text-sm line-clamp-2 mb-1">{product.name}</p>
+                        {product.brand && (
+                          <p className="text-xs text-gray-600 mb-1">{product.brand.name}</p>
+                        )}
+                        <p className="text-sm font-bold text-green-600 mb-3">${product.price}</p>
+                        {isAlreadyAdded ? (
+                          <button
+                            disabled
+                            className="w-full bg-green-100 text-green-700 py-2 rounded text-sm font-medium"
+                          >
+                            Added
+                          </button>
+                        ) : canAdd ? (
+                          <button
+                            onClick={() => addCuratedProduct(product)}
+                            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors text-sm font-medium"
+                          >
+                            Add to Profile
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="w-full bg-gray-200 text-gray-500 py-2 rounded text-sm font-medium cursor-not-allowed"
+                          >
+                            Limit Reached
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>
@@ -902,6 +1111,91 @@ export default function PartnerDashboardPage() {
       {/* Profile/Settings Tab */}
       {activeTab === 'profile' && (
         <div className="space-y-6">
+          {/* Profile Information */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Profile Information
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Organization Name
+                </label>
+                <input
+                  type="text"
+                  value={organizationName}
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  placeholder="Your organization name"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Mission Statement
+                </label>
+                <textarea
+                  value={missionStatement}
+                  onChange={(e) => setMissionStatement(e.target.value)}
+                  placeholder="Tell supporters about your mission..."
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg resize-none"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact Name
+                  </label>
+                  <input
+                    type="text"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                    placeholder="Primary contact name"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact Email
+                  </label>
+                  <input
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="contact@organization.org"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Website
+                </label>
+                <input
+                  type="url"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  placeholder="https://yourwebsite.org"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                />
+              </div>
+
+              <Button
+                onClick={saveProfileInformation}
+                disabled={savingProfile}
+                className="w-full"
+              >
+                {savingProfile ? 'Saving...' : 'Save Profile Information'}
+              </Button>
+            </div>
+          </div>
+
+          {/* Payout Information */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
               <CreditCard className="h-5 w-5" />
