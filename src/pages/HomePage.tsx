@@ -165,11 +165,11 @@ export default function HomePage() {
                       )}
                     </div>
 
-                    <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
+                    <div className="relative z-10 order-1 md:order-2 flex items-center justify-center h-full">
                       <img
                         src={banner.image_url}
                         alt={banner.title}
-                        className="w-full max-w-md h-auto object-contain drop-shadow-2xl"
+                        className="w-full max-w-md h-full max-h-[450px] object-contain drop-shadow-2xl"
                       />
                     </div>
                   </div>
