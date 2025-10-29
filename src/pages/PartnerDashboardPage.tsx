@@ -271,13 +271,15 @@ export default function PartnerDashboardPage() {
   const loadRecentActivity = async (nonprofitId: string) => {
     const activities: Activity[] = [];
 
-    const { data: orders } = await supabase
+    const { data: orders, error: ordersError } = await supabase
       .from('orders')
       .select('id, order_number, subtotal, created_at')
       .eq('attributed_rescue_id', nonprofitId)
       .in('status', ['completed', 'delivered'])
       .order('created_at', { ascending: false })
       .limit(20);
+
+    console.log('Orders query:', { orders, ordersError, nonprofitId });
 
     if (orders) {
       orders.forEach((order) => {
@@ -293,13 +295,15 @@ export default function PartnerDashboardPage() {
       });
     }
 
-    const { data: leads } = await supabase
+    const { data: leads, error: leadsError } = await supabase
       .from('users')
       .select('id, email, created_at, total_orders')
       .eq('attributed_rescue_id', nonprofitId)
       .eq('total_orders', 0)
       .order('created_at', { ascending: false })
       .limit(20);
+
+    console.log('Leads query:', { leads, leadsError, nonprofitId });
 
     if (leads) {
       leads.forEach((lead) => {
@@ -313,13 +317,15 @@ export default function PartnerDashboardPage() {
       });
     }
 
-    const { data: qualifiedReferrals } = await supabase
+    const { data: qualifiedReferrals, error: referralsError } = await supabase
       .from('nonprofit_referrals')
       .select('id, referred_email, bounty_amount, qualification_date')
       .eq('referrer_nonprofit_id', nonprofitId)
       .in('status', ['qualified', 'paid'])
       .not('qualification_date', 'is', null)
       .order('qualification_date', { ascending: false });
+
+    console.log('Referrals query:', { qualifiedReferrals, referralsError, nonprofitId });
 
     if (qualifiedReferrals) {
       qualifiedReferrals.forEach((referral) => {
@@ -333,6 +339,7 @@ export default function PartnerDashboardPage() {
       });
     }
 
+    console.log('Final activities:', activities);
     activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setRecentActivity(activities.slice(0, 20));
   };

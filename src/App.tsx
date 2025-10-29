@@ -27,7 +27,7 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/register" element={<LeadRegistrationPage />} />
+              <Route path="/lead-registration" element={<LeadRegistrationPage />} />
               <Route path="/shop" element={<ShopPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/login" element={<LoginPage />} />
