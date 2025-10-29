@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ShoppingCart, ChevronLeft } from 'lucide-react';
+import { ShoppingCart, ChevronLeft, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../contexts/CartContext';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
+import ProductCard from '../components/ProductCard';
 
 interface ProductVariant {
   id: string;
@@ -37,6 +38,15 @@ interface Product {
   } | null;
 }
 
+interface RelatedProduct {
+  id: string;
+  name: string;
+  price: number;
+  image_url: string | null;
+  tags: string[];
+  brand: { name: string } | null;
+}
+
 export default function ProductDetailPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
@@ -44,6 +54,8 @@ export default function ProductDetailPage() {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [sameBrandProducts, setSameBrandProducts] = useState<RelatedProduct[]>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<RelatedProduct[]>([]);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -69,6 +81,11 @@ export default function ProductDetailPage() {
       if (data?.has_variants) {
         loadVariants();
       }
+
+      if (data) {
+        loadSameBrandProducts(data.brand?.id, data.id);
+        loadRecommendedProducts(data.category, data.tags, data.id);
+      }
     }
     setLoading(false);
   };
@@ -84,6 +101,61 @@ export default function ProductDetailPage() {
     if (data && data.length > 0) {
       setVariants(data);
       setSelectedVariant(data[0]);
+    }
+  };
+
+  const loadSameBrandProducts = async (brandId: string | undefined, currentProductId: string) => {
+    if (!brandId) return;
+
+    const { data } = await supabase
+      .from('products')
+      .select(`
+        id,
+        name,
+        price,
+        image_url,
+        tags,
+        brand:brands(name)
+      `)
+      .eq('brand_id', brandId)
+      .eq('is_active', true)
+      .neq('id', currentProductId)
+      .limit(8);
+
+    if (data) {
+      const shuffled = [...data].sort(() => Math.random() - 0.5);
+      setSameBrandProducts(shuffled.slice(0, 4) as any);
+    }
+  };
+
+  const loadRecommendedProducts = async (category: string | null, tags: string[], currentProductId: string) => {
+    const { data } = await supabase
+      .from('products')
+      .select(`
+        id,
+        name,
+        price,
+        image_url,
+        tags,
+        category,
+        brand:brands(name)
+      `)
+      .eq('is_active', true)
+      .neq('id', currentProductId)
+      .limit(20);
+
+    if (data) {
+      const scored = data.map((p: any) => {
+        let score = 0;
+        if (category && p.category === category) score += 3;
+        const commonTags = tags.filter(tag => p.tags?.includes(tag)).length;
+        score += commonTags * 2;
+        return { ...p, score };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      const shuffled = scored.slice(0, 12).sort(() => Math.random() - 0.5);
+      setRecommendedProducts(shuffled.slice(0, 4) as any);
     }
   };
 
@@ -266,6 +338,72 @@ export default function ProductDetailPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {sameBrandProducts.length > 0 && (
+        <div className="mt-16 pt-16 border-t border-gray-200">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">More from {product.brand?.name}</h2>
+              <p className="text-gray-600">Discover other products from this brand</p>
+            </div>
+            {product.brand && (
+              <Button
+                variant="outline"
+                onClick={() => window.location.href = `/brands/${product.brand!.slug}`}
+              >
+                View All Products
+              </Button>
+            )}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {sameBrandProducts.map((relatedProduct) => (
+              <ProductCard
+                key={relatedProduct.id}
+                product={{
+                  ...relatedProduct,
+                  brand_name: relatedProduct.brand?.name,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {recommendedProducts.length > 0 && (
+        <div className="mt-16 pt-16 border-t border-gray-200">
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <Sparkles className="h-8 w-8 text-amber-500" />
+              <h2 className="text-3xl font-bold">You May Also Like</h2>
+            </div>
+            <p className="text-gray-600">Handpicked recommendations based on this product</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {recommendedProducts.map((relatedProduct) => (
+              <ProductCard
+                key={relatedProduct.id}
+                product={{
+                  ...relatedProduct,
+                  brand_name: relatedProduct.brand?.name,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-16 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-12 text-center">
+        <h2 className="text-3xl font-bold mb-4">Shopping supports animal rescues</h2>
+        <p className="text-xl text-gray-700 mb-6 max-w-2xl mx-auto">
+          5% of every purchase goes directly to animal rescue organizations. Your purchases make a real difference!
+        </p>
+        <Button
+          size="lg"
+          onClick={() => window.location.href = '/rescues'}
+        >
+          Learn More About Our Rescues
+        </Button>
       </div>
     </div>
   );
