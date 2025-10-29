@@ -8,7 +8,7 @@ interface Brand {
   slug: string;
   description: string;
   logo_url: string | null;
-  attributes: string[];
+  attributes: any;
 }
 
 export default function BrandsPage() {
@@ -29,19 +29,24 @@ export default function BrandsPage() {
       .order('name');
 
     if (data) {
-      setBrands(data);
+      const normalizedBrands = data.map(brand => ({
+        ...brand,
+        attributes: Array.isArray(brand.attributes) ? brand.attributes : []
+      }));
+      setBrands(normalizedBrands);
     }
     setLoading(false);
   };
 
   const filteredBrands = brands.filter((brand) => {
+    const attrs = Array.isArray(brand.attributes) ? brand.attributes : [];
     const matchesSearch = brand.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesAttribute = selectedAttribute === 'all' || brand.attributes.includes(selectedAttribute);
+    const matchesAttribute = selectedAttribute === 'all' || attrs.includes(selectedAttribute);
     return matchesSearch && matchesAttribute;
   });
 
   const allAttributes = Array.from(
-    new Set(brands.flatMap((brand) => brand.attributes))
+    new Set(brands.flatMap((brand) => Array.isArray(brand.attributes) ? brand.attributes : []))
   ).sort();
 
   return (
@@ -155,9 +160,9 @@ export default function BrandsPage() {
                 <p className="text-sm text-gray-600 line-clamp-2 mb-3">
                   {brand.description}
                 </p>
-                {brand.attributes.length > 0 && (
+                {Array.isArray(brand.attributes) && brand.attributes.length > 0 && (
                   <div className="flex flex-wrap gap-1">
-                    {brand.attributes.slice(0, 2).map((attr) => (
+                    {brand.attributes.slice(0, 2).map((attr: string) => (
                       <span
                         key={attr}
                         className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded"
