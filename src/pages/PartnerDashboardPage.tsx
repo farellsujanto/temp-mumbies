@@ -580,51 +580,51 @@ export default function PartnerDashboardPage() {
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors ${
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'overview'
                 ? 'text-green-600 border-b-2 border-green-600'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <TrendingUp className="h-5 w-5 inline mr-2" />
+            <TrendingUp className="h-5 w-5" />
             Overview
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors ${
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'products'
                 ? 'text-green-600 border-b-2 border-green-600'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <Package className="h-5 w-5 inline mr-2" />
+            <Package className="h-5 w-5" />
             Curated Products
           </button>
           <button
             onClick={() => setActiveTab('referrals')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors ${
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'referrals'
                 ? 'text-green-600 border-b-2 border-green-600'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <Gift className="h-5 w-5 inline mr-2" />
+            <Gift className="h-5 w-5" />
             Refer Partners
             {nonprofit.active_referrals_count > 0 && (
-              <span className="ml-2 bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-bold">
+              <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded-full text-xs font-bold">
                 {nonprofit.active_referrals_count}
               </span>
             )}
           </button>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors ${
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'profile'
                 ? 'text-green-600 border-b-2 border-green-600'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <Settings className="h-5 w-5 inline mr-2" />
+            <Settings className="h-5 w-5" />
             Settings
           </button>
         </div>
