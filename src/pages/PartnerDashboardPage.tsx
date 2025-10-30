@@ -352,6 +352,32 @@ export default function PartnerDashboardPage() {
       });
     }
 
+    const { data: incentives, error: incentivesError } = await supabase
+      .from('partner_incentives')
+      .select(`
+        id,
+        amount,
+        created_at,
+        partner_leads (email)
+      `)
+      .eq('partner_id', nonprofitId)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    console.log('Incentives query:', { incentives, incentivesError, nonprofitId });
+
+    if (incentives) {
+      incentives.forEach((inc: any) => {
+        activities.push({
+          id: `gift-${inc.id}`,
+          type: 'lead',
+          amount: -inc.amount,
+          description: `Sent $${inc.amount.toFixed(2)} gift to ${inc.partner_leads?.email || 'lead'}`,
+          date: inc.created_at,
+        });
+      });
+    }
+
     console.log('Final activities:', activities);
     activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setRecentActivity(activities.slice(0, 20));
@@ -835,6 +861,8 @@ export default function PartnerDashboardPage() {
                         <div className={`p-2 rounded-full ${
                           activity.type === 'order'
                             ? 'bg-blue-100'
+                            : activity.type === 'lead' && activity.amount < 0
+                            ? 'bg-purple-100'
                             : activity.type === 'lead'
                             ? 'bg-green-100'
                             : 'bg-amber-100'
@@ -842,7 +870,10 @@ export default function PartnerDashboardPage() {
                           {activity.type === 'order' && (
                             <ShoppingBag className="h-4 w-4 text-blue-600" />
                           )}
-                          {activity.type === 'lead' && (
+                          {activity.type === 'lead' && activity.amount < 0 && (
+                            <Gift className="h-4 w-4 text-purple-600" />
+                          )}
+                          {activity.type === 'lead' && activity.amount === 0 && (
                             <UserPlus className="h-4 w-4 text-green-600" />
                           )}
                           {activity.type === 'referral' && (
@@ -871,7 +902,12 @@ export default function PartnerDashboardPage() {
                             </p>
                           </>
                         )}
-                        {activity.type === 'lead' && (
+                        {activity.type === 'lead' && activity.amount < 0 && (
+                          <p className="font-semibold text-red-600">
+                            ${activity.amount.toFixed(2)}
+                          </p>
+                        )}
+                        {activity.type === 'lead' && activity.amount === 0 && (
                           <p className="text-sm font-medium text-green-600">
                             New Lead
                           </p>
