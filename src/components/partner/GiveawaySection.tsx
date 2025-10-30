@@ -104,7 +104,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
   };
 
   const canUnlockBundle = (bundle: GiveawayBundle) => {
-    return totalSales >= bundle.sales_threshold;
+    return totalSales >= Number(bundle.sales_threshold);
   };
 
   const getTierColor = (tier: string) => {

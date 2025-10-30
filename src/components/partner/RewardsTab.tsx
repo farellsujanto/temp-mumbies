@@ -277,10 +277,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border-2 border-orange-300 rounded-lg p-4 hover:shadow-lg transition-shadow"
+                  className="bg-white border-2 border-orange-300 rounded-lg p-4 hover:shadow-2xl transition-all transform hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white shadow-lg`}>
                       {getRewardIcon(reward.reward_type, 'white')}
                     </div>
                     <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
@@ -288,8 +288,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
                   <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
 
-                  <div className="bg-amber-50 border border-amber-200 rounded p-2 mb-3">
-                    <p className="text-xs font-bold text-amber-700">{reward.reward_description}</p>
+                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 border-2 border-amber-300 rounded-lg p-3 mb-3 shadow-sm">
+                    <p className="text-xs font-bold text-amber-800">{reward.reward_description}</p>
                   </div>
 
                   <div className="mb-3">
@@ -341,21 +341,24 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       {/* Three Column Layout: Sales, Leads, Coming Soon */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Sales Challenges */}
-        <div>
+        <div className="flex flex-col h-full">
           <div className="flex items-center gap-2 mb-4">
-            <DollarSign className="h-6 w-6 text-green-600" />
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-2">
+              <DollarSign className="h-5 w-5 text-white" />
+            </div>
             <h3 className="text-xl font-bold">Sales Challenges</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+            <div className="space-y-4">
             {availableSalesChallenges.length > 0 ? availableSalesChallenges.map((reward) => {
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="bg-white border-2 border-green-200 rounded-lg p-4 hover:shadow-xl hover:border-green-400 transition-all transform hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white shadow-lg`}>
                       {getRewardIcon(reward.reward_type, 'white')}
                     </div>
                     <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
@@ -363,8 +366,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
                   <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
 
-                  <div className="bg-green-50 border border-green-200 rounded p-2 mb-3">
-                    <p className="text-xs font-bold text-green-700">{reward.reward_description}</p>
+                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-lg p-3 mb-3 shadow-sm">
+                    <p className="text-xs font-bold text-green-800">{reward.reward_description}</p>
                   </div>
 
                   <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
@@ -384,30 +387,34 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 </div>
               );
             }) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
                 <DollarSign className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-sm text-gray-600">No active sales challenges</p>
+                <p className="text-sm text-gray-600">No available sales challenges</p>
               </div>
             )}
+            </div>
           </div>
         </div>
 
         {/* Lead Challenges */}
-        <div>
+        <div className="flex flex-col h-full">
           <div className="flex items-center gap-2 mb-4">
-            <Users className="h-6 w-6 text-blue-600" />
+            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg p-2">
+              <Users className="h-5 w-5 text-white" />
+            </div>
             <h3 className="text-xl font-bold">Lead Challenges</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+            <div className="space-y-4">
             {availableLeadChallenges.length > 0 ? availableLeadChallenges.map((reward) => {
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="bg-white border-2 border-blue-200 rounded-lg p-4 hover:shadow-xl hover:border-blue-400 transition-all transform hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white shadow-lg`}>
                       {getRewardIcon(reward.reward_type, 'white')}
                     </div>
                     <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
@@ -415,8 +422,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
                   <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded p-2 mb-3">
-                    <p className="text-xs font-bold text-blue-700">{reward.reward_description}</p>
+                  <div className="bg-gradient-to-r from-blue-100 to-cyan-100 border-2 border-blue-300 rounded-lg p-3 mb-3 shadow-sm">
+                    <p className="text-xs font-bold text-blue-800">{reward.reward_description}</p>
                   </div>
 
                   <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
@@ -436,30 +443,36 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 </div>
               );
             }) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
                 <Users className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-sm text-gray-600">No active lead challenges</p>
+                <p className="text-sm text-gray-600">No available lead challenges</p>
               </div>
             )}
+            </div>
           </div>
         </div>
 
         {/* Coming Soon */}
-        <div>
+        <div className="flex flex-col h-full">
           <div className="flex items-center gap-2 mb-4">
-            <Calendar className="h-6 w-6 text-purple-600" />
+            <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-2">
+              <Calendar className="h-5 w-5 text-white" />
+            </div>
             <h3 className="text-xl font-bold">Coming Soon</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+            <div className="space-y-4">
             {upcomingRewards.length > 0 ? upcomingRewards.map((reward) => (
               <div
                 key={reward.id}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-4"
+                className="bg-white border-2 border-purple-200 rounded-lg p-4 hover:shadow-xl hover:border-purple-400 transition-all transform hover:-translate-y-1"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <Crown className="h-5 w-5 text-purple-600" />
-                  <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-2 shadow-lg">
+                    <Crown className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold border border-purple-300">
                     COMING SOON
                   </span>
                 </div>
@@ -467,13 +480,13 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 <h4 className="font-bold text-gray-900 mb-2 text-sm">{reward.title}</h4>
                 <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
 
-                <div className="bg-white border border-purple-200 rounded p-2">
+                <div className="bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300 rounded-lg p-3 shadow-sm">
                   <p className="text-xs text-purple-600 font-semibold mb-1">Reward</p>
-                  <p className="text-xs font-bold text-purple-700">{reward.reward_description}</p>
+                  <p className="text-xs font-bold text-purple-800">{reward.reward_description}</p>
                 </div>
 
                 {reward.starts_at && (
-                  <div className="mt-3 flex items-center gap-2 text-xs text-purple-700">
+                  <div className="mt-3 flex items-center gap-2 text-xs text-purple-700 bg-purple-50 rounded p-2">
                     <Calendar className="h-3 w-3" />
                     <span className="font-medium">
                       Starts {new Date(reward.starts_at).toLocaleDateString()}
@@ -482,12 +495,13 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 )}
               </div>
             )) : (
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+              <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
                 <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-3" />
                 <p className="text-sm text-gray-600 mb-2">No upcoming challenges</p>
                 <p className="text-xs text-gray-500">Check back soon for new opportunities</p>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
