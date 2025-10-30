@@ -19,7 +19,9 @@ import {
   ExternalLink,
   MessageSquare,
   Calculator,
-  Target
+  Target,
+  Trophy,
+  X
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -27,6 +29,7 @@ import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import OpportunitiesTab from '../components/partner/OpportunitiesTab';
 import ReferralOpportunitiesTab from '../components/partner/ReferralOpportunitiesTab';
+import RewardsTab from '../components/partner/RewardsTab';
 
 interface NonprofitData {
   id: string;
@@ -103,7 +106,7 @@ export default function PartnerDashboardPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'opportunities' | 'profile'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'opportunities' | 'rewards' | 'profile'>('overview');
   const [copied, setCopied] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
   const [referralEmail, setReferralEmail] = useState('');
@@ -661,7 +664,18 @@ export default function PartnerDashboardPage() {
           >
             <Target className="h-5 w-5" />
             Opportunities
-            <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-bold">
+          </button>
+          <button
+            onClick={() => setActiveTab('rewards')}
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
+              activeTab === 'rewards'
+                ? 'text-green-600 border-b-2 border-green-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Trophy className="h-5 w-5" />
+            Rewards
+            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-bold">
               NEW
             </span>
           </button>
@@ -1544,6 +1558,14 @@ export default function PartnerDashboardPage() {
           partnerBalance={nonprofit.total_commissions_earned + nonprofit.total_referral_earnings}
           organizationName={nonprofit.organization_name}
           logoUrl={nonprofit.logo_url}
+        />
+      )}
+
+      {/* Rewards Tab */}
+      {activeTab === 'rewards' && nonprofit && (
+        <RewardsTab
+          partnerId={nonprofit.id}
+          organizationName={nonprofit.organization_name}
         />
       )}
 
