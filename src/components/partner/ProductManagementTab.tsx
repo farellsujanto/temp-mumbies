@@ -142,7 +142,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
         image_url,
         brand:brand_id (name)
       `)
-      .eq('status', 'active')
+      .eq('is_active', true)
       .order('name');
 
     console.log('Products loaded:', { count: data?.length || 0, error });
