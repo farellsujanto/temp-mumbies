@@ -48,6 +48,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
   const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState<string | null>(null);
+  const [showActivateModal, setShowActivateModal] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
 
   useEffect(() => {
     fetchRewardsData();
@@ -111,17 +113,24 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     setLoading(false);
   };
 
-  const activateChallenge = async (rewardId: string) => {
-    setActivating(rewardId);
+  const openActivateModal = (reward: Reward) => {
+    setSelectedReward(reward);
+    setShowActivateModal(true);
+  };
+
+  const confirmActivateChallenge = async () => {
+    if (!selectedReward) return;
+
+    setActivating(selectedReward.id);
 
     const { error } = await supabase
       .from('partner_reward_progress')
       .insert({
         partner_id: partnerId,
-        reward_id: rewardId,
+        reward_id: selectedReward.id,
         status: 'in_progress',
         current_value: 0,
-        target_value: activeRewards.find(r => r.id === rewardId)?.requirement_value || 0,
+        target_value: selectedReward.requirement_value,
         progress_percentage: 0
       });
 
@@ -130,6 +139,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     }
 
     setActivating(null);
+    setShowActivateModal(false);
+    setSelectedReward(null);
   };
 
   const claimReward = async (rewardId: string, progressId: string) => {
@@ -349,7 +360,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             <h3 className="text-xl font-bold">Sales Challenges</h3>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
             {availableSalesChallenges.length > 0 ? availableSalesChallenges.map((reward) => {
               return (
@@ -379,10 +390,9 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   <Button
                     size="sm"
                     fullWidth
-                    onClick={() => activateChallenge(reward.id)}
-                    disabled={activating === reward.id}
+                    onClick={() => openActivateModal(reward)}
                   >
-                    {activating === reward.id ? 'Activating...' : 'Start Challenge'}
+                    Start Challenge
                   </Button>
                 </div>
               );
@@ -405,7 +415,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             <h3 className="text-xl font-bold">Lead Challenges</h3>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
             {availableLeadChallenges.length > 0 ? availableLeadChallenges.map((reward) => {
               return (
@@ -435,10 +445,9 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   <Button
                     size="sm"
                     fullWidth
-                    onClick={() => activateChallenge(reward.id)}
-                    disabled={activating === reward.id}
+                    onClick={() => openActivateModal(reward)}
                   >
-                    {activating === reward.id ? 'Activating...' : 'Start Challenge'}
+                    Start Challenge
                   </Button>
                 </div>
               );
@@ -461,7 +470,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             <h3 className="text-xl font-bold">Coming Soon</h3>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
             {upcomingRewards.length > 0 ? upcomingRewards.map((reward) => (
               <div
@@ -590,6 +599,60 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </div>
         </div>
       </div>
+
+      {/* Activate Challenge Modal */}
+      {showActivateModal && selectedReward && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`bg-gradient-to-br ${getBadgeColor(selectedReward.badge_color)} rounded-lg p-3 text-white`}>
+                {getRewardIcon(selectedReward.reward_type, 'white')}
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">{selectedReward.title}</h3>
+            </div>
+
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg p-4 mb-4">
+              <p className="text-sm font-semibold text-amber-900 mb-2">Challenge Reward:</p>
+              <p className="text-lg font-bold text-amber-700">{selectedReward.reward_description}</p>
+            </div>
+
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+              <p className="text-sm font-semibold text-gray-700 mb-2">Your Goal:</p>
+              <p className="text-sm text-gray-900">{selectedReward.requirement_description}</p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <p className="text-sm font-semibold text-blue-900 mb-2">How It Works:</p>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Your progress will be tracked automatically</li>
+                <li>• View real-time updates in "Active Challenges"</li>
+                <li>• Claim your reward when you reach 100%</li>
+                <li>• You can activate multiple challenges at once</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                fullWidth
+                onClick={() => {
+                  setShowActivateModal(false);
+                  setSelectedReward(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                fullWidth
+                onClick={confirmActivateChallenge}
+                disabled={activating === selectedReward.id}
+              >
+                {activating === selectedReward.id ? 'Activating...' : 'Start Tracking'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

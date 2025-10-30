@@ -1589,7 +1589,7 @@ export default function PartnerDashboardPage() {
         <div className="space-y-8">
           <GiveawaySection
             partnerId={nonprofit.id}
-            totalSales={nonprofit.total_sales}
+            totalSales={Number(nonprofit.total_sales)}
             organizationName={nonprofit.organization_name}
           />
           <GiveawayEntriesTab partnerId={nonprofit.id} />

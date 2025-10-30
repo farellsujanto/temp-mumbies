@@ -139,28 +139,18 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 rounded-lg p-8 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-10">
-          <Gift className="h-64 w-64" />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <Sparkles className="h-8 w-8" />
-            <h2 className="text-3xl font-bold">Giveaway Marketing</h2>
+      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 rounded-lg p-4 text-white">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-5 w-5" />
+              <h2 className="text-xl font-bold">Giveaway Marketing</h2>
+            </div>
+            <p className="text-sm opacity-90">
+              Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
+            </p>
           </div>
-          <p className="text-lg mb-4">
-            Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
-          </p>
-          <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4">
-            <h3 className="font-bold mb-2">How It Works:</h3>
-            <ul className="space-y-1 text-sm">
-              <li>• Hit sales milestones to unlock giveaway bundles</li>
-              <li>• Create your custom giveaway with auto-generated landing page</li>
-              <li>• Share the link on social media to collect entries</li>
-              <li>• Every entry becomes a qualified lead in your dashboard</li>
-              <li>• Winner is auto-selected when giveaway ends</li>
-            </ul>
-          </div>
+          <Gift className="h-16 w-16 opacity-20" />
         </div>
       </div>
 
