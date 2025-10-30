@@ -1566,6 +1566,7 @@ export default function PartnerDashboardPage() {
         <RewardsTab
           partnerId={nonprofit.id}
           organizationName={nonprofit.organization_name}
+          totalSales={nonprofit.total_sales}
         />
       )}
 

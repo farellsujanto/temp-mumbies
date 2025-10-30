@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trophy, Gift, Zap, Target, Calendar, TrendingUp, Award, Star, Flame, Crown, CheckCircle, Clock, Users, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
+import GiveawaySection from './GiveawaySection';
 
 interface Reward {
   id: string;
@@ -37,9 +38,10 @@ interface RewardProgress {
 interface RewardsTabProps {
   partnerId: string;
   organizationName: string;
+  totalSales: number;
 }
 
-export default function RewardsTab({ partnerId, organizationName }: RewardsTabProps) {
+export default function RewardsTab({ partnerId, organizationName, totalSales }: RewardsTabProps) {
   const [activeRewards, setActiveRewards] = useState<Reward[]>([]);
   const [upcomingRewards, setUpcomingRewards] = useState<Reward[]>([]);
   const [myProgress, setMyProgress] = useState<Record<string, RewardProgress>>({});
@@ -457,6 +459,13 @@ export default function RewardsTab({ partnerId, organizationName }: RewardsTabPr
         </div>
       )}
 
+      {/* Giveaway System */}
+      <GiveawaySection
+        partnerId={partnerId}
+        totalSales={totalSales}
+        organizationName={organizationName}
+      />
+
       {/* How Rewards Work */}
       <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -480,6 +489,7 @@ export default function RewardsTab({ partnerId, organizationName }: RewardsTabPr
               <li>• <strong>Free Products:</strong> Complimentary premium items</li>
               <li>• <strong>Gift Cards:</strong> Mumbies shopping credit</li>
               <li>• <strong>Commission Boosts:</strong> Temporary or permanent increases</li>
+              <li>• <strong>Giveaway Bundles:</strong> Sponsored prizes to build your audience</li>
             </ul>
           </div>
         </div>

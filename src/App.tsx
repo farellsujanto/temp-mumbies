@@ -18,6 +18,7 @@ import PartnerLoginPage from './pages/PartnerLoginPage';
 import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import { ImpactPage } from './pages/ImpactPage';
 import LeadRegistrationPage from './pages/LeadRegistrationPage';
+import GiveawayPage from './pages/GiveawayPage';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
               <Route path="/partner/apply" element={<PartnerApplyPage />} />
               <Route path="/partner/login" element={<PartnerLoginPage />} />
               <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
+              <Route path="/giveaway/:slug" element={<GiveawayPage />} />
               <Route path="/impact" element={<ImpactPage />} />
             </Routes>
           </Layout>
