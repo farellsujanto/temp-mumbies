@@ -193,59 +193,54 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Left Column: No Sales Yet */}
         <div>
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <AlertCircle className="h-6 w-6 text-blue-600" />
+          <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-blue-600" />
             Partners With No Sales Yet
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-xs text-gray-600 mb-3">
             These partners are approved but haven't made their first sale. Reach out to help them get started!
           </p>
 
           {activeNoSales.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-              <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">All your active referrals have made sales!</p>
+            <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+              <CheckCircle className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600">All your active referrals have made sales!</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {activeNoSales.map((partner) => (
                 <div
                   key={partner.id}
-                  className={`border rounded-lg p-6 ${getUrgencyColor(partner.days_until_deadline || 0)}`}
+                  className={`border rounded-lg p-4 ${getUrgencyColor(partner.days_until_deadline || 0)}`}
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-lg">
+                      <h4 className="font-semibold text-sm">
                         {partner.referred_nonprofit?.organization_name || partner.referred_email}
                       </h4>
-                      {partner.referred_nonprofit?.contact_name && (
-                        <p className="text-sm opacity-80">
-                          Contact: {partner.referred_nonprofit.contact_name}
-                        </p>
-                      )}
-                      <p className="text-sm opacity-80 mt-1">
+                      <p className="text-xs opacity-80 mt-0.5">
                         {partner.referred_email}
                       </p>
                     </div>
-                    <span className="px-3 py-1 bg-white rounded-full text-xs font-semibold whitespace-nowrap">
+                    <span className="px-2 py-0.5 bg-white rounded-full text-xs font-semibold whitespace-nowrap ml-2">
                       {partner.days_until_deadline} days left
                     </span>
                   </div>
 
-                  <div className="bg-white rounded-lg p-4 border border-current border-opacity-20 mb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-semibold">Sales Progress</span>
-                      <span className="text-sm font-bold">$0 / $500</span>
+                  <div className="bg-white rounded-lg p-3 border border-current border-opacity-20 mb-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold">Sales Progress</span>
+                      <span className="text-xs font-bold">$0 / $500</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-current h-2 rounded-full" style={{ width: '0%' }}></div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div className="bg-current h-1.5 rounded-full" style={{ width: '0%' }}></div>
                     </div>
-                    <p className="text-xs mt-2 opacity-70">
+                    <p className="text-xs mt-1.5 opacity-70">
                       Needs $500 in sales by {new Date(partner.deadline!).toLocaleDateString()}
                     </p>
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -264,73 +259,59 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
 
         {/* Right Column: Need Help Reaching Goal */}
         <div>
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Target className="h-6 w-6 text-orange-600" />
+          <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+            <Target className="h-5 w-5 text-orange-600" />
             Partners Close to Goal
           </h3>
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-xs text-gray-600 mb-3">
             These partners have made sales but need to reach $500 before the deadline. Help them cross the finish line!
           </p>
 
           {activeNeedsHelp.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-              <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No partners currently between $1-$499 in sales</p>
+            <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-200">
+              <CheckCircle className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <p className="text-sm text-gray-600">No partners currently between $1-$499 in sales</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {activeNeedsHelp.map((partner) => (
                 <div
                   key={partner.id}
-                  className={`border rounded-lg p-6 ${getUrgencyColor(partner.days_until_deadline || 0)}`}
+                  className={`border rounded-lg p-4 ${getUrgencyColor(partner.days_until_deadline || 0)}`}
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-lg">
+                      <h4 className="font-semibold text-sm">
                         {partner.referred_nonprofit?.organization_name || partner.referred_email}
                       </h4>
-                      {partner.referred_nonprofit?.contact_name && (
-                        <p className="text-sm opacity-80">
-                          Contact: {partner.referred_nonprofit.contact_name}
-                        </p>
-                      )}
-                      <p className="text-sm opacity-80 mt-1">
+                      <p className="text-xs opacity-80 mt-0.5">
                         {partner.referred_email}
                       </p>
                     </div>
-                    <span className="px-3 py-1 bg-white rounded-full text-xs font-semibold whitespace-nowrap">
+                    <span className="px-2 py-0.5 bg-white rounded-full text-xs font-semibold whitespace-nowrap ml-2">
                       {partner.days_until_deadline} days left
                     </span>
                   </div>
 
-                  <div className="bg-white rounded-lg p-4 border border-current border-opacity-20 mb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-semibold">Sales Progress</span>
-                      <span className="text-sm font-bold">
+                  <div className="bg-white rounded-lg p-3 border border-current border-opacity-20 mb-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold">Sales Progress</span>
+                      <span className="text-xs font-bold">
                         ${partner.total_sales.toFixed(2)} / $500
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
                       <div
-                        className="bg-current h-2 rounded-full"
+                        className="bg-current h-1.5 rounded-full"
                         style={{ width: `${(partner.total_sales / 500) * 100}%` }}
                       ></div>
                     </div>
-                    <p className="text-xs mt-2 opacity-70">
+                    <p className="text-xs mt-1.5 opacity-70">
                       ${partner.sales_needed?.toFixed(2)} more needed by {new Date(partner.deadline!).toLocaleDateString()}
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-lg p-3 mb-3 border border-current border-opacity-20">
-                    <p className="text-xs font-semibold mb-1">So close! They need:</p>
-                    <ul className="text-xs opacity-80 space-y-1">
-                      <li>• Just ${partner.sales_needed?.toFixed(2)} more in sales</li>
-                      <li>• Then you earn your $1,000 bounty!</li>
-                      <li>• And they keep earning 5% forever</li>
-                    </ul>
-                  </div>
-
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -351,25 +332,25 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
       {/* Bottom Sections */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Pending Partners */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
             <Clock className="h-5 w-5 text-gray-600" />
             Pending Approval
           </h3>
           {pendingPartners.length === 0 ? (
-            <p className="text-gray-500 text-sm">No pending referrals</p>
+            <p className="text-gray-500 text-xs">No pending referrals</p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {pendingPartners.map((partner) => (
-                <div key={partner.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={partner.id} className="border border-gray-200 rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold">{partner.referred_email}</p>
+                      <p className="font-semibold text-sm">{partner.referred_email}</p>
                       <p className="text-xs text-gray-500">
                         Applied: {new Date(partner.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">
+                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">
                       Pending
                     </span>
                   </div>
@@ -380,20 +361,20 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
         </div>
 
         {/* Qualified Partners */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-emerald-600" />
             Qualified Partners
           </h3>
           {qualified.length === 0 ? (
-            <p className="text-gray-500 text-sm">No qualified referrals yet</p>
+            <p className="text-gray-500 text-xs">No qualified referrals yet</p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {qualified.map((partner) => (
-                <div key={partner.id} className="border border-emerald-200 bg-emerald-50 rounded-lg p-4">
+                <div key={partner.id} className="border border-emerald-200 bg-emerald-50 rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-emerald-900">
+                      <p className="font-semibold text-sm text-emerald-900">
                         {partner.referred_nonprofit?.organization_name || partner.referred_email}
                       </p>
                       <p className="text-xs text-emerald-700">
@@ -401,10 +382,10 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-emerald-600">
+                      <p className="text-base font-bold text-emerald-600">
                         ${partner.bounty_amount.toFixed(2)}
                       </p>
-                      <span className="px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
+                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
                         {partner.status === 'paid' ? 'Paid' : 'Qualified'}
                       </span>
                     </div>
