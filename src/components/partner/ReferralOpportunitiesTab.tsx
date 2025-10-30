@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, Mail, CheckCircle, Target, Calendar } from 'lucide-react';
+import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, Mail, CheckCircle, Target, Calendar, Copy, Send, Users } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
 
@@ -34,10 +34,60 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
   const [activeNeedsHelp, setActiveNeedsHelp] = useState<ReferralPartner[]>([]);
   const [qualified, setQualified] = useState<ReferralPartner[]>([]);
   const [loading, setLoading] = useState(true);
+  const [referralEmail, setReferralEmail] = useState('');
+  const [sendingReferral, setSendingReferral] = useState(false);
+  const [referralCopied, setReferralCopied] = useState(false);
+  const [referralLink, setReferralLink] = useState('');
+  const [referralCode, setReferralCode] = useState('');
 
   useEffect(() => {
     fetchReferralData();
+    loadPartnerData();
   }, [partnerId]);
+
+  const loadPartnerData = async () => {
+    const { data: nonprofit } = await supabase
+      .from('nonprofits')
+      .select('referral_link, referral_code, slug')
+      .eq('id', partnerId)
+      .maybeSingle();
+
+    if (nonprofit) {
+      setReferralLink(nonprofit.referral_link || `${window.location.origin}/partner/apply?ref=${nonprofit.referral_code}`);
+      setReferralCode(nonprofit.referral_code || '');
+    }
+  };
+
+  const copyReferralCode = () => {
+    navigator.clipboard.writeText(referralLink);
+    setReferralCopied(true);
+    setTimeout(() => setReferralCopied(false), 2000);
+  };
+
+  const sendReferralEmail = async () => {
+    if (!referralEmail) return;
+
+    setSendingReferral(true);
+    try {
+      const { error } = await supabase
+        .from('nonprofit_referrals')
+        .insert({
+          referrer_nonprofit_id: partnerId,
+          referred_email: referralEmail,
+          referral_code: referralCode,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      alert('Referral invite sent successfully!');
+      setReferralEmail('');
+      fetchReferralData();
+    } catch (error) {
+      alert('Error sending referral invite. Please try again.');
+    }
+    setSendingReferral(false);
+  };
 
   const fetchReferralData = async () => {
     setLoading(true);
@@ -153,6 +203,75 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
               </p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Referral Tools */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left: Referral Link & Email */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-4">Share Your Referral Link</h3>
+
+          {/* Referral Link */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Link</label>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                readOnly
+                value={referralLink}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+              />
+              <Button onClick={copyReferralCode}>
+                {referralCopied ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Send Email Invite */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Send Email Invite</label>
+            <div className="flex gap-3">
+              <input
+                type="email"
+                value={referralEmail}
+                onChange={(e) => setReferralEmail(e.target.value)}
+                placeholder="nonprofit@example.com"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+              />
+              <Button
+                onClick={sendReferralEmail}
+                disabled={sendingReferral || !referralEmail}
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {sendingReferral ? 'Sending...' : 'Send Invite'}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: How it Works */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+          <h4 className="font-semibold text-lg text-gray-900 mb-3 flex items-center gap-2">
+            <Gift className="h-5 w-5 text-amber-600" />
+            How Partner Referrals Work
+          </h4>
+          <ol className="space-y-2 text-sm text-gray-700">
+            <li>1. Share your referral link with other nonprofits</li>
+            <li>2. They apply using your link and get approved</li>
+            <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
+            <li>4. Earnings are automatically added to your balance</li>
+          </ol>
         </div>
       </div>
 

@@ -711,6 +711,42 @@ export default function PartnerDashboardPage() {
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="space-y-8">
+          {/* Welcome Video Info Box */}
+          <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white">
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold mb-3">Welcome to the Partner Program!</h2>
+                <p className="text-green-100 mb-4">
+                  Watch this quick video to learn how to maximize your earnings and make the most of your partnership with Mumbies.
+                </p>
+                <ul className="space-y-2 text-sm text-green-50">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                    <span>Share your unique referral link to earn 5% on all sales</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                    <span>Refer other nonprofits and earn $1,000 per qualified partner</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                    <span>Run giveaways to grow your audience and generate leads</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="w-full lg:w-96 flex-shrink-0">
+                <div className="bg-gray-900 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="bg-white bg-opacity-20 rounded-full p-4 inline-block mb-2">
+                      <MessageSquare className="h-8 w-8" />
+                    </div>
+                    <p className="text-sm text-gray-300">Video Coming Soon</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Stats - Five Across */}
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
@@ -1386,141 +1422,10 @@ export default function PartnerDashboardPage() {
 
       {/* Referrals Tab */}
       {activeTab === 'referrals' && nonprofit && (
-        <div className="space-y-6">
-          {/* Hero */}
-          <div className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-lg p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="h-5 w-5" />
-                  <h2 className="text-xl font-bold">Partner Referrals</h2>
-                </div>
-                <p className="text-sm opacity-90">
-                  Earn $1,000 for every nonprofit partner you refer that reaches $500 in sales within 6 months!
-                </p>
-              </div>
-              <Gift className="h-16 w-16 opacity-20" />
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Total Referrals</span>
-                <Users className="h-5 w-5 text-blue-600" />
-              </div>
-              <p className="text-3xl font-bold text-blue-600">
-                {referrals.length}
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Partners Joined</span>
-                <CheckCircle className="h-5 w-5 text-green-600" />
-              </div>
-              <p className="text-3xl font-bold text-green-600">
-                {referrals.filter(r => r.status !== 'pending').length}
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Qualified</span>
-                <Gift className="h-5 w-5 text-amber-600" />
-              </div>
-              <p className="text-3xl font-bold text-amber-600">
-                {nonprofit.qualified_referrals_count || 0}
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Total Earned</span>
-                <DollarSign className="h-5 w-5 text-emerald-600" />
-              </div>
-              <p className="text-3xl font-bold text-emerald-600">
-                ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
-              </p>
-            </div>
-          </div>
-
-          {/* Referral Tools */}
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Left: Referral Link & Email */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Share Your Referral Link</h3>
-
-              {/* Referral Link */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Link</label>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    readOnly
-                    value={nonprofit.referral_link || `${window.location.origin}/partner/apply?ref=${nonprofit.referral_code}`}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
-                  />
-                  <Button onClick={copyReferralCode}>
-                    {referralCopied ? (
-                      <>
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Send Email Invite */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Send Email Invite</label>
-                <div className="flex gap-3">
-                  <input
-                    type="email"
-                    value={referralEmail}
-                    onChange={(e) => setReferralEmail(e.target.value)}
-                    placeholder="nonprofit@example.com"
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
-                  />
-                  <Button
-                    onClick={sendReferralEmail}
-                    disabled={sendingReferral || !referralEmail}
-                  >
-                    <Send className="h-4 w-4 mr-2" />
-                    {sendingReferral ? 'Sending...' : 'Send Invite'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: How it Works */}
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-              <h4 className="font-semibold text-lg text-gray-900 mb-3 flex items-center gap-2">
-                <Gift className="h-5 w-5 text-amber-600" />
-                How Partner Referrals Work
-              </h4>
-              <ol className="space-y-2 text-sm text-gray-700">
-                <li>1. Share your referral link with other nonprofits</li>
-                <li>2. They apply using your link and get approved</li>
-                <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
-                <li>4. Earnings are automatically added to your balance</li>
-              </ol>
-            </div>
-          </div>
-
-          {/* Referral Opportunities Component */}
-          <ReferralOpportunitiesTab
-            partnerId={nonprofit.id}
-            organizationName={nonprofit.organization_name}
-          />
-        </div>
+        <ReferralOpportunitiesTab
+          partnerId={nonprofit.id}
+          organizationName={nonprofit.organization_name}
+        />
       )}
 
       {/* Opportunities Tab */}

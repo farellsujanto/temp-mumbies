@@ -421,7 +421,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
                   />
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  {availableProducts.length > 0 && renderProductGrid(wishlistProducts, 'wishlist')}
+                  {renderProductGrid(wishlistProducts, 'wishlist')}
                 </div>
               </>
             )}
@@ -500,7 +500,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
                   />
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  {availableProducts.length > 0 && renderProductGrid(recommendedProducts, 'recommended')}
+                  {renderProductGrid(recommendedProducts, 'recommended')}
                 </div>
               </>
             )}
@@ -605,7 +605,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
                   />
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  {availableProducts.length > 0 && renderProductGrid(bundleProducts, 'bundle', 5)}
+                  {renderProductGrid(bundleProducts, 'bundle', 5)}
                 </div>
               </>
             )}
