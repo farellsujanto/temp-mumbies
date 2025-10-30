@@ -1,0 +1,420 @@
+import { useState, useEffect } from 'react';
+import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, Mail, CheckCircle, Target, Calendar } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import Button from '../Button';
+
+interface ReferralPartner {
+  id: string;
+  referred_email: string;
+  referral_code: string;
+  status: string;
+  signup_date: string | null;
+  qualification_date: string | null;
+  total_sales: number;
+  bounty_amount: number;
+  created_at: string;
+  referred_nonprofit?: {
+    organization_name: string;
+    contact_name: string | null;
+    total_sales: number;
+  };
+  days_until_deadline?: number;
+  deadline?: string;
+  sales_needed?: number;
+}
+
+interface ReferralOpportunitiesTabProps {
+  partnerId: string;
+  organizationName: string;
+}
+
+export default function ReferralOpportunitiesTab({ partnerId, organizationName }: ReferralOpportunitiesTabProps) {
+  const [pendingPartners, setPendingPartners] = useState<ReferralPartner[]>([]);
+  const [activeNoSales, setActiveNoSales] = useState<ReferralPartner[]>([]);
+  const [activeNeedsHelp, setActiveNeedsHelp] = useState<ReferralPartner[]>([]);
+  const [qualified, setQualified] = useState<ReferralPartner[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchReferralData();
+  }, [partnerId]);
+
+  const fetchReferralData = async () => {
+    setLoading(true);
+
+    const { data: referrals, error } = await supabase
+      .from('nonprofit_referrals')
+      .select(`
+        id,
+        referred_email,
+        referral_code,
+        status,
+        signup_date,
+        qualification_date,
+        total_sales,
+        bounty_amount,
+        created_at,
+        referred_nonprofit_id
+      `)
+      .eq('referrer_nonprofit_id', partnerId)
+      .order('created_at', { ascending: false });
+
+    if (!error && referrals) {
+      const pending: ReferralPartner[] = [];
+      const activeNoSalesArr: ReferralPartner[] = [];
+      const activeNeedsHelpArr: ReferralPartner[] = [];
+      const qualifiedArr: ReferralPartner[] = [];
+
+      for (const referral of referrals) {
+        let processedReferral: ReferralPartner = {
+          ...referral,
+          signup_date: referral.signup_date || referral.created_at,
+        };
+
+        if (referral.referred_nonprofit_id) {
+          const { data: nonprofitData } = await supabase
+            .from('nonprofits')
+            .select('organization_name, contact_name, total_sales')
+            .eq('id', referral.referred_nonprofit_id)
+            .maybeSingle();
+
+          if (nonprofitData) {
+            processedReferral.referred_nonprofit = nonprofitData;
+          }
+        }
+
+        const signupDate = new Date(referral.signup_date || referral.created_at);
+        const deadline = new Date(signupDate.getTime() + 180 * 24 * 60 * 60 * 1000);
+        const now = new Date();
+        const daysUntilDeadline = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+        processedReferral.days_until_deadline = daysUntilDeadline;
+        processedReferral.deadline = deadline.toISOString();
+        processedReferral.sales_needed = Math.max(0, 500 - referral.total_sales);
+
+        if (referral.status === 'pending') {
+          pending.push(processedReferral);
+        } else if (referral.status === 'active') {
+          if (referral.total_sales === 0) {
+            activeNoSalesArr.push(processedReferral);
+          } else if (referral.total_sales < 500) {
+            activeNeedsHelpArr.push(processedReferral);
+          }
+        } else if (referral.status === 'qualified' || referral.status === 'paid') {
+          qualifiedArr.push(processedReferral);
+        }
+      }
+
+      setPendingPartners(pending);
+      setActiveNoSales(activeNoSalesArr);
+      setActiveNeedsHelp(activeNeedsHelpArr);
+      setQualified(qualifiedArr);
+    }
+
+    setLoading(false);
+  };
+
+  const sendEncouragementEmail = async (partner: ReferralPartner) => {
+    alert(`Feature coming soon: Send personalized encouragement email to ${partner.referred_email}`);
+  };
+
+  const getUrgencyColor = (days: number) => {
+    if (days <= 30) return 'text-red-600 bg-red-50 border-red-200';
+    if (days <= 60) return 'text-orange-600 bg-orange-50 border-orange-200';
+    if (days <= 90) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    return 'text-blue-600 bg-blue-50 border-blue-200';
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+        <p className="text-gray-600 mt-4">Loading referral opportunities...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header Stats */}
+      <div className="grid md:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <Clock className="h-8 w-8 text-gray-600" />
+            <span className="text-3xl font-bold text-gray-600">{pendingPartners.length}</span>
+          </div>
+          <h3 className="font-semibold text-gray-900">Pending</h3>
+          <p className="text-sm text-gray-700">Not yet approved</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <AlertCircle className="h-8 w-8 text-blue-600" />
+            <span className="text-3xl font-bold text-blue-600">{activeNoSales.length}</span>
+          </div>
+          <h3 className="font-semibold text-blue-900">No Sales Yet</h3>
+          <p className="text-sm text-blue-700">Need first sale</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <Target className="h-8 w-8 text-orange-600" />
+            <span className="text-3xl font-bold text-orange-600">{activeNeedsHelp.length}</span>
+          </div>
+          <h3 className="font-semibold text-orange-900">Need to Hit Goal</h3>
+          <p className="text-sm text-orange-700">Under $500 in sales</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <CheckCircle className="h-8 w-8 text-emerald-600" />
+            <span className="text-3xl font-bold text-emerald-600">{qualified.length}</span>
+          </div>
+          <h3 className="font-semibold text-emerald-900">Qualified</h3>
+          <p className="text-sm text-emerald-700">$1,000 earned!</p>
+        </div>
+      </div>
+
+      {/* Info Banner */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+          <Gift className="h-5 w-5 text-blue-600" />
+          Help Your Referrals Succeed
+        </h3>
+        <ul className="space-y-2 text-sm text-gray-700">
+          <li>• <strong>Reach out personally</strong> to partners who haven't made their first sale yet</li>
+          <li>• <strong>Share tips and strategies</strong> that worked for you with partners close to the deadline</li>
+          <li>• <strong>Remind them of the 6-month deadline</strong> to reach $500 in sales</li>
+          <li>• <strong>You both win</strong> when they succeed - they get ongoing 5% commissions, you get $1,000!</li>
+        </ul>
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left Column: No Sales Yet */}
+        <div>
+          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <AlertCircle className="h-6 w-6 text-blue-600" />
+            Partners With No Sales Yet
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            These partners are approved but haven't made their first sale. Reach out to help them get started!
+          </p>
+
+          {activeNoSales.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+              <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">All your active referrals have made sales!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {activeNoSales.map((partner) => (
+                <div
+                  key={partner.id}
+                  className={`border rounded-lg p-6 ${getUrgencyColor(partner.days_until_deadline || 0)}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg">
+                        {partner.referred_nonprofit?.organization_name || partner.referred_email}
+                      </h4>
+                      {partner.referred_nonprofit?.contact_name && (
+                        <p className="text-sm opacity-80">
+                          Contact: {partner.referred_nonprofit.contact_name}
+                        </p>
+                      )}
+                      <p className="text-sm opacity-80 mt-1">
+                        {partner.referred_email}
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 bg-white rounded-full text-xs font-semibold whitespace-nowrap">
+                      {partner.days_until_deadline} days left
+                    </span>
+                  </div>
+
+                  <div className="bg-white rounded-lg p-4 border border-current border-opacity-20 mb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold">Sales Progress</span>
+                      <span className="text-sm font-bold">$0 / $500</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-current h-2 rounded-full" style={{ width: '0%' }}></div>
+                    </div>
+                    <p className="text-xs mt-2 opacity-70">
+                      Needs $500 in sales by {new Date(partner.deadline!).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => sendEncouragementEmail(partner)}
+                      className="flex-1"
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send Encouragement
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Column: Need Help Reaching Goal */}
+        <div>
+          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Target className="h-6 w-6 text-orange-600" />
+            Partners Close to Goal
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            These partners have made sales but need to reach $500 before the deadline. Help them cross the finish line!
+          </p>
+
+          {activeNeedsHelp.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+              <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No partners currently between $1-$499 in sales</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {activeNeedsHelp.map((partner) => (
+                <div
+                  key={partner.id}
+                  className={`border rounded-lg p-6 ${getUrgencyColor(partner.days_until_deadline || 0)}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg">
+                        {partner.referred_nonprofit?.organization_name || partner.referred_email}
+                      </h4>
+                      {partner.referred_nonprofit?.contact_name && (
+                        <p className="text-sm opacity-80">
+                          Contact: {partner.referred_nonprofit.contact_name}
+                        </p>
+                      )}
+                      <p className="text-sm opacity-80 mt-1">
+                        {partner.referred_email}
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 bg-white rounded-full text-xs font-semibold whitespace-nowrap">
+                      {partner.days_until_deadline} days left
+                    </span>
+                  </div>
+
+                  <div className="bg-white rounded-lg p-4 border border-current border-opacity-20 mb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold">Sales Progress</span>
+                      <span className="text-sm font-bold">
+                        ${partner.total_sales.toFixed(2)} / $500
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-current h-2 rounded-full"
+                        style={{ width: `${(partner.total_sales / 500) * 100}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs mt-2 opacity-70">
+                      ${partner.sales_needed?.toFixed(2)} more needed by {new Date(partner.deadline!).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="bg-white rounded-lg p-3 mb-3 border border-current border-opacity-20">
+                    <p className="text-xs font-semibold mb-1">So close! They need:</p>
+                    <ul className="text-xs opacity-80 space-y-1">
+                      <li>• Just ${partner.sales_needed?.toFixed(2)} more in sales</li>
+                      <li>• Then you earn your $1,000 bounty!</li>
+                      <li>• And they keep earning 5% forever</li>
+                    </ul>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => sendEncouragementEmail(partner)}
+                      className="flex-1"
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send Support Email
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Sections */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Pending Partners */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Clock className="h-5 w-5 text-gray-600" />
+            Pending Approval
+          </h3>
+          {pendingPartners.length === 0 ? (
+            <p className="text-gray-500 text-sm">No pending referrals</p>
+          ) : (
+            <div className="space-y-3">
+              {pendingPartners.map((partner) => (
+                <div key={partner.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold">{partner.referred_email}</p>
+                      <p className="text-xs text-gray-500">
+                        Applied: {new Date(partner.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">
+                      Pending
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Qualified Partners */}
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-emerald-600" />
+            Qualified Partners
+          </h3>
+          {qualified.length === 0 ? (
+            <p className="text-gray-500 text-sm">No qualified referrals yet</p>
+          ) : (
+            <div className="space-y-3">
+              {qualified.map((partner) => (
+                <div key={partner.id} className="border border-emerald-200 bg-emerald-50 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-emerald-900">
+                        {partner.referred_nonprofit?.organization_name || partner.referred_email}
+                      </p>
+                      <p className="text-xs text-emerald-700">
+                        Qualified: {partner.qualification_date ? new Date(partner.qualification_date).toLocaleDateString() : 'N/A'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-emerald-600">
+                        ${partner.bounty_amount.toFixed(2)}
+                      </p>
+                      <span className="px-2 py-1 bg-emerald-100 text-emerald-800 rounded text-xs font-medium">
+                        {partner.status === 'paid' ? 'Paid' : 'Qualified'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

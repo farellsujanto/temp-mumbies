@@ -26,6 +26,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import OpportunitiesTab from '../components/partner/OpportunitiesTab';
+import ReferralOpportunitiesTab from '../components/partner/ReferralOpportunitiesTab';
 
 interface NonprofitData {
   id: string;
@@ -1239,7 +1240,7 @@ export default function PartnerDashboardPage() {
       )}
 
       {/* Referrals Tab */}
-      {activeTab === 'referrals' && (
+      {activeTab === 'referrals' && nonprofit && (
         <div className="space-y-6">
           {/* Referral Program Banner */}
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6">
@@ -1334,68 +1335,11 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
 
-          {/* Referrals List */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Your Referrals</h3>
-            {referrals.length > 0 ? (
-              <div className="space-y-3">
-                {referrals.map((referral) => {
-                  const signupDate = new Date(referral.created_at);
-                  const qualifyByDate = new Date(signupDate.getTime() + 180 * 24 * 60 * 60 * 1000);
-
-                  let statusText = '';
-                  if (referral.status === 'pending') statusText = 'Pending';
-                  else if (referral.status === 'active') statusText = 'Active';
-                  else if (referral.status === 'qualified') statusText = 'Qualified for bounty!';
-                  else if (referral.status === 'paid') statusText = 'Bounty paid';
-
-                  return (
-                    <div
-                      key={referral.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <p className="font-medium">{referral.referred_email}</p>
-                        <p className="text-sm text-gray-600">
-                          Status: {statusText}
-                        </p>
-                        {(referral.status === 'pending' || referral.status === 'active') && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            Signed up: {signupDate.toLocaleDateString('en-US', {
-                              month: 'numeric',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        {referral.status === 'qualified' || referral.status === 'paid' ? (
-                          <p className="text-lg font-bold text-amber-600">
-                            ${referral.bounty_amount.toFixed(2)}
-                          </p>
-                        ) : (
-                          <p className="text-sm text-gray-500">
-                            {qualifyByDate.toLocaleDateString('en-US', {
-                              month: 'numeric',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <Gift className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                <p>No referrals yet</p>
-                <p className="text-sm">Start referring nonprofits to earn bounties!</p>
-              </div>
-            )}
-          </div>
+          {/* Referral Opportunities Component */}
+          <ReferralOpportunitiesTab
+            partnerId={nonprofit.id}
+            organizationName={nonprofit.organization_name}
+          />
         </div>
       )}
 
