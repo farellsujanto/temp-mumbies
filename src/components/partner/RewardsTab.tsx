@@ -44,8 +44,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
   const [activeRewards, setActiveRewards] = useState<Reward[]>([]);
   const [upcomingRewards, setUpcomingRewards] = useState<Reward[]>([]);
   const [myProgress, setMyProgress] = useState<Record<string, RewardProgress>>({});
+  const [completedRewards, setCompletedRewards] = useState<RewardProgress[]>([]);
   const [completedCount, setCompletedCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [activating, setActivating] = useState<string | null>(null);
 
   useEffect(() => {
     fetchRewardsData();
@@ -76,12 +78,21 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       .select('*')
       .eq('partner_id', partnerId);
 
-    // Fetch completed count
-    const { count } = await supabase
+    // Fetch completed rewards
+    const { data: completed } = await supabase
       .from('partner_reward_progress')
-      .select('*', { count: 'exact', head: true })
+      .select(`
+        *,
+        reward:reward_id (
+          title,
+          reward_description,
+          badge_color,
+          reward_type
+        )
+      `)
       .eq('partner_id', partnerId)
-      .eq('status', 'claimed');
+      .eq('status', 'claimed')
+      .order('claimed_at', { ascending: false });
 
     if (active) setActiveRewards(active);
     if (upcoming) setUpcomingRewards(upcoming);
@@ -92,9 +103,33 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       });
       setMyProgress(progressMap);
     }
-    setCompletedCount(count || 0);
+    if (completed) {
+      setCompletedRewards(completed);
+      setCompletedCount(completed.length);
+    }
 
     setLoading(false);
+  };
+
+  const activateChallenge = async (rewardId: string) => {
+    setActivating(rewardId);
+
+    const { error } = await supabase
+      .from('partner_reward_progress')
+      .insert({
+        partner_id: partnerId,
+        reward_id: rewardId,
+        status: 'in_progress',
+        current_value: 0,
+        target_value: activeRewards.find(r => r.id === rewardId)?.requirement_value || 0,
+        progress_percentage: 0
+      });
+
+    if (!error) {
+      await fetchRewardsData();
+    }
+
+    setActivating(null);
   };
 
   const claimReward = async (rewardId: string, progressId: string) => {
@@ -164,17 +199,12 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     );
   }
 
-  const salesChallenges = activeRewards.filter(r =>
-    ['sales_amount', 'sales_count', 'customer_count', 'time_period'].includes(r.requirement_type) && !r.featured
+  const activeChallenges = activeRewards.filter(r => myProgress[r.id]?.status === 'in_progress');
+  const availableSalesChallenges = activeRewards.filter(r =>
+    ['sales_amount', 'sales_count', 'customer_count', 'time_period'].includes(r.requirement_type) && !myProgress[r.id]
   );
-  const leadChallenges = activeRewards.filter(r =>
-    ['lead_count', 'referral_count'].includes(r.requirement_type) && !r.featured
-  );
-  const featuredSalesChallenges = activeRewards.filter(r =>
-    ['sales_amount', 'sales_count', 'customer_count', 'time_period'].includes(r.requirement_type) && r.featured
-  );
-  const featuredLeadChallenges = activeRewards.filter(r =>
-    ['lead_count', 'referral_count'].includes(r.requirement_type) && r.featured
+  const availableLeadChallenges = activeRewards.filter(r =>
+    ['lead_count', 'referral_count'].includes(r.requirement_type) && !myProgress[r.id]
   );
 
   return (
@@ -225,6 +255,89 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
       </div>
 
+      {/* Active Challenges - Full Width */}
+      {activeChallenges.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Flame className="h-6 w-6 text-orange-600" />
+            <h3 className="text-2xl font-bold">Your Active Challenges</h3>
+            <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-bold">
+              {activeChallenges.length} IN PROGRESS
+            </span>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {activeChallenges.map((reward) => {
+              const progress = myProgress[reward.id];
+              const progressPercent = progress ? progress.progress_percentage : 0;
+              const isCompleted = progress?.status === 'completed';
+              const isClaimed = progress?.status === 'claimed';
+              const timeLeft = getTimeRemaining(reward.ends_at);
+
+              return (
+                <div
+                  key={reward.id}
+                  className="bg-white border-2 border-orange-300 rounded-lg p-4 hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
+                      {getRewardIcon(reward.reward_type, 'white')}
+                    </div>
+                    <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
+                  </div>
+
+                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
+
+                  <div className="bg-amber-50 border border-amber-200 rounded p-2 mb-3">
+                    <p className="text-xs font-bold text-amber-700">{reward.reward_description}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-gray-700">Progress</span>
+                      <span className="text-xs font-bold text-green-600">
+                        {progress.current_value} / {progress.target_value}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                      <div
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full"
+                        style={{ width: `${Math.min(progressPercent, 100)}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-600">{progressPercent}% complete</p>
+                  </div>
+
+                  {timeLeft && (
+                    <div className="flex items-center gap-2 text-xs text-orange-600 mb-2">
+                      <Clock className="h-3 w-3" />
+                      <span className="font-semibold">{timeLeft}</span>
+                    </div>
+                  )}
+
+                  {isClaimed ? (
+                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded font-bold flex items-center justify-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Claimed
+                    </span>
+                  ) : isCompleted ? (
+                    <Button
+                      size="sm"
+                      fullWidth
+                      onClick={() => claimReward(reward.id, progress.id)}
+                    >
+                      Claim Reward
+                    </Button>
+                  ) : (
+                    <p className="text-xs text-center text-gray-500 font-medium">Keep going!</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Three Column Layout: Sales, Leads, Coming Soon */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Sales Challenges */}
@@ -235,12 +348,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </div>
 
           <div className="space-y-4">
-            {[...featuredSalesChallenges, ...salesChallenges].length > 0 ? [...featuredSalesChallenges, ...salesChallenges].map((reward) => {
-              const progress = myProgress[reward.id];
-              const progressPercent = progress ? progress.progress_percentage : 0;
-              const isCompleted = progress?.status === 'completed';
-              const isClaimed = progress?.status === 'claimed';
-
+            {availableSalesChallenges.length > 0 ? availableSalesChallenges.map((reward) => {
               return (
                 <div
                   key={reward.id}
@@ -259,38 +367,20 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                     <p className="text-xs font-bold text-green-700">{reward.reward_description}</p>
                   </div>
 
-                  {progress && (
-                    <div className="mb-3">
-                      <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                        <div
-                          className="bg-green-500 h-2 rounded-full"
-                          style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-600">
-                        {progress.current_value} / {progress.target_value}
-                      </p>
-                    </div>
-                  )}
-
-                  {isClaimed ? (
-                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded font-bold flex items-center justify-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      Claimed
-                    </span>
-                  ) : isCompleted ? (
-                    <Button
-                      size="sm"
-                      fullWidth
-                      onClick={() => claimReward(reward.id, progress.id)}
-                    >
-                      Claim
-                    </Button>
-                  ) : (
-                    <p className="text-xs text-center text-gray-500 font-medium">
-                      {reward.requirement_description}
+                  <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
+                    <p className="text-xs text-gray-600">
+                      <strong>Goal:</strong> {reward.requirement_description}
                     </p>
-                  )}
+                  </div>
+
+                  <Button
+                    size="sm"
+                    fullWidth
+                    onClick={() => activateChallenge(reward.id)}
+                    disabled={activating === reward.id}
+                  >
+                    {activating === reward.id ? 'Activating...' : 'Start Challenge'}
+                  </Button>
                 </div>
               );
             }) : (
@@ -310,12 +400,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </div>
 
           <div className="space-y-4">
-            {[...featuredLeadChallenges, ...leadChallenges].length > 0 ? [...featuredLeadChallenges, ...leadChallenges].map((reward) => {
-              const progress = myProgress[reward.id];
-              const progressPercent = progress ? progress.progress_percentage : 0;
-              const isCompleted = progress?.status === 'completed';
-              const isClaimed = progress?.status === 'claimed';
-
+            {availableLeadChallenges.length > 0 ? availableLeadChallenges.map((reward) => {
               return (
                 <div
                   key={reward.id}
@@ -334,38 +419,20 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                     <p className="text-xs font-bold text-blue-700">{reward.reward_description}</p>
                   </div>
 
-                  {progress && (
-                    <div className="mb-3">
-                      <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-600">
-                        {progress.current_value} / {progress.target_value}
-                      </p>
-                    </div>
-                  )}
-
-                  {isClaimed ? (
-                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded font-bold flex items-center justify-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      Claimed
-                    </span>
-                  ) : isCompleted ? (
-                    <Button
-                      size="sm"
-                      fullWidth
-                      onClick={() => claimReward(reward.id, progress.id)}
-                    >
-                      Claim
-                    </Button>
-                  ) : (
-                    <p className="text-xs text-center text-gray-500 font-medium">
-                      {reward.requirement_description}
+                  <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
+                    <p className="text-xs text-gray-600">
+                      <strong>Goal:</strong> {reward.requirement_description}
                     </p>
-                  )}
+                  </div>
+
+                  <Button
+                    size="sm"
+                    fullWidth
+                    onClick={() => activateChallenge(reward.id)}
+                    disabled={activating === reward.id}
+                  >
+                    {activating === reward.id ? 'Activating...' : 'Start Challenge'}
+                  </Button>
                 </div>
               );
             }) : (
@@ -425,6 +492,62 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
       </div>
 
+      {/* Completed Challenges */}
+      {completedRewards.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Trophy className="h-6 w-6 text-amber-600" />
+            <h3 className="text-2xl font-bold">Completed Challenges</h3>
+            <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-bold">
+              {completedCount} CLAIMED
+            </span>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="max-h-96 overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-semibold">Challenge</th>
+                    <th className="text-left px-4 py-3 font-semibold">Reward</th>
+                    <th className="text-left px-4 py-3 font-semibold">Completed</th>
+                    <th className="text-left px-4 py-3 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {completedRewards.map((progress: any) => (
+                    <tr key={progress.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className={`bg-gradient-to-br ${getBadgeColor(progress.reward?.badge_color)} rounded p-1.5 text-white`}>
+                            {getRewardIcon(progress.reward?.reward_type, 'white')}
+                          </div>
+                          <span className="font-medium">{progress.reward?.title}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="font-semibold text-green-600">
+                          {progress.reward?.reward_description}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {progress.completed_at ? new Date(progress.completed_at).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 w-fit">
+                          <CheckCircle className="h-3 w-3" />
+                          Claimed
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* How Rewards Work */}
       <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -435,10 +558,11 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">Earning Rewards</h4>
             <ul className="space-y-1 text-gray-700">
-              <li>• Complete challenges to unlock rewards automatically</li>
+              <li>• Click "Start Challenge" to activate tracking</li>
               <li>• Track your progress in real-time</li>
-              <li>• Compete with other partners for exclusive prizes</li>
-              <li>• Stack multiple rewards simultaneously</li>
+              <li>• Complete challenges to unlock rewards automatically</li>
+              <li>• Claim rewards when you reach your goal</li>
+              <li>• Stack multiple challenges simultaneously</li>
             </ul>
           </div>
           <div>
@@ -448,7 +572,6 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               <li>• <strong>Free Products:</strong> Complimentary premium items</li>
               <li>• <strong>Gift Cards:</strong> Mumbies shopping credit</li>
               <li>• <strong>Commission Boosts:</strong> Temporary or permanent increases</li>
-              <li>• <strong>Giveaway Bundles:</strong> Sponsored prizes to build your audience</li>
             </ul>
           </div>
         </div>
