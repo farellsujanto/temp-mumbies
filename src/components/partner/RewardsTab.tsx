@@ -354,12 +354,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Sales Challenges */}
         <div className="flex flex-col h-full">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-2">
-              <DollarSign className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="text-xl font-bold">Sales Challenges</h3>
-          </div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <DollarSign className="h-6 w-6 text-green-600" />
+            Sales Challenges
+          </h3>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
@@ -409,12 +407,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
         {/* Lead Challenges */}
         <div className="flex flex-col h-full">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg p-2">
-              <Users className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="text-xl font-bold">Lead Challenges</h3>
-          </div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Users className="h-6 w-6 text-blue-600" />
+            Lead Challenges
+          </h3>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
@@ -464,12 +460,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
         {/* Coming Soon */}
         <div className="flex flex-col h-full">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-2">
-              <Calendar className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="text-xl font-bold">Coming Soon</h3>
-          </div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Calendar className="h-6 w-6 text-purple-600" />
+            Coming Soon
+          </h3>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
