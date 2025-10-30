@@ -10,9 +10,11 @@ interface Review {
   title: string;
   content: string;
   reviewer_name: string;
+  reviewer_location: string;
   verified_purchase: boolean;
   helpful_count: number;
   created_at: string;
+  image_urls: string[];
 }
 
 interface ProductReviewsProps {
@@ -277,11 +279,31 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
             <div className="text-sm text-gray-600 mb-3">
               <span className="font-medium">{review.reviewer_name}</span>
+              {review.reviewer_location && (
+                <>
+                  {' • '}
+                  <span>{review.reviewer_location}</span>
+                </>
+              )}
               {' • '}
               <span>{new Date(review.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
 
             <p className="text-gray-700 leading-relaxed mb-3">{review.content}</p>
+
+            {review.image_urls && review.image_urls.length > 0 && (
+              <div className="flex gap-2 mb-3 flex-wrap">
+                {review.image_urls.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Review image ${index + 1}`}
+                    className="w-24 h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => window.open(url, '_blank')}
+                  />
+                ))}
+              </div>
+            )}
 
             <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
               <ThumbsUp className="h-4 w-4" />
