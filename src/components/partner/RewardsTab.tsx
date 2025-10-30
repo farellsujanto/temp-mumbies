@@ -164,8 +164,18 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     );
   }
 
-  const salesChallenges = activeRewards.filter(r => r.requirement_type === 'sales');
-  const leadChallenges = activeRewards.filter(r => r.requirement_type === 'leads');
+  const salesChallenges = activeRewards.filter(r =>
+    ['sales_amount', 'sales_count', 'customer_count', 'time_period'].includes(r.requirement_type) && !r.featured
+  );
+  const leadChallenges = activeRewards.filter(r =>
+    ['lead_count', 'referral_count'].includes(r.requirement_type) && !r.featured
+  );
+  const featuredSalesChallenges = activeRewards.filter(r =>
+    ['sales_amount', 'sales_count', 'customer_count', 'time_period'].includes(r.requirement_type) && r.featured
+  );
+  const featuredLeadChallenges = activeRewards.filter(r =>
+    ['lead_count', 'referral_count'].includes(r.requirement_type) && r.featured
+  );
 
   return (
     <div className="space-y-6">
@@ -215,137 +225,6 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
       </div>
 
-      {/* Featured Active Rewards */}
-      {activeRewards.filter(r => r.featured).length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Flame className="h-6 w-6 text-orange-500" />
-            <h3 className="text-2xl font-bold">Hot Challenges</h3>
-            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold">LIMITED TIME</span>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {activeRewards.filter(r => r.featured).map((reward) => {
-              const progress = myProgress[reward.id];
-              const progressPercent = progress ? progress.progress_percentage : 0;
-              const isCompleted = progress?.status === 'completed';
-              const isClaimed = progress?.status === 'claimed';
-              const timeLeft = getTimeRemaining(reward.ends_at);
-
-              return (
-                <div
-                  key={reward.id}
-                  className="bg-white border-2 border-gray-200 rounded-lg p-6 relative overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {/* Badge */}
-                  <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${getBadgeColor(reward.badge_color)} opacity-10 rounded-bl-full`}></div>
-
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start gap-3">
-                      <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-3 text-white`}>
-                        {getRewardIcon(reward.reward_type, 'white')}
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-bold text-gray-900">{reward.title}</h4>
-                        <p className="text-sm text-gray-600">{reward.description}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Reward Value */}
-                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4 mb-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-gray-600 mb-1">You'll Earn</p>
-                        <p className="text-xl font-bold text-amber-700">{reward.reward_description}</p>
-                      </div>
-                      <Gift className="h-8 w-8 text-amber-600" />
-                    </div>
-                  </div>
-
-                  {/* Progress */}
-                  {progress ? (
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-gray-700">Your Progress</span>
-                        <span className="text-sm font-bold text-green-600">
-                          {progress.current_value} / {progress.target_value}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3">
-                        <div
-                          className={`bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all`}
-                          style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">{progressPercent}% complete</p>
-                    </div>
-                  ) : (
-                    <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-sm text-blue-700">
-                        <strong>Goal:</strong> {reward.requirement_description}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Competition Info */}
-                  {reward.reward_type === 'competition' && reward.max_winners && (
-                    <div className="flex items-center gap-2 mb-4 text-sm">
-                      <Users className="h-4 w-4 text-purple-600" />
-                      <span className="text-gray-700">
-                        <strong>{reward.current_participants}</strong> competing •
-                        <strong className="text-purple-600 ml-1">{reward.max_winners} winners</strong>
-                      </span>
-                      {progress?.current_rank && (
-                        <span className="ml-auto bg-purple-100 text-purple-700 px-2 py-1 rounded font-bold">
-                          #{progress.current_rank}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Time & Action */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                    <div className="flex items-center gap-2 text-sm">
-                      {timeLeft && (
-                        <>
-                          <Clock className="h-4 w-4 text-orange-600" />
-                          <span className={`font-semibold ${
-                            timeLeft.includes('day') && parseInt(timeLeft) <= 3
-                              ? 'text-red-600'
-                              : 'text-orange-600'
-                          }`}>
-                            {timeLeft}
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    {isClaimed ? (
-                      <span className="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4" />
-                        Claimed!
-                      </span>
-                    ) : isCompleted ? (
-                      <Button
-                        size="sm"
-                        onClick={() => claimReward(reward.id, progress.id)}
-                      >
-                        <Award className="h-4 w-4 mr-2" />
-                        Claim Reward
-                      </Button>
-                    ) : (
-                      <span className="text-sm text-gray-600 font-medium">Keep going!</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Three Column Layout: Sales, Leads, Coming Soon */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Sales Challenges */}
@@ -356,7 +235,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </div>
 
           <div className="space-y-4">
-            {salesChallenges.length > 0 ? salesChallenges.map((reward) => {
+            {[...featuredSalesChallenges, ...salesChallenges].length > 0 ? [...featuredSalesChallenges, ...salesChallenges].map((reward) => {
               const progress = myProgress[reward.id];
               const progressPercent = progress ? progress.progress_percentage : 0;
               const isCompleted = progress?.status === 'completed';
@@ -431,7 +310,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </div>
 
           <div className="space-y-4">
-            {leadChallenges.length > 0 ? leadChallenges.map((reward) => {
+            {[...featuredLeadChallenges, ...leadChallenges].length > 0 ? [...featuredLeadChallenges, ...leadChallenges].map((reward) => {
               const progress = myProgress[reward.id];
               const progressPercent = progress ? progress.progress_percentage : 0;
               const isCompleted = progress?.status === 'completed';
