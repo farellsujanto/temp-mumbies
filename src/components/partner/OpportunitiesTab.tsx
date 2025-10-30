@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock, DollarSign, TrendingUp, Gift, AlertCircle } from 'lucide-react';
+import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
 
@@ -14,24 +14,21 @@ interface Lead {
   days_until_expiry: number;
 }
 
-interface Incentive {
-  id: string;
-  amount: number;
-  created_at: string;
-  expires_at: string;
-  status: string;
-}
-
 interface OpportunitiesTabProps {
   partnerId: string;
   partnerBalance: number;
+  organizationName: string;
+  logoUrl?: string | null;
 }
 
-export default function OpportunitiesTab({ partnerId, partnerBalance }: OpportunitiesTabProps) {
+export default function OpportunitiesTab({ partnerId, partnerBalance, organizationName, logoUrl }: OpportunitiesTabProps) {
   const [expiringLeads, setExpiringLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [sendingGift, setSendingGift] = useState<string | null>(null);
   const [giftAmount, setGiftAmount] = useState<{ [key: string]: number }>({});
+  const [showEmailPreview, setShowEmailPreview] = useState(false);
+  const [previewLead, setPreviewLead] = useState<Lead | null>(null);
+  const [previewAmount, setPreviewAmount] = useState(0);
 
   useEffect(() => {
     fetchExpiringLeads();
@@ -78,13 +75,24 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
     setLoading(false);
   };
 
-  const handleSendGift = async (leadId: string, amount: number) => {
+  const handleShowPreview = (lead: Lead, amount: number) => {
     if (amount <= 0 || amount > partnerBalance) {
       alert('Invalid gift amount or insufficient balance');
       return;
     }
+    setPreviewLead(lead);
+    setPreviewAmount(amount);
+    setShowEmailPreview(true);
+  };
 
-    setSendingGift(leadId);
+  const handleConfirmSend = async () => {
+    if (!previewLead || previewAmount <= 0) return;
+
+    setSendingGift(previewLead.id);
+    setShowEmailPreview(false);
+
+    const leadId = previewLead.id;
+    const amount = previewAmount;
 
     // Create incentive record
     const expiresAt = new Date();
@@ -97,7 +105,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
         lead_id: leadId,
         amount: amount,
         expires_at: expiresAt.toISOString(),
-        status: 'active',
+        status: 'pending',
       });
 
     if (incentiveError) {
@@ -107,23 +115,17 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
       return;
     }
 
-    // Update or create lead balance
-    const { error: balanceError } = await supabase
-      .rpc('upsert_lead_balance', {
-        p_lead_id: leadId,
-        p_amount: amount,
-      });
-
-    if (balanceError) {
-      console.error('Error updating balance:', balanceError);
-    }
+    // Update or create lead balance (this will happen when they claim it)
+    // For now, we're just creating the pending incentive
 
     // Refresh the list
     await fetchExpiringLeads();
     setSendingGift(null);
     setGiftAmount({ ...giftAmount, [leadId]: 0 });
+    setPreviewLead(null);
+    setPreviewAmount(0);
 
-    alert(`Successfully sent $${amount.toFixed(2)} gift!`);
+    alert(`Successfully sent $${amount.toFixed(2)} gift to ${previewLead.email}!`);
   };
 
   const getUrgencyColor = (days: number) => {
@@ -131,6 +133,13 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
     if (days <= 14) return 'text-orange-600 bg-orange-50 border-orange-200';
     if (days <= 30) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
     return 'text-gray-600 bg-gray-50 border-gray-200';
+  };
+
+  const formatExpirationDate = () => {
+    if (!previewAmount) return '';
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 14);
+    return expiryDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
   if (loading) {
@@ -144,6 +153,114 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
 
   return (
     <div className="space-y-6">
+      {/* Email Preview Modal */}
+      {showEmailPreview && previewLead && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">Email Preview</h2>
+                <button
+                  onClick={() => setShowEmailPreview(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-4">
+                This is what {previewLead.email} will receive:
+              </p>
+
+              {/* Email Preview */}
+              <div className="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50 p-8">
+                <div className="bg-white rounded-lg shadow-sm max-w-xl mx-auto">
+                  {/* Email Header */}
+                  <div className="bg-gradient-to-r from-green-600 to-green-500 p-8 text-center">
+                    {logoUrl ? (
+                      <img
+                        src={logoUrl}
+                        alt={organizationName}
+                        className="h-16 mx-auto mb-4 bg-white rounded-lg p-2"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-white rounded-lg mx-auto mb-4 flex items-center justify-center">
+                        <Mail className="h-8 w-8 text-green-600" />
+                      </div>
+                    )}
+                    <h1 className="text-2xl font-bold text-white">You've Got Cash!</h1>
+                  </div>
+
+                  {/* Email Body */}
+                  <div className="p-8 text-center">
+                    <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 mb-6">
+                      <p className="text-gray-700 text-lg mb-2">
+                        <strong>{organizationName}</strong> is sending you
+                      </p>
+                      <div className="text-5xl font-bold text-green-600 mb-2">
+                        ${previewAmount.toFixed(2)}
+                      </div>
+                      <p className="text-gray-600">
+                        cash to spend on Mumbies
+                      </p>
+                    </div>
+
+                    <p className="text-gray-700 mb-6">
+                      Use your gift to shop for premium dog products and support animal welfare!
+                    </p>
+
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm">
+                      <p className="text-amber-900">
+                        <strong>Use by {formatExpirationDate()}</strong>
+                      </p>
+                      <p className="text-amber-700 text-xs mt-1">
+                        Gift expires in 14 days if not claimed
+                      </p>
+                    </div>
+
+                    <button className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors">
+                      Claim Gift
+                    </button>
+
+                    <p className="text-xs text-gray-500 mt-6">
+                      Your gift will be automatically added to your account balance when you claim it.
+                    </p>
+                  </div>
+
+                  {/* Email Footer */}
+                  <div className="bg-gray-100 p-6 text-center border-t">
+                    <p className="text-xs text-gray-600">
+                      Sent with support from {organizationName}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Mumbies - Premium Dog Products Supporting Animal Welfare
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-4 mt-6">
+                <Button
+                  variant="outline"
+                  fullWidth
+                  onClick={() => setShowEmailPreview(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  fullWidth
+                  onClick={handleConfirmSend}
+                  disabled={sendingGift !== null}
+                >
+                  Confirm & Send Gift
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Stats */}
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
@@ -161,7 +278,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
             <span className="text-3xl font-bold text-green-600">${partnerBalance.toFixed(2)}</span>
           </div>
           <h3 className="font-semibold text-green-900">Available Balance</h3>
-          <p className="text-sm text-green-700">To send as gifts</p>
+          <p className="text-sm text-green-700">Unpaid commissions</p>
         </div>
 
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6">
@@ -262,7 +379,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance }: Opportun
                       </div>
                     </div>
                     <Button
-                      onClick={() => handleSendGift(lead.id, giftAmount[lead.id] || 5)}
+                      onClick={() => handleShowPreview(lead, giftAmount[lead.id] || 5)}
                       disabled={sendingGift === lead.id || (giftAmount[lead.id] || 5) > partnerBalance}
                       loading={sendingGift === lead.id}
                     >

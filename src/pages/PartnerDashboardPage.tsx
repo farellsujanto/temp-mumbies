@@ -1368,6 +1368,8 @@ export default function PartnerDashboardPage() {
         <OpportunitiesTab
           partnerId={nonprofit.id}
           partnerBalance={nonprofit.total_commissions_earned + nonprofit.total_referral_earnings}
+          organizationName={nonprofit.organization_name}
+          logoUrl={nonprofit.logo_url}
         />
       )}
 

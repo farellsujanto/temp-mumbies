@@ -172,19 +172,45 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Add some sample data for testing
-INSERT INTO partner_leads (partner_id, email, registered_at, expires_at, status, total_spent)
-SELECT
-  id,
-  'lead' || floor(random() * 1000)::text || '@example.com',
-  now() - (floor(random() * 80)::int || ' days')::interval,
-  now() + (floor(random() * 30)::int || ' days')::interval,
-  CASE
-    WHEN random() < 0.3 THEN 'active'
-    WHEN random() < 0.6 THEN 'converted'
-    ELSE 'expired'
-  END,
-  CASE WHEN random() < 0.5 THEN floor(random() * 500)::decimal ELSE 0 END
-FROM nonprofits
-WHERE status = 'approved'
-LIMIT 5;
+-- Add sample lead data for testing (only active leads within 90 days)
+DO $$
+DECLARE
+  nonprofit_record RECORD;
+  days_ago INT;
+  expiry_date TIMESTAMPTZ;
+BEGIN
+  FOR nonprofit_record IN
+    SELECT id FROM nonprofits WHERE status = 'approved' LIMIT 1
+  LOOP
+    -- Create 15 sample leads with varying expiration dates
+    FOR i IN 1..15 LOOP
+      days_ago := 60 + (i * 2); -- Registered 60-90 days ago
+      expiry_date := now() + ((90 - days_ago) || ' days')::interval;
+
+      INSERT INTO partner_leads (
+        partner_id,
+        email,
+        registered_at,
+        expires_at,
+        status,
+        total_spent,
+        first_purchase_at
+      ) VALUES (
+        nonprofit_record.id,
+        'lead' || i || '.test@example.com',
+        now() - (days_ago || ' days')::interval,
+        expiry_date,
+        'active',
+        0,
+        NULL
+      );
+    END LOOP;
+
+    -- Add a few with existing gift balances
+    INSERT INTO lead_balances (lead_id, balance, lifetime_received)
+    SELECT id, 10.00, 10.00
+    FROM partner_leads
+    WHERE partner_id = nonprofit_record.id
+    LIMIT 3;
+  END LOOP;
+END $$;
