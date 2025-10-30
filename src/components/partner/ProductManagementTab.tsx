@@ -360,32 +360,52 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
             </p>
           </div>
 
-          {wishlistProducts.length > 0 && (
-            <div>
-              <h3 className="text-lg font-bold mb-4">Current Wishlist ({wishlistProducts.length} items)</h3>
-              <div className="grid md:grid-cols-5 gap-4 mb-6">
-                {wishlistProducts.map((product) => (
-                  <div key={product.id} className="border border-green-300 bg-green-50 rounded-lg p-3 relative">
-                    <button
-                      onClick={() => removeFromList(product.id, 'wishlist')}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 text-xs"
-                    >
-                      ×
-                    </button>
-                    <img src={product.image_url || ''} alt={product.name} className="w-full h-20 object-cover rounded mb-2" />
-                    <p className="text-xs font-medium line-clamp-2">{product.name}</p>
-                    <p className="text-xs text-gray-600">${product.price}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
+          {/* Card Slots */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Add Products to Wishlist</h3>
+            <h3 className="text-lg font-bold mb-4">Your Wishlist (Up to 10 Items)</h3>
+            <div className="grid md:grid-cols-5 gap-4 mb-8">
+              {[...Array(10)].map((_, index) => {
+                const product = wishlistProducts[index];
+                return (
+                  <div
+                    key={index}
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 aspect-square flex flex-col items-center justify-center relative"
+                  >
+                    {product ? (
+                      <>
+                        <button
+                          onClick={() => removeFromList(product.id, 'wishlist')}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors text-xs font-bold z-10"
+                        >
+                          ×
+                        </button>
+                        <img
+                          src={product.image_url || 'https://via.placeholder.com/150'}
+                          alt={product.name}
+                          className="w-full h-24 object-cover rounded mb-2"
+                        />
+                        <p className="text-xs font-medium text-center line-clamp-2">{product.name}</p>
+                        <p className="text-xs text-gray-600">${product.price}</p>
+                      </>
+                    ) : (
+                      <>
+                        <Heart className="h-8 w-8 text-gray-300 mb-2" />
+                        <p className="text-xs text-gray-400 text-center">Slot {index + 1}</p>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Browse Products */}
+          <div>
+            <h3 className="text-lg font-bold mb-4">Browse Products to Add</h3>
             {!productsLoaded ? (
               <div className="text-center py-8">
                 <Button onClick={loadAvailableProducts}>
+                  <Plus className="h-4 w-4 inline mr-2" />
                   Load Products
                 </Button>
               </div>
@@ -401,7 +421,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
                   />
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  {renderProductGrid(wishlistProducts, 'wishlist')}
+                  {availableProducts.length > 0 && renderProductGrid(wishlistProducts, 'wishlist')}
                 </div>
               </>
             )}
@@ -419,32 +439,52 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
             </p>
           </div>
 
-          {recommendedProducts.length > 0 && (
-            <div>
-              <h3 className="text-lg font-bold mb-4">Current Recommendations ({recommendedProducts.length} items)</h3>
-              <div className="grid md:grid-cols-5 gap-4 mb-6">
-                {recommendedProducts.map((product) => (
-                  <div key={product.id} className="border border-green-300 bg-green-50 rounded-lg p-3 relative">
-                    <button
-                      onClick={() => removeFromList(product.id, 'recommended')}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 text-xs"
-                    >
-                      ×
-                    </button>
-                    <img src={product.image_url || ''} alt={product.name} className="w-full h-20 object-cover rounded mb-2" />
-                    <p className="text-xs font-medium line-clamp-2">{product.name}</p>
-                    <p className="text-xs text-gray-600">${product.price}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
+          {/* Card Slots */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Add Recommended Products</h3>
+            <h3 className="text-lg font-bold mb-4">Your Recommended Products (Up to 10 Items)</h3>
+            <div className="grid md:grid-cols-5 gap-4 mb-8">
+              {[...Array(10)].map((_, index) => {
+                const product = recommendedProducts[index];
+                return (
+                  <div
+                    key={index}
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 aspect-square flex flex-col items-center justify-center relative"
+                  >
+                    {product ? (
+                      <>
+                        <button
+                          onClick={() => removeFromList(product.id, 'recommended')}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors text-xs font-bold z-10"
+                        >
+                          ×
+                        </button>
+                        <img
+                          src={product.image_url || 'https://via.placeholder.com/150'}
+                          alt={product.name}
+                          className="w-full h-24 object-cover rounded mb-2"
+                        />
+                        <p className="text-xs font-medium text-center line-clamp-2">{product.name}</p>
+                        <p className="text-xs text-gray-600">${product.price}</p>
+                      </>
+                    ) : (
+                      <>
+                        <Star className="h-8 w-8 text-gray-300 mb-2" />
+                        <p className="text-xs text-gray-400 text-center">Slot {index + 1}</p>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Browse Products */}
+          <div>
+            <h3 className="text-lg font-bold mb-4">Browse Products to Add</h3>
             {!productsLoaded ? (
               <div className="text-center py-8">
                 <Button onClick={loadAvailableProducts}>
+                  <Plus className="h-4 w-4 inline mr-2" />
                   Load Products
                 </Button>
               </div>
@@ -460,7 +500,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
                   />
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  {renderProductGrid(recommendedProducts, 'recommended')}
+                  {availableProducts.length > 0 && renderProductGrid(recommendedProducts, 'recommended')}
                 </div>
               </>
             )}
@@ -549,6 +589,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
             {!productsLoaded ? (
               <div className="text-center py-8">
                 <Button onClick={loadAvailableProducts}>
+                  <Plus className="h-4 w-4 inline mr-2" />
                   Load Products
                 </Button>
               </div>
@@ -564,7 +605,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
                   />
                 </div>
                 <div className="max-h-[600px] overflow-y-auto">
-                  {renderProductGrid(bundleProducts, 'bundle', 5)}
+                  {availableProducts.length > 0 && renderProductGrid(bundleProducts, 'bundle', 5)}
                 </div>
               </>
             )}

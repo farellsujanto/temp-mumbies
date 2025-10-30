@@ -137,7 +137,7 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
   return (
     <div className="space-y-6">
       {/* Info Section */}
-      <div className="bg-gradient-to-br from-orange-600 via-red-600 to-pink-600 rounded-lg p-6 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-teal-600 via-emerald-600 to-green-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Gift className="h-48 w-48" />
         </div>
@@ -148,7 +148,7 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
             </div>
             <div>
               <h2 className="text-2xl font-bold">Partner Referral Program</h2>
-              <p className="text-sm text-orange-100">
+              <p className="text-sm text-teal-100">
                 Help your referrals succeed and earn $1,000 when they reach $500 in sales within 6 months!
               </p>
             </div>
