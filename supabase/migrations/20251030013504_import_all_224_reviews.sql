@@ -1,0 +1,2 @@
+-- Import all 224 reviews (214 for Mumbies Original Wood Chew, 10 for Variety Pack)
+-- This includes review images, verified purchase status, helpful counts, and all data
