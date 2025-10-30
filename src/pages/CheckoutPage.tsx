@@ -10,6 +10,10 @@ export default function CheckoutPage() {
   const [isEditingSlider, setIsEditingSlider] = useState(false);
   const [localSliderValue, setLocalSliderValue] = useState(sliderValue);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [applyCashBalance, setApplyCashBalance] = useState(false);
+
+  // Mock cash balance - in production, this would come from userProfile
+  const cashBalance = 15.50;
 
   if (items.length === 0 && !showSuccess) {
     window.location.href = '/cart';
@@ -21,6 +25,11 @@ export default function CheckoutPage() {
   const cashbackAmount = subtotal * (currentSliderValue / 100);
   const generalDonationAmount = subtotal * ((5 - currentSliderValue) / 100);
   const rescueDonationAmount = userProfile?.attributed_rescue_id ? subtotal * 0.05 : 0;
+
+  // Calculate savings and totals
+  const savings = 0; // Would be calculated from discounts/promotions
+  const cashBalanceApplied = applyCashBalance ? Math.min(cashBalance, subtotal) : 0;
+  const finalTotal = subtotal - cashBalanceApplied;
 
   const handleSaveSlider = () => {
     setSliderValue(localSliderValue);
@@ -196,11 +205,17 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="mb-6">
-              <div className="flex justify-between mb-2">
+            <div className="mb-6 space-y-2">
+              <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-semibold">${subtotal.toFixed(2)}</span>
               </div>
+              {savings > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Savings</span>
+                  <span className="font-semibold">-${savings.toFixed(2)}</span>
+                </div>
+              )}
             </div>
 
             <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-6 mb-6">
@@ -262,22 +277,17 @@ export default function CheckoutPage() {
                   </Button>
                 </>
               ) : (
-                <div className="flex justify-between text-xs text-gray-600 mb-4">
-                  <span>{currentSliderValue}% Cash Back</span>
-                  <span>{(5 - currentSliderValue)}% Rescue Donation</span>
+                <div className="space-y-2 text-sm mt-2">
+                  <div className="flex justify-between">
+                    <span className="text-blue-600 font-medium">{currentSliderValue}% Cash Back:</span>
+                    <span className="text-blue-600 font-bold">${cashbackAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-green-600 font-medium">{(5 - currentSliderValue)}% Rescue Donation:</span>
+                    <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
+                  </div>
                 </div>
               )}
-
-              <div className="space-y-2 text-sm mt-4">
-                <div className="flex justify-between">
-                  <span className="text-blue-600 font-medium">Cash Back ({currentSliderValue}%):</span>
-                  <span className="text-blue-600 font-bold">${cashbackAmount.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-green-600 font-medium">Rescue Donation ({(5 - currentSliderValue)}%):</span>
-                  <span className="text-green-600 font-bold">${generalDonationAmount.toFixed(2)}</span>
-                </div>
-              </div>
             </div>
 
             {userProfile?.attributed_rescue_id && (
@@ -298,6 +308,37 @@ export default function CheckoutPage() {
                 </div>
               </div>
             )}
+
+            {cashBalance > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={applyCashBalance}
+                    onChange={(e) => setApplyCashBalance(e.target.checked)}
+                    className="mt-1 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-blue-900">Apply Cash Balance</span>
+                      <span className="text-blue-600 font-bold">${cashBalance.toFixed(2)}</span>
+                    </div>
+                    {applyCashBalance && (
+                      <p className="text-xs text-blue-700 mt-1">
+                        ${cashBalanceApplied.toFixed(2)} will be deducted from your total
+                      </p>
+                    )}
+                  </div>
+                </label>
+              </div>
+            )}
+
+            <div className="border-t border-gray-200 pt-4 mb-6">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-bold">Total</span>
+                <span className="text-2xl font-bold text-green-600">${finalTotal.toFixed(2)}</span>
+              </div>
+            </div>
 
             <Button fullWidth size="lg" onClick={handleCheckout}>
               Place Demo Order
