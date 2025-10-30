@@ -561,34 +561,46 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
             </div>
           </div>
 
-          {bundleProducts.length > 0 && (
-            <div>
-              <h3 className="text-lg font-bold mb-4">Bundle Products ({bundleProducts.length}/5)</h3>
-              <div className="grid md:grid-cols-5 gap-4 mb-6">
-                {bundleProducts.map((product) => (
-                  <div key={product.id} className="border border-amber-300 bg-amber-50 rounded-lg p-3 relative">
-                    <button
-                      onClick={() => removeFromList(product.id, 'bundle')}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 text-xs"
-                    >
-                      ×
-                    </button>
-                    <img src={product.image_url || ''} alt={product.name} className="w-full h-20 object-cover rounded mb-2" />
-                    <p className="text-xs font-medium line-clamp-2">{product.name}</p>
-                    <p className="text-xs text-gray-600">${product.price}</p>
-                  </div>
-                ))}
-              </div>
-              {bundleProducts.length === 5 && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-sm text-green-800 font-medium">
-                    Bundle complete! Total value: ${bundleProducts.reduce((sum, p) => sum + p.price, 0).toFixed(2)}
-                    {' '}(20% off: ${(bundleProducts.reduce((sum, p) => sum + p.price, 0) * 0.8).toFixed(2)})
-                  </p>
-                </div>
-              )}
+          <div>
+            <h3 className="text-lg font-bold mb-4">Bundle Products ({bundleProducts.length}/5)</h3>
+            <div className="grid md:grid-cols-5 gap-4 mb-6">
+              {[...Array(5)].map((_, index) => {
+                const product = bundleProducts[index];
+                if (product) {
+                  return (
+                    <div key={product.id} className="border-2 border-amber-400 bg-amber-50 rounded-lg p-3 relative">
+                      <button
+                        onClick={() => removeFromList(product.id, 'bundle')}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 text-xs"
+                      >
+                        ×
+                      </button>
+                      <img src={product.image_url || ''} alt={product.name} className="w-full h-20 object-cover rounded mb-2" />
+                      <p className="text-xs font-medium line-clamp-2">{product.name}</p>
+                      <p className="text-xs text-gray-600">${product.price}</p>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={`empty-${index}`} className="border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg p-3 flex items-center justify-center h-32">
+                      <div className="text-center">
+                        <Gift className="h-8 w-8 text-gray-400 mx-auto mb-1" />
+                        <p className="text-xs text-gray-500">Slot {index + 1}</p>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
             </div>
-          )}
+            {bundleProducts.length === 5 && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="text-sm text-green-800 font-medium">
+                  Bundle complete! Total value: ${bundleProducts.reduce((sum, p) => sum + p.price, 0).toFixed(2)}
+                  {' '}(20% off: ${(bundleProducts.reduce((sum, p) => sum + p.price, 0) * 0.8).toFixed(2)})
+                </p>
+              </div>
+            )}
+          </div>
 
           <div>
             <h3 className="text-lg font-bold mb-4">Select 5 Products for Bundle</h3>
