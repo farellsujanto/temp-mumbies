@@ -797,19 +797,8 @@ export default function PartnerDashboardPage() {
                 <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
-              <p className="text-3xl font-bold text-green-600 mb-3">
+              <p className="text-3xl font-bold text-green-600">
                 ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
-              </p>
-              <Button
-                onClick={() => setShowWithdrawalModal(true)}
-                className="w-full text-sm py-2"
-                disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) === 0}
-              >
-                <CreditCard className="h-3 w-3 mr-1" />
-                Withdraw or Convert
-              </Button>
-              <p className="text-xs text-gray-600 text-center mt-2">
-                Convert to Mumbies balance for 10% bonus!
               </p>
             </div>
 

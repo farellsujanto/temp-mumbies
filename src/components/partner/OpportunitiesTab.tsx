@@ -163,8 +163,8 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       const items = incentives.map((inc: any) => ({
         id: inc.id,
         type: 'gift_sent',
-        description: `Sent $${inc.amount.toFixed(2)} to ${inc.partner_leads.email}`,
-        amount: -inc.amount,
+        description: `Sent $${inc.amount.toFixed(2)} gift to ${inc.partner_leads.email}`,
+        amount: inc.amount,
         created_at: inc.created_at,
       }));
 
@@ -487,6 +487,15 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                       >
                         $15
                       </button>
+                      <input
+                        type="number"
+                        value={giftAmount[lead.id] || ''}
+                        onChange={(e) => setGiftAmount({ ...giftAmount, [lead.id]: parseFloat(e.target.value) || 0 })}
+                        placeholder="Custom"
+                        className="w-20 px-2 py-1.5 border-2 border-current rounded-lg text-xs"
+                        min="1"
+                        max={partnerBalance}
+                      />
                     </div>
                     <Button
                       size="sm"
@@ -566,7 +575,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                       </p>
                     </div>
                     <span className="text-sm font-bold text-red-600">
-                      -{item.amount.toFixed(2)}
+                      -${item.amount.toFixed(2)}
                     </span>
                   </div>
                 ))}

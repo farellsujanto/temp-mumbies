@@ -163,8 +163,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     fetchRewardsData();
   };
 
-  const getRewardIcon = (type: string, color?: string) => {
-    const iconClass = `h-6 w-6 ${color ? `text-${color}-600` : 'text-gray-600'}`;
+  const getRewardIcon = (type: string, colorClass?: string) => {
+    const iconClass = `h-5 w-5 ${colorClass || 'text-gray-600'}`;
     switch (type) {
       case 'competition': return <Trophy className={iconClass} />;
       case 'bonus_commission': return <TrendingUp className={iconClass} />;
@@ -175,16 +175,16 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     }
   };
 
-  const getBadgeColor = (color?: string | null) => {
+  const getIconColor = (color?: string | null) => {
     const colorMap: Record<string, string> = {
-      red: 'from-red-500 to-rose-600',
-      blue: 'from-blue-500 to-cyan-600',
-      green: 'from-green-500 to-emerald-600',
-      amber: 'from-amber-500 to-orange-600',
-      purple: 'from-purple-500 to-violet-600',
-      black: 'from-gray-800 to-black',
+      red: 'text-red-600',
+      blue: 'text-blue-600',
+      green: 'text-green-600',
+      amber: 'text-amber-600',
+      purple: 'text-purple-600',
+      black: 'text-gray-800',
     };
-    return colorMap[color || ''] || 'from-gray-500 to-gray-600';
+    return colorMap[color || ''] || 'text-gray-600';
   };
 
   const getTimeRemaining = (endsAt: string | null) => {
@@ -242,7 +242,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm">Active Challenges</span>
+            <span className="text-gray-600 text-sm">Available</span>
             <Zap className="h-5 w-5 text-orange-600" />
           </div>
           <p className="text-3xl font-bold">{activeRewards.length}</p>
@@ -272,7 +272,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Flame className="h-6 w-6 text-orange-600" />
-            <h3 className="text-2xl font-bold">Your Active Challenges</h3>
+            <h3 className="text-2xl font-bold">Available Challenges</h3>
             <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-bold">
               {activeChallenges.length} IN PROGRESS
             </span>

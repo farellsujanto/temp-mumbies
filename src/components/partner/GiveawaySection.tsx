@@ -168,7 +168,15 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
 
           <div className="grid md:grid-cols-3 gap-6">
             {giveaways.map((giveaway) => (
-              <div key={giveaway.id} className="border border-gray-200 rounded-lg p-6 bg-white">
+              <div key={giveaway.id} className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+                <div className="h-40">
+                  <img
+                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440"
+                    alt={giveaway.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h4 className="font-bold text-lg">{giveaway.title}</h4>
@@ -236,6 +244,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                 >
                   Copy Link to Share
                 </Button>
+                </div>
               </div>
             ))}
             {/* Fake Entry 1 */}
