@@ -376,7 +376,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       </div>
 
       {/* Grid Layout - How it Works + Stats */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-5 gap-6">
         {/* How it Works - Left Column */}
         <div className="lg:col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
@@ -393,40 +393,40 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
         </div>
 
         {/* Stats - Right Column */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+        <div className="lg:col-span-3 grid grid-cols-2 gap-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-5">
             <div className="flex items-center justify-between mb-2">
-              <Clock className="h-6 w-6 text-blue-600" />
-              <span className="text-2xl font-bold text-blue-600">{expiringLeads.length}</span>
+              <Clock className="h-7 w-7 text-blue-600" />
+              <span className="text-3xl font-bold text-blue-600">{expiringLeads.length}</span>
             </div>
-            <h3 className="font-semibold text-sm text-blue-900">Expiring Leads</h3>
+            <h3 className="font-semibold text-blue-900">Expiring Leads</h3>
             <p className="text-xs text-blue-700">Within 30 days</p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-5">
             <div className="flex items-center justify-between mb-2">
-              <DollarSign className="h-6 w-6 text-green-600" />
-              <span className="text-2xl font-bold text-green-600">${partnerBalance.toFixed(2)}</span>
+              <DollarSign className="h-7 w-7 text-green-600" />
+              <span className="text-3xl font-bold text-green-600">${partnerBalance.toFixed(2)}</span>
             </div>
-            <h3 className="font-semibold text-sm text-green-900">Balance</h3>
+            <h3 className="font-semibold text-green-900">Balance</h3>
             <p className="text-xs text-green-700">Available</p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-5">
             <div className="flex items-center justify-between mb-2">
-              <Gift className="h-6 w-6 text-purple-600" />
-              <span className="text-2xl font-bold text-purple-600">{giftedLeads.length}</span>
+              <Gift className="h-7 w-7 text-purple-600" />
+              <span className="text-3xl font-bold text-purple-600">{giftedLeads.length}</span>
             </div>
-            <h3 className="font-semibold text-sm text-purple-900">Active Gifts</h3>
+            <h3 className="font-semibold text-purple-900">Active Gifts</h3>
             <p className="text-xs text-purple-700">Sent</p>
           </div>
 
-          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4">
+          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-5">
             <div className="flex items-center justify-between mb-2">
-              <CheckCircle className="h-6 w-6 text-emerald-600" />
-              <span className="text-2xl font-bold text-emerald-600">{conversions}</span>
+              <CheckCircle className="h-7 w-7 text-emerald-600" />
+              <span className="text-3xl font-bold text-emerald-600">{conversions}</span>
             </div>
-            <h3 className="font-semibold text-sm text-emerald-900">Conversions</h3>
+            <h3 className="font-semibold text-emerald-900">Conversions</h3>
             <p className="text-xs text-emerald-700">All-time</p>
           </div>
         </div>

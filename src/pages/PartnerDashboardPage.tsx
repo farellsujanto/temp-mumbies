@@ -710,77 +710,72 @@ export default function PartnerDashboardPage() {
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="space-y-8">
-          {/* Earnings and Withdrawal */}
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Stats Grid - Left Side */}
-            <div className="lg:col-span-2 grid md:grid-cols-3 gap-6">
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-600 text-sm">Lifetime Earnings</span>
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                </div>
-                <p className="text-3xl font-bold text-green-600">
-                  ${nonprofit.total_commissions_earned.toFixed(2)}
-                </p>
+          {/* Stats - Four Across */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Lifetime Earnings</span>
+                <DollarSign className="h-5 w-5 text-green-600" />
               </div>
-
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-600 text-sm">Lifetime Sales</span>
-                  <ShoppingBag className="h-5 w-5 text-blue-600" />
-                </div>
-                <p className="text-3xl font-bold">
-                  ${nonprofit.total_sales.toFixed(2)}
-                </p>
-              </div>
-
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-600 text-sm">Customers</span>
-                  <Users className="h-5 w-5 text-amber-600" />
-                </div>
-                <p className="text-3xl font-bold">
-                  {nonprofit.total_attributed_customers}
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6 md:col-span-3">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
-                  <Gift className="h-5 w-5 text-amber-600" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-3xl font-bold text-amber-700">
-                    ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
-                  </p>
-                  <p className="text-sm text-amber-700">
-                    {nonprofit.qualified_referrals_count || 0} qualified referrals
-                  </p>
-                </div>
-              </div>
+              <p className="text-3xl font-bold text-green-600">
+                ${nonprofit.total_commissions_earned.toFixed(2)}
+              </p>
             </div>
 
-            {/* Available Balance Card - Right Side */}
-            <div className="lg:col-span-1 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
-                <DollarSign className="h-6 w-6 text-green-600" />
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Lifetime Sales</span>
+                <ShoppingBag className="h-5 w-5 text-blue-600" />
               </div>
-              <p className="text-4xl font-bold text-green-600 mb-6">
+              <p className="text-3xl font-bold">
+                ${nonprofit.total_sales.toFixed(2)}
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Customers</span>
+                <Users className="h-5 w-5 text-amber-600" />
+              </div>
+              <p className="text-3xl font-bold">
+                {nonprofit.total_attributed_customers}
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
+                <DollarSign className="h-5 w-5 text-green-600" />
+              </div>
+              <p className="text-3xl font-bold text-green-600 mb-3">
                 ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
               </p>
-
               <Button
                 onClick={() => setShowWithdrawalModal(true)}
-                className="w-full mb-3"
+                className="w-full text-sm py-2"
                 disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) === 0}
               >
-                <CreditCard className="h-4 w-4 mr-2" />
+                <CreditCard className="h-3 w-3 mr-1" />
                 Withdraw or Convert
               </Button>
-
-              <p className="text-xs text-gray-600 text-center">
+              <p className="text-xs text-gray-600 text-center mt-2">
                 Convert to Mumbies balance for 10% bonus!
+              </p>
+            </div>
+          </div>
+
+          {/* Referral Earnings - Full Width */}
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
+              <Gift className="h-5 w-5 text-amber-600" />
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-3xl font-bold text-amber-700">
+                ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
+              </p>
+              <p className="text-sm text-amber-700">
+                {nonprofit.qualified_referrals_count || 0} qualified referrals
               </p>
             </div>
           </div>
@@ -900,36 +895,36 @@ export default function PartnerDashboardPage() {
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Referral Links */}
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <LinkIcon className="h-5 w-5" />
                 Your Referral Links
               </h2>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Profile/Shop Link */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
                     Profile & Curated Products Link
                   </label>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Share with supporters to see your organization and recommended products
+                  <p className="text-xs text-gray-600 mb-2">
+                    Share with supporters to see your organization
                   </p>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       readOnly
                       value={`${window.location.origin}/rescues/${nonprofit.slug}`}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
                     />
-                    <Button onClick={copyReferralLink}>
+                    <Button onClick={copyReferralLink} className="text-sm px-3">
                       {copied ? (
                         <>
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Copied!
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Copied
                         </>
                       ) : (
                         <>
-                          <Copy className="h-4 w-4 mr-2" />
+                          <Copy className="h-3 w-3 mr-1" />
                           Copy
                         </>
                       )}
@@ -938,62 +933,62 @@ export default function PartnerDashboardPage() {
                 </div>
 
                 {/* General Registration Link */}
-                <div className="pt-4 border-t border-gray-200">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div className="pt-3 border-t border-gray-200">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
                     <UserPlus className="h-4 w-4 inline mr-1" />
                     Lead Registration Link
                   </label>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Give to new adopters so they register and get attributed to your organization
+                  <p className="text-xs text-gray-600 mb-2">
+                    Give to new adopters to register
                   </p>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       readOnly
                       value={`${window.location.origin}/lead-registration?ref=${nonprofit.slug}`}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
                     />
                     <Button onClick={() => {
                       navigator.clipboard.writeText(`${window.location.origin}/lead-registration?ref=${nonprofit.slug}`);
-                    }}>
-                      <Copy className="h-4 w-4 mr-2" />
+                    }} className="text-sm px-3">
+                      <Copy className="h-3 w-3 mr-1" />
                       Copy
                     </Button>
                   </div>
                 </div>
 
                 {/* Custom URL Generator */}
-                <div className="pt-4 border-t border-gray-200">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div className="pt-3 border-t border-gray-200">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">
                     <ExternalLink className="h-4 w-4 inline mr-1" />
                     Custom URL Referral Generator
                   </label>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Add tracking to any URL (your website, social media, etc.)
+                  <p className="text-xs text-gray-600 mb-2">
+                    Add tracking to any URL
                   </p>
-                  <div className="space-y-3">
-                    <div className="flex gap-3">
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
                       <input
                         type="text"
                         value={customUrl}
                         onChange={(e) => setCustomUrl(e.target.value)}
                         placeholder="yourwebsite.com/adopt"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                       />
-                      <Button onClick={generateCustomReferralLink}>
+                      <Button onClick={generateCustomReferralLink} className="text-sm px-3">
                         Generate
                       </Button>
                     </div>
                     {customReferralLink && (
-                      <div className="flex gap-3">
+                      <div className="flex gap-2">
                         <input
                           type="text"
                           readOnly
                           value={customReferralLink}
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
                         />
-                        <Button onClick={copyCustomLink}>
-                          <Copy className="h-4 w-4 mr-2" />
+                        <Button onClick={copyCustomLink} className="text-sm px-3">
+                          <Copy className="h-3 w-3 mr-1" />
                           Copy
                         </Button>
                       </div>
@@ -1454,63 +1449,66 @@ export default function PartnerDashboardPage() {
           </div>
 
           {/* Referral Tools */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Share Your Referral Link</h3>
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Left: Referral Link & Email */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">Share Your Referral Link</h3>
 
-            {/* Referral Link */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Link</label>
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  readOnly
-                  value={nonprofit.referral_link || `${window.location.origin}/partner/apply?ref=${nonprofit.referral_code}`}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
-                />
-                <Button onClick={copyReferralCode}>
-                  {referralCopied ? (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy
-                    </>
-                  )}
-                </Button>
+              {/* Referral Link */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Link</label>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    readOnly
+                    value={nonprofit.referral_link || `${window.location.origin}/partner/apply?ref=${nonprofit.referral_code}`}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                  />
+                  <Button onClick={copyReferralCode}>
+                    {referralCopied ? (
+                      <>
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4 mr-2" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Send Email Invite */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Send Email Invite</label>
+                <div className="flex gap-3">
+                  <input
+                    type="email"
+                    value={referralEmail}
+                    onChange={(e) => setReferralEmail(e.target.value)}
+                    placeholder="nonprofit@example.com"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                  <Button
+                    onClick={sendReferralEmail}
+                    disabled={sendingReferral || !referralEmail}
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {sendingReferral ? 'Sending...' : 'Send Invite'}
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Send Email Invite */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Send Email Invite</label>
-              <div className="flex gap-3">
-                <input
-                  type="email"
-                  value={referralEmail}
-                  onChange={(e) => setReferralEmail(e.target.value)}
-                  placeholder="nonprofit@example.com"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
-                />
-                <Button
-                  onClick={sendReferralEmail}
-                  disabled={sendingReferral || !referralEmail}
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  {sendingReferral ? 'Sending...' : 'Send Invite'}
-                </Button>
-              </div>
-            </div>
-
-            {/* How it Works */}
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-6">
-              <h4 className="font-semibold text-gray-900 mb-2 text-sm flex items-center gap-2">
-                <Gift className="h-4 w-4 text-amber-600" />
+            {/* Right: How it Works */}
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+              <h4 className="font-semibold text-lg text-gray-900 mb-3 flex items-center gap-2">
+                <Gift className="h-5 w-5 text-amber-600" />
                 How Partner Referrals Work
               </h4>
-              <ol className="space-y-1 text-sm text-gray-700">
+              <ol className="space-y-2 text-sm text-gray-700">
                 <li>1. Share your referral link with other nonprofits</li>
                 <li>2. They apply using your link and get approved</li>
                 <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
