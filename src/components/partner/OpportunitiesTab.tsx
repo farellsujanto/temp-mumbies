@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail } from 'lucide-react';
+import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail, CheckCircle, History } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
 
@@ -14,6 +14,25 @@ interface Lead {
   days_until_expiry: number;
 }
 
+interface GiftedLead {
+  id: string;
+  email: string;
+  amount: number;
+  sent_at: string;
+  expires_at: string;
+  status: string;
+  balance: number;
+  days_until_expiry: number;
+}
+
+interface ActivityItem {
+  id: string;
+  type: string;
+  description: string;
+  amount: number;
+  created_at: string;
+}
+
 interface OpportunitiesTabProps {
   partnerId: string;
   partnerBalance: number;
@@ -23,6 +42,9 @@ interface OpportunitiesTabProps {
 
 export default function OpportunitiesTab({ partnerId, partnerBalance, organizationName, logoUrl }: OpportunitiesTabProps) {
   const [expiringLeads, setExpiringLeads] = useState<Lead[]>([]);
+  const [giftedLeads, setGiftedLeads] = useState<GiftedLead[]>([]);
+  const [activityItems, setActivityItems] = useState<ActivityItem[]>([]);
+  const [conversions, setConversions] = useState(0);
   const [loading, setLoading] = useState(true);
   const [sendingGift, setSendingGift] = useState<string | null>(null);
   const [giftAmount, setGiftAmount] = useState<{ [key: string]: number }>({});
@@ -31,13 +53,21 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
   const [previewAmount, setPreviewAmount] = useState(0);
 
   useEffect(() => {
-    fetchExpiringLeads();
+    fetchData();
   }, [partnerId]);
 
-  const fetchExpiringLeads = async () => {
+  const fetchData = async () => {
     setLoading(true);
+    await Promise.all([
+      fetchExpiringLeads(),
+      fetchGiftedLeads(),
+      fetchActivityItems(),
+      fetchConversions()
+    ]);
+    setLoading(false);
+  };
 
-    // Fetch leads expiring soon (within 30 days) that haven't made a purchase
+  const fetchExpiringLeads = async () => {
     const { data: leads, error } = await supabase
       .from('partner_leads')
       .select(`
@@ -69,10 +99,89 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
         };
       });
 
-      setExpiringLeads(processedLeads);
+      setExpiringLeads(processedLeads.filter(l => l.days_until_expiry <= 30));
     }
+  };
 
-    setLoading(false);
+  const fetchGiftedLeads = async () => {
+    const { data: incentives, error } = await supabase
+      .from('partner_incentives')
+      .select(`
+        id,
+        amount,
+        created_at,
+        expires_at,
+        status,
+        partner_leads (
+          id,
+          email,
+          lead_balances (balance)
+        )
+      `)
+      .eq('partner_id', partnerId)
+      .in('status', ['pending', 'active'])
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (!error && incentives) {
+      const processed = incentives.map((inc: any) => {
+        const expiresAt = new Date(inc.expires_at);
+        const now = new Date();
+        const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+        return {
+          id: inc.id,
+          email: inc.partner_leads.email,
+          amount: inc.amount,
+          sent_at: inc.created_at,
+          expires_at: inc.expires_at,
+          status: inc.status,
+          balance: inc.partner_leads.lead_balances?.[0]?.balance || 0,
+          days_until_expiry: daysUntilExpiry,
+        };
+      });
+
+      setGiftedLeads(processed);
+    }
+  };
+
+  const fetchActivityItems = async () => {
+    const { data: incentives, error } = await supabase
+      .from('partner_incentives')
+      .select(`
+        id,
+        amount,
+        created_at,
+        status,
+        partner_leads (email)
+      `)
+      .eq('partner_id', partnerId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!error && incentives) {
+      const items = incentives.map((inc: any) => ({
+        id: inc.id,
+        type: 'gift_sent',
+        description: `Sent $${inc.amount.toFixed(2)} to ${inc.partner_leads.email}`,
+        amount: -inc.amount,
+        created_at: inc.created_at,
+      }));
+
+      setActivityItems(items);
+    }
+  };
+
+  const fetchConversions = async () => {
+    const { count, error } = await supabase
+      .from('partner_leads')
+      .select('*', { count: 'exact', head: true })
+      .eq('partner_id', partnerId)
+      .eq('status', 'converted');
+
+    if (!error && count !== null) {
+      setConversions(count);
+    }
   };
 
   const handleShowPreview = (lead: Lead, amount: number) => {
@@ -94,9 +203,8 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
     const leadId = previewLead.id;
     const amount = previewAmount;
 
-    // Create incentive record
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 14); // 2 week expiration
+    expiresAt.setDate(expiresAt.getDate() + 14);
 
     const { error: incentiveError } = await supabase
       .from('partner_incentives')
@@ -115,11 +223,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       return;
     }
 
-    // Update or create lead balance (this will happen when they claim it)
-    // For now, we're just creating the pending incentive
-
-    // Refresh the list
-    await fetchExpiringLeads();
+    await fetchData();
     setSendingGift(null);
     setGiftAmount({ ...giftAmount, [leadId]: 0 });
     setPreviewLead(null);
@@ -153,7 +257,6 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
 
   return (
     <div className="space-y-6">
-      {/* Email Preview Modal */}
       {showEmailPreview && previewLead && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -172,10 +275,8 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                 This is what {previewLead.email} will receive:
               </p>
 
-              {/* Email Preview */}
               <div className="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50 p-8">
                 <div className="bg-white rounded-lg shadow-sm max-w-xl mx-auto">
-                  {/* Email Header */}
                   <div className="bg-gradient-to-r from-green-600 to-green-500 p-8 text-center">
                     {logoUrl ? (
                       <img
@@ -191,7 +292,6 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                     <h1 className="text-2xl font-bold text-white">You've Got Cash!</h1>
                   </div>
 
-                  {/* Email Body */}
                   <div className="p-8 text-center">
                     <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 mb-6">
                       <p className="text-gray-700 text-lg mb-2">
@@ -227,7 +327,6 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                     </p>
                   </div>
 
-                  {/* Email Footer */}
                   <div className="bg-gray-100 p-6 text-center border-t">
                     <p className="text-xs text-gray-600">
                       Sent with support from {organizationName}
@@ -239,7 +338,6 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex gap-4 mt-6">
                 <Button
                   variant="outline"
@@ -262,7 +360,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       )}
 
       {/* Header Stats */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-4 gap-6">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <Clock className="h-8 w-8 text-blue-600" />
@@ -283,13 +381,20 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
 
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
-            <TrendingUp className="h-8 w-8 text-purple-600" />
-            <span className="text-3xl font-bold text-purple-600">
-              {expiringLeads.filter(l => l.days_until_expiry <= 14).length}
-            </span>
+            <Gift className="h-8 w-8 text-purple-600" />
+            <span className="text-3xl font-bold text-purple-600">{giftedLeads.length}</span>
           </div>
-          <h3 className="font-semibold text-purple-900">High Priority</h3>
-          <p className="text-sm text-purple-700">Expiring in 2 weeks</p>
+          <h3 className="font-semibold text-purple-900">Active Gifts</h3>
+          <p className="text-sm text-purple-700">Awaiting conversion</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <CheckCircle className="h-8 w-8 text-emerald-600" />
+            <span className="text-3xl font-bold text-emerald-600">{conversions}</span>
+          </div>
+          <h3 className="font-semibold text-emerald-900">Total Conversions</h3>
+          <p className="text-sm text-emerald-700">All-time leads converted</p>
         </div>
       </div>
 
@@ -308,92 +413,176 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
         </ul>
       </div>
 
-      {/* Expiring Leads List */}
-      <div>
-        <h3 className="text-xl font-bold mb-4">Expiring Leads</h3>
+      {/* Two Column Layout */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left Column: Expiring Leads */}
+        <div>
+          <h3 className="text-xl font-bold mb-4">Expiring Leads</h3>
 
-        {expiringLeads.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-            <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No expiring leads at the moment</p>
-            <p className="text-sm text-gray-500 mt-2">Leads will appear here when they're within 30 days of expiration</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {expiringLeads.map((lead) => (
-              <div
-                key={lead.id}
-                className={`border rounded-lg p-6 ${getUrgencyColor(lead.days_until_expiry)}`}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-semibold text-lg">{lead.email}</h4>
-                      <span className="px-2 py-1 bg-white rounded text-xs font-semibold">
-                        {lead.days_until_expiry} days left
+          {expiringLeads.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+              <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No expiring leads at the moment</p>
+              <p className="text-sm text-gray-500 mt-2">Leads will appear here when they're within 30 days of expiration</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {expiringLeads.map((lead) => (
+                <div
+                  key={lead.id}
+                  className={`border rounded-lg p-6 ${getUrgencyColor(lead.days_until_expiry)}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="font-semibold text-lg">{lead.email}</h4>
+                        <span className="px-2 py-1 bg-white rounded text-xs font-semibold">
+                          {lead.days_until_expiry} days left
+                        </span>
+                      </div>
+                      <p className="text-sm opacity-80">
+                        Registered {new Date(lead.registered_at).toLocaleDateString()}
+                      </p>
+                      {lead.balance > 0 && (
+                        <p className="text-sm font-semibold mt-2">
+                          Current Gift Balance: ${lead.balance.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-lg p-4 border border-current border-opacity-20">
+                    <p className="text-sm font-semibold mb-3">Send a Gift to Encourage Purchase</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 5 })}
+                            className="px-3 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
+                          >
+                            $5
+                          </button>
+                          <button
+                            onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 10 })}
+                            className="px-3 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
+                          >
+                            $10
+                          </button>
+                          <button
+                            onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 15 })}
+                            className="px-3 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
+                          >
+                            $15
+                          </button>
+                          <input
+                            type="number"
+                            value={giftAmount[lead.id] || ''}
+                            onChange={(e) => setGiftAmount({ ...giftAmount, [lead.id]: parseFloat(e.target.value) || 0 })}
+                            placeholder="Custom"
+                            className="w-24 px-3 py-2 border-2 border-current rounded-lg text-sm"
+                            min="1"
+                            max={partnerBalance}
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleShowPreview(lead, giftAmount[lead.id] || 5)}
+                        disabled={sendingGift === lead.id || (giftAmount[lead.id] || 5) > partnerBalance}
+                        loading={sendingGift === lead.id}
+                      >
+                        {sendingGift === lead.id ? 'Sending...' : `Send $${(giftAmount[lead.id] || 5).toFixed(2)}`}
+                      </Button>
+                    </div>
+                    <p className="text-xs mt-2 opacity-70">
+                      Gift expires in 14 days. Unused amount returns to your balance.
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Column: Gifted Leads & Activity */}
+        <div className="space-y-6">
+          {/* Gifted Leads */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Gifted Leads</h3>
+
+            {giftedLeads.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+                <Gift className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No gifts sent yet</p>
+                <p className="text-sm text-gray-500 mt-2">Send a gift to an expiring lead to get started</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {giftedLeads.map((gift) => (
+                  <div
+                    key={gift.id}
+                    className="bg-purple-50 border border-purple-200 rounded-lg p-4"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">{gift.email}</h4>
+                        <p className="text-sm text-gray-600">
+                          Gift: ${gift.amount.toFixed(2)} • Balance: ${gift.balance.toFixed(2)}
+                        </p>
+                      </div>
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        gift.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                      }`}>
+                        {gift.status === 'pending' ? 'Pending' : 'Claimed'}
                       </span>
                     </div>
-                    <p className="text-sm opacity-80">
-                      Registered {new Date(lead.registered_at).toLocaleDateString()}
-                    </p>
-                    {lead.balance > 0 && (
-                      <p className="text-sm font-semibold mt-2">
-                        Current Gift Balance: ${lead.balance.toFixed(2)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg p-4 border border-current border-opacity-20">
-                  <p className="text-sm font-semibold mb-3">Send a Gift to Encourage Purchase</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 5 })}
-                          className="px-3 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
-                        >
-                          $5
-                        </button>
-                        <button
-                          onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 10 })}
-                          className="px-3 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
-                        >
-                          $10
-                        </button>
-                        <button
-                          onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 15 })}
-                          className="px-3 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
-                        >
-                          $15
-                        </button>
-                        <input
-                          type="number"
-                          value={giftAmount[lead.id] || ''}
-                          onChange={(e) => setGiftAmount({ ...giftAmount, [lead.id]: parseFloat(e.target.value) || 0 })}
-                          placeholder="Custom"
-                          className="w-24 px-3 py-2 border-2 border-current rounded-lg text-sm"
-                          min="1"
-                          max={partnerBalance}
-                        />
-                      </div>
+                    <div className="flex items-center justify-between text-xs text-gray-600">
+                      <span>
+                        Sent {new Date(gift.sent_at).toLocaleDateString()}
+                      </span>
+                      <span>
+                        Expires in {gift.days_until_expiry} days
+                      </span>
                     </div>
-                    <Button
-                      onClick={() => handleShowPreview(lead, giftAmount[lead.id] || 5)}
-                      disabled={sendingGift === lead.id || (giftAmount[lead.id] || 5) > partnerBalance}
-                      loading={sendingGift === lead.id}
-                    >
-                      {sendingGift === lead.id ? 'Sending...' : `Send $${(giftAmount[lead.id] || 5).toFixed(2)}`}
-                    </Button>
                   </div>
-                  <p className="text-xs mt-2 opacity-70">
-                    Gift expires in 14 days. Unused amount returns to your balance.
-                  </p>
-                </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
+
+          {/* Activity Stream */}
+          <div>
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <History className="h-5 w-5" />
+              Recent Activity
+            </h3>
+
+            {activityItems.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+                <History className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">No activity yet</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {activityItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between"
+                  >
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900">{item.description}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(item.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className="text-lg font-bold text-red-600">
+                      {item.amount.toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
