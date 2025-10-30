@@ -360,7 +360,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       )}
 
       {/* Info Section */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Gift className="h-48 w-48" />
         </div>
@@ -371,7 +371,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
             </div>
             <div>
               <h2 className="text-2xl font-bold">Gift Incentives</h2>
-              <p className="text-sm text-green-100">
+              <p className="text-sm text-indigo-100">
                 Send gift incentives to leads using your balance to boost conversions before they expire!
               </p>
             </div>

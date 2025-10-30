@@ -30,6 +30,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
   const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [productsLoaded, setProductsLoaded] = useState(false);
 
   useEffect(() => {
     loadAllData();
@@ -41,8 +42,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
       loadWishlistProducts(),
       loadRecommendedProducts(),
       loadBundleProducts(),
-      loadBundleConfig(),
-      loadAvailableProducts()
+      loadBundleConfig()
     ]);
     setLoading(false);
   };
@@ -130,6 +130,9 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
   };
 
   const loadAvailableProducts = async () => {
+    if (productsLoaded) return;
+    setProductsLoaded(true);
+
     const { data } = await supabase
       .from('products')
       .select(`
@@ -291,7 +294,7 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
   return (
     <div className="space-y-6">
       {/* Info Section */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Package className="h-48 w-48" />
         </div>
@@ -380,18 +383,28 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
 
           <div>
             <h3 className="text-lg font-bold mb-4">Add Products to Wishlist</h3>
-            <div className="mb-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div className="max-h-[600px] overflow-y-auto">
-              {renderProductGrid(wishlistProducts, 'wishlist')}
-            </div>
+            {!productsLoaded ? (
+              <div className="text-center py-8">
+                <Button onClick={loadAvailableProducts}>
+                  Load Products
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="max-h-[600px] overflow-y-auto">
+                  {renderProductGrid(wishlistProducts, 'wishlist')}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -429,18 +442,28 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
 
           <div>
             <h3 className="text-lg font-bold mb-4">Add Recommended Products</h3>
-            <div className="mb-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div className="max-h-[600px] overflow-y-auto">
-              {renderProductGrid(recommendedProducts, 'recommended')}
-            </div>
+            {!productsLoaded ? (
+              <div className="text-center py-8">
+                <Button onClick={loadAvailableProducts}>
+                  Load Products
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="max-h-[600px] overflow-y-auto">
+                  {renderProductGrid(recommendedProducts, 'recommended')}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -523,18 +546,28 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
 
           <div>
             <h3 className="text-lg font-bold mb-4">Select 5 Products for Bundle</h3>
-            <div className="mb-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <div className="max-h-[600px] overflow-y-auto">
-              {renderProductGrid(bundleProducts, 'bundle', 5)}
-            </div>
+            {!productsLoaded ? (
+              <div className="text-center py-8">
+                <Button onClick={loadAvailableProducts}>
+                  Load Products
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search products..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="max-h-[600px] overflow-y-auto">
+                  {renderProductGrid(bundleProducts, 'bundle', 5)}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

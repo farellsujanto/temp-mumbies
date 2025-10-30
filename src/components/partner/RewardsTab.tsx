@@ -221,7 +221,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
   return (
     <div className="space-y-6">
       {/* Info Section */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Trophy className="h-48 w-48" />
         </div>

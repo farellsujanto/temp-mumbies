@@ -139,7 +139,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
   return (
     <div className="space-y-6">
       {/* Info Section */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Gift className="h-48 w-48" />
         </div>
@@ -150,7 +150,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             </div>
             <div>
               <h2 className="text-2xl font-bold">Giveaway Marketing</h2>
-              <p className="text-sm text-green-100">
+              <p className="text-sm text-amber-100">
                 Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
               </p>
             </div>
