@@ -33,6 +33,7 @@ import ReferralOpportunitiesTab from '../components/partner/ReferralOpportunitie
 import RewardsTab from '../components/partner/RewardsTab';
 import GiveawayEntriesTab from '../components/partner/GiveawayEntriesTab';
 import GiveawaySection from '../components/partner/GiveawaySection';
+import ProductManagementTab from '../components/partner/ProductManagementTab';
 
 interface NonprofitData {
   id: string;
@@ -1554,150 +1555,8 @@ export default function PartnerDashboardPage() {
       )}
 
       {/* Products Tab */}
-      {activeTab === 'products' && (
-        <div className="space-y-6">
-          {/* Info Section */}
-          <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 opacity-10">
-              <Package className="h-48 w-48" />
-            </div>
-            <div className="relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="bg-white bg-opacity-20 rounded-full p-3">
-                  <Package className="h-6 w-6" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Curated Products</h2>
-                  <p className="text-sm text-green-100">
-                    Select up to 10 products to feature on your profile page. These products will be highlighted when supporters visit your profile.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Your Curated Products (10 slots) */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Your Curated Products (Top 10)</h2>
-            <div className="grid md:grid-cols-5 gap-4 mb-8">
-              {[...Array(10)].map((_, index) => {
-                const product = curatedProducts[index];
-                return (
-                  <div
-                    key={index}
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 aspect-square flex flex-col items-center justify-center relative"
-                  >
-                    {product ? (
-                      <>
-                        <button
-                          onClick={() => removeCuratedProduct(product.id)}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors text-xs font-bold"
-                        >
-                          ×
-                        </button>
-                        <img
-                          src={product.image_url || 'https://via.placeholder.com/150'}
-                          alt={product.name}
-                          className="w-full h-24 object-cover rounded mb-2"
-                        />
-                        <p className="text-xs font-medium text-center line-clamp-2">{product.name}</p>
-                        <p className="text-xs text-gray-600">${product.price}</p>
-                      </>
-                    ) : (
-                      <>
-                        <Package className="h-8 w-8 text-gray-300 mb-2" />
-                        <p className="text-xs text-gray-400 text-center">Slot {index + 1}</p>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Browse All Products */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Browse Products</h2>
-            <p className="text-gray-600 mb-4">
-              Search and select products to add to your curated list.
-            </p>
-
-            <div className="mb-6">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products by name..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-
-            {availableProducts.length === 0 && (
-              <div className="text-center py-4">
-                <Button onClick={loadAvailableProducts}>
-                  Load Available Products
-                </Button>
-              </div>
-            )}
-
-            {availableProducts.length > 0 && (
-              <div className="grid md:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto">
-                {availableProducts
-                  .filter(p =>
-                    !searchQuery ||
-                    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    p.brand?.name.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .map((product) => {
-                    const isAlreadyAdded = curatedProducts.some(cp => cp.id === product.id);
-                    const canAdd = curatedProducts.length < 10 && !isAlreadyAdded;
-
-                    return (
-                      <div
-                        key={product.id}
-                        className={`border rounded-lg p-4 ${
-                          isAlreadyAdded ? 'border-green-300 bg-green-50' : 'border-gray-200'
-                        }`}
-                      >
-                        <img
-                          src={product.image_url || 'https://via.placeholder.com/150'}
-                          alt={product.name}
-                          className="w-full h-32 object-cover rounded mb-3"
-                        />
-                        <p className="font-medium text-sm line-clamp-2 mb-1">{product.name}</p>
-                        {product.brand && (
-                          <p className="text-xs text-gray-600 mb-1">{product.brand.name}</p>
-                        )}
-                        <p className="text-sm font-bold text-green-600 mb-3">${product.price}</p>
-                        {isAlreadyAdded ? (
-                          <button
-                            disabled
-                            className="w-full bg-green-100 text-green-700 py-2 rounded text-sm font-medium"
-                          >
-                            Added
-                          </button>
-                        ) : canAdd ? (
-                          <button
-                            onClick={() => addCuratedProduct(product)}
-                            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors text-sm font-medium"
-                          >
-                            Add to Profile
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="w-full bg-gray-200 text-gray-500 py-2 rounded text-sm font-medium cursor-not-allowed"
-                          >
-                            Limit Reached
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-          </div>
-        </div>
+      {activeTab === 'products' && nonprofit && (
+        <ProductManagementTab partnerId={nonprofit.id} />
       )}
 
       {/* Profile/Settings Tab */}
