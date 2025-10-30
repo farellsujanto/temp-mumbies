@@ -238,32 +238,49 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
       </div>
 
-      {/* Stats - Three Across */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm">Available</span>
-            <Zap className="h-5 w-5 text-orange-600" />
-          </div>
-          <p className="text-3xl font-bold">{activeRewards.length}</p>
+      {/* How It Works + Stats Grid */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* How Rewards Work - Takes up 1 column */}
+        <div className="lg:col-span-1 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h3 className="font-bold text-base mb-3 flex items-center gap-2">
+            <Star className="h-5 w-5 text-blue-600" />
+            How Rewards Work
+          </h3>
+          <ul className="space-y-2 text-sm text-gray-700">
+            <li>• <strong>Start challenges</strong> to activate automatic progress tracking</li>
+            <li>• <strong>Complete goals</strong> to unlock cash bonuses, products, and perks</li>
+            <li>• <strong>Stack multiple challenges</strong> simultaneously for faster rewards</li>
+            <li>• <strong>Claim instantly</strong> when you reach 100% completion</li>
+          </ul>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm">Completed</span>
-            <CheckCircle className="h-5 w-5 text-green-600" />
+        {/* Stats - Takes up 2 columns */}
+        <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Available</span>
+              <Zap className="h-5 w-5 text-orange-600" />
+            </div>
+            <p className="text-3xl font-bold">{activeRewards.length}</p>
           </div>
-          <p className="text-3xl font-bold">{completedCount}</p>
-        </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm">In Progress</span>
-            <Flame className="h-5 w-5 text-red-600" />
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">In Progress</span>
+              <Flame className="h-5 w-5 text-red-600" />
+            </div>
+            <p className="text-3xl font-bold">
+              {Object.values(myProgress).filter(p => p.status === 'in_progress').length}
+            </p>
           </div>
-          <p className="text-3xl font-bold">
-            {Object.values(myProgress).filter(p => p.status === 'in_progress').length}
-          </p>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Completed</span>
+              <CheckCircle className="h-5 w-5 text-green-600" />
+            </div>
+            <p className="text-3xl font-bold">{completedCount}</p>
+          </div>
         </div>
       </div>
 
@@ -292,16 +309,14 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   className="bg-white border-2 border-orange-300 rounded-lg p-4 hover:shadow-2xl transition-all transform hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white shadow-lg`}>
-                      {getRewardIcon(reward.reward_type, 'white')}
-                    </div>
-                    <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
+                    {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
+                    <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
                   </div>
 
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
+                  <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                  <div className="bg-gradient-to-r from-amber-100 to-orange-100 border-2 border-amber-300 rounded-lg p-3 mb-3 shadow-sm">
-                    <p className="text-xs font-bold text-amber-800">{reward.reward_description}</p>
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-3">
+                    <p className="text-xs font-semibold text-amber-800">{reward.reward_description}</p>
                   </div>
 
                   <div className="mb-3">
@@ -368,10 +383,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   className="bg-white border-2 border-green-200 rounded-lg p-4 hover:border-green-400 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
-                      {getRewardIcon(reward.reward_type, 'white')}
-                    </div>
-                    <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
+                    {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
+                    <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
                   </div>
 
                   <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
@@ -419,10 +432,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   className="bg-white border-2 border-blue-200 rounded-lg p-4 hover:border-blue-400 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
-                      {getRewardIcon(reward.reward_type, 'white')}
-                    </div>
-                    <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
+                    {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
+                    <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
                   </div>
 
                   <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
@@ -469,15 +480,9 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 className="bg-white border-2 border-purple-200 rounded-lg p-4 hover:border-purple-400 transition-colors"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-2 shadow-lg">
-                    <Crown className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold border border-purple-300">
-                    COMING SOON
-                  </span>
+                  {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
+                  <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
                 </div>
-
-                <h4 className="font-bold text-gray-900 mb-2 text-sm">{reward.title}</h4>
                 <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-2 mb-3">
@@ -504,6 +509,87 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </div>
         </div>
       </div>
+
+      {/* Challenge Activity Stream */}
+      {(activeChallenges.length > 0 || completedRewards.length > 0) && (
+        <div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Flame className="h-6 w-6 text-blue-600" />
+            Your Challenge Activity
+          </h3>
+
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="max-h-96 overflow-y-auto">
+              <div className="divide-y divide-gray-200">
+                {/* Active Challenges */}
+                {activeChallenges.map((challenge) => {
+                  const progress = myProgress[challenge.reward_id];
+                  return (
+                    <div key={challenge.id} className="p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          {getRewardIcon(challenge.reward?.reward_type, getIconColor(challenge.reward?.badge_color))}
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">{challenge.reward?.title}</h4>
+                            <p className="text-sm text-gray-600">{challenge.reward?.reward_description}</p>
+                            {progress && (
+                              <div className="mt-2">
+                                <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                  <span>Progress: {progress.progress_percentage.toFixed(0)}%</span>
+                                  <span>{progress.current_value} / {progress.target_value}</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all"
+                                    style={{ width: `${Math.min(progress.progress_percentage, 100)}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold ml-4">
+                          IN PROGRESS
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Completed Challenges */}
+                {completedRewards.slice(0, 5).map((progress: any) => (
+                  <div key={progress.id} className="p-4 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        {getRewardIcon(progress.reward?.reward_type, getIconColor(progress.reward?.badge_color))}
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900">{progress.reward?.title}</h4>
+                          <p className="text-sm text-gray-600">{progress.reward?.reward_description}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Completed {new Date(progress.completed_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold ml-4 flex items-center gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        COMPLETED
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {(activeChallenges.length === 0 && completedRewards.length === 0) && (
+                  <div className="p-8 text-center">
+                    <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600">No challenge activity yet</p>
+                    <p className="text-sm text-gray-500 mt-2">Start a challenge to track your progress here</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Completed Challenges */}
       {completedRewards.length > 0 && (
@@ -532,9 +618,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                     <tr key={progress.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className={`bg-gradient-to-br ${getBadgeColor(progress.reward?.badge_color)} rounded p-1.5 text-white`}>
-                            {getRewardIcon(progress.reward?.reward_type, 'white')}
-                          </div>
+                          {getRewardIcon(progress.reward?.reward_type, getIconColor(progress.reward?.badge_color))}
                           <span className="font-medium">{progress.reward?.title}</span>
                         </div>
                       </td>
@@ -561,43 +645,13 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
       )}
 
-      {/* How Rewards Work */}
-      <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <Star className="h-5 w-5 text-blue-600" />
-          How Partner Rewards Work
-        </h3>
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2">Earning Rewards</h4>
-            <ul className="space-y-1 text-gray-700">
-              <li>• Click "Start Challenge" to activate tracking</li>
-              <li>• Track your progress in real-time</li>
-              <li>• Complete challenges to unlock rewards automatically</li>
-              <li>• Claim rewards when you reach your goal</li>
-              <li>• Stack multiple challenges simultaneously</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2">Reward Types</h4>
-            <ul className="space-y-1 text-gray-700">
-              <li>• <strong>Cash Bonuses:</strong> Direct payments to your account</li>
-              <li>• <strong>Free Products:</strong> Complimentary premium items</li>
-              <li>• <strong>Gift Cards:</strong> Mumbies shopping credit</li>
-              <li>• <strong>Commission Boosts:</strong> Temporary or permanent increases</li>
-            </ul>
-          </div>
-        </div>
-      </div>
 
       {/* Activate Challenge Modal */}
       {showActivateModal && selectedReward && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className={`bg-gradient-to-br ${getBadgeColor(selectedReward.badge_color)} rounded-lg p-3 text-white`}>
-                {getRewardIcon(selectedReward.reward_type, 'white')}
-              </div>
+              {getRewardIcon(selectedReward.reward_type, getIconColor(selectedReward.badge_color))}
               <h3 className="text-xl font-bold text-gray-900">{selectedReward.title}</h3>
             </div>
 
