@@ -365,26 +365,24 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border-2 border-green-200 rounded-lg p-4 hover:shadow-xl hover:border-green-400 transition-all transform hover:-translate-y-1"
+                  className="bg-white border-2 border-green-200 rounded-lg p-4 hover:border-green-400 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white shadow-lg`}>
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
                       {getRewardIcon(reward.reward_type, 'white')}
                     </div>
                     <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
                   </div>
 
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
+                  <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-lg p-3 mb-3 shadow-sm">
-                    <p className="text-xs font-bold text-green-800">{reward.reward_description}</p>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-3">
+                    <p className="text-xs font-semibold text-green-800">{reward.reward_description}</p>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
-                    <p className="text-xs text-gray-600">
-                      <strong>Goal:</strong> {reward.requirement_description}
-                    </p>
-                  </div>
+                  <p className="text-xs text-gray-600 mb-3">
+                    <strong>Goal:</strong> {reward.requirement_description}
+                  </p>
 
                   <Button
                     size="sm"
@@ -418,26 +416,24 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border-2 border-blue-200 rounded-lg p-4 hover:shadow-xl hover:border-blue-400 transition-all transform hover:-translate-y-1"
+                  className="bg-white border-2 border-blue-200 rounded-lg p-4 hover:border-blue-400 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white shadow-lg`}>
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
                       {getRewardIcon(reward.reward_type, 'white')}
                     </div>
                     <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
                   </div>
 
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
+                  <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                  <div className="bg-gradient-to-r from-blue-100 to-cyan-100 border-2 border-blue-300 rounded-lg p-3 mb-3 shadow-sm">
-                    <p className="text-xs font-bold text-blue-800">{reward.reward_description}</p>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mb-3">
+                    <p className="text-xs font-semibold text-blue-800">{reward.reward_description}</p>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded p-2 mb-3">
-                    <p className="text-xs text-gray-600">
-                      <strong>Goal:</strong> {reward.requirement_description}
-                    </p>
-                  </div>
+                  <p className="text-xs text-gray-600 mb-3">
+                    <strong>Goal:</strong> {reward.requirement_description}
+                  </p>
 
                   <Button
                     size="sm"
@@ -470,7 +466,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             {upcomingRewards.length > 0 ? upcomingRewards.map((reward) => (
               <div
                 key={reward.id}
-                className="bg-white border-2 border-purple-200 rounded-lg p-4 hover:shadow-xl hover:border-purple-400 transition-all transform hover:-translate-y-1"
+                className="bg-white border-2 border-purple-200 rounded-lg p-4 hover:border-purple-400 transition-colors"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-2 shadow-lg">
@@ -482,15 +478,14 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 </div>
 
                 <h4 className="font-bold text-gray-900 mb-2 text-sm">{reward.title}</h4>
-                <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
+                <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                <div className="bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300 rounded-lg p-3 shadow-sm">
-                  <p className="text-xs text-purple-600 font-semibold mb-1">Reward</p>
-                  <p className="text-xs font-bold text-purple-800">{reward.reward_description}</p>
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-2 mb-3">
+                  <p className="text-xs font-semibold text-purple-800">{reward.reward_description}</p>
                 </div>
 
                 {reward.starts_at && (
-                  <div className="mt-3 flex items-center gap-2 text-xs text-purple-700 bg-purple-50 rounded p-2">
+                  <div className="flex items-center gap-2 text-xs text-purple-700">
                     <Calendar className="h-3 w-3" />
                     <span className="font-medium">
                       Starts {new Date(reward.starts_at).toLocaleDateString()}

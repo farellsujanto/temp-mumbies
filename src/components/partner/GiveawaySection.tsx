@@ -361,7 +361,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
               >
                 <div className="relative h-48">
                   <img
-                    src={bundle.image_url}
+                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440"
                     alt={bundle.name}
                     className={`w-full h-full object-cover ${!unlocked && 'opacity-50 grayscale'}`}
                   />
