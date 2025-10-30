@@ -359,58 +359,77 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
         </div>
       )}
 
-      {/* Header Stats */}
-      <div className="grid md:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <Clock className="h-8 w-8 text-blue-600" />
-            <span className="text-3xl font-bold text-blue-600">{expiringLeads.length}</span>
+      {/* Hero */}
+      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-lg p-4 text-white">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Gift className="h-5 w-5" />
+              <h2 className="text-xl font-bold">Gift Incentives</h2>
+            </div>
+            <p className="text-sm opacity-90">
+              Send gift incentives to leads using your balance to boost conversions before they expire!
+            </p>
           </div>
-          <h3 className="font-semibold text-blue-900">Expiring Leads</h3>
-          <p className="text-sm text-blue-700">Within 30 days</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="h-8 w-8 text-green-600" />
-            <span className="text-3xl font-bold text-green-600">${partnerBalance.toFixed(2)}</span>
-          </div>
-          <h3 className="font-semibold text-green-900">Available Balance</h3>
-          <p className="text-sm text-green-700">Unpaid commissions</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <Gift className="h-8 w-8 text-purple-600" />
-            <span className="text-3xl font-bold text-purple-600">{giftedLeads.length}</span>
-          </div>
-          <h3 className="font-semibold text-purple-900">Active Gifts</h3>
-          <p className="text-sm text-purple-700">Awaiting conversion</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="h-8 w-8 text-emerald-600" />
-            <span className="text-3xl font-bold text-emerald-600">{conversions}</span>
-          </div>
-          <h3 className="font-semibold text-emerald-900">Total Conversions</h3>
-          <p className="text-sm text-emerald-700">All-time leads converted</p>
+          <TrendingUp className="h-16 w-16 opacity-20" />
         </div>
       </div>
 
-      {/* How it Works */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-          <Gift className="h-5 w-5 text-blue-600" />
-          How Gift Incentives Work
-        </h3>
-        <ul className="space-y-2 text-sm text-gray-700">
-          <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
-          <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
-          <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
-          <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
-          <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
-        </ul>
+      {/* Grid Layout - How it Works + Stats */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* How it Works - Left Column */}
+        <div className="lg:col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+            <Gift className="h-5 w-5 text-blue-600" />
+            How Gift Incentives Work
+          </h3>
+          <ul className="space-y-2 text-sm text-gray-700">
+            <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
+            <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
+            <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
+            <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
+            <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
+          </ul>
+        </div>
+
+        {/* Stats - Right Column */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <Clock className="h-6 w-6 text-blue-600" />
+              <span className="text-2xl font-bold text-blue-600">{expiringLeads.length}</span>
+            </div>
+            <h3 className="font-semibold text-sm text-blue-900">Expiring Leads</h3>
+            <p className="text-xs text-blue-700">Within 30 days</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="h-6 w-6 text-green-600" />
+              <span className="text-2xl font-bold text-green-600">${partnerBalance.toFixed(2)}</span>
+            </div>
+            <h3 className="font-semibold text-sm text-green-900">Balance</h3>
+            <p className="text-xs text-green-700">Available</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <Gift className="h-6 w-6 text-purple-600" />
+              <span className="text-2xl font-bold text-purple-600">{giftedLeads.length}</span>
+            </div>
+            <h3 className="font-semibold text-sm text-purple-900">Active Gifts</h3>
+            <p className="text-xs text-purple-700">Sent</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <CheckCircle className="h-6 w-6 text-emerald-600" />
+              <span className="text-2xl font-bold text-emerald-600">{conversions}</span>
+            </div>
+            <h3 className="font-semibold text-sm text-emerald-900">Conversions</h3>
+            <p className="text-xs text-emerald-700">All-time</p>
+          </div>
+        </div>
       </div>
 
       {/* Two Column Layout */}
