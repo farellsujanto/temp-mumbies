@@ -710,8 +710,8 @@ export default function PartnerDashboardPage() {
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="space-y-8">
-          {/* Stats - Four Across */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Stats - Five Across */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-600 text-sm">Lifetime Earnings</span>
@@ -762,20 +762,17 @@ export default function PartnerDashboardPage() {
                 Convert to Mumbies balance for 10% bonus!
               </p>
             </div>
-          </div>
 
-          {/* Referral Earnings - Full Width */}
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
-              <Gift className="h-5 w-5 text-amber-600" />
-            </div>
-            <div className="flex items-center justify-between">
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
+                <Gift className="h-5 w-5 text-amber-600" />
+              </div>
               <p className="text-3xl font-bold text-amber-700">
                 ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
               </p>
-              <p className="text-sm text-amber-700">
-                {nonprofit.qualified_referrals_count || 0} qualified referrals
+              <p className="text-xs text-amber-700 mt-1">
+                {nonprofit.qualified_referrals_count || 0} qualified
               </p>
             </div>
           </div>
