@@ -1556,12 +1556,29 @@ export default function PartnerDashboardPage() {
       {/* Products Tab */}
       {activeTab === 'products' && (
         <div className="space-y-6">
+          {/* Info Section */}
+          <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 opacity-10">
+              <Package className="h-48 w-48" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="bg-white bg-opacity-20 rounded-full p-3">
+                  <Package className="h-6 w-6" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold">Curated Products</h2>
+                  <p className="text-sm text-green-100">
+                    Select up to 10 products to feature on your profile page. These products will be highlighted when supporters visit your profile.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Your Curated Products (10 slots) */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Your Curated Products (Top 10)</h2>
-            <p className="text-gray-600 mb-6">
-              Select up to 10 products to feature on your profile page. These products will be highlighted when supporters visit your profile.
-            </p>
             <div className="grid md:grid-cols-5 gap-4 mb-8">
               {[...Array(10)].map((_, index) => {
                 const product = curatedProducts[index];

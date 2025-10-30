@@ -138,21 +138,207 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
 
   return (
     <div className="space-y-6">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 rounded-lg p-4 text-white">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5" />
-              <h2 className="text-xl font-bold">Giveaway Marketing</h2>
+      {/* Info Section */}
+      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 opacity-10">
+          <Gift className="h-48 w-48" />
+        </div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="bg-white bg-opacity-20 rounded-full p-3">
+              <Sparkles className="h-6 w-6" />
             </div>
-            <p className="text-sm opacity-90">
-              Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
-            </p>
+            <div>
+              <h2 className="text-2xl font-bold">Giveaway Marketing</h2>
+              <p className="text-sm text-green-100">
+                Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
+              </p>
+            </div>
           </div>
-          <Gift className="h-16 w-16 opacity-20" />
         </div>
       </div>
+
+      {/* Active Giveaways */}
+      {giveaways.length > 0 && (
+        <div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Crown className="h-6 w-6 text-amber-600" />
+            Your Active Giveaways
+          </h3>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {giveaways.map((giveaway) => (
+              <div key={giveaway.id} className="border border-gray-200 rounded-lg p-6 bg-white">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h4 className="font-bold text-lg">{giveaway.title}</h4>
+                    <p className="text-sm text-gray-600">{giveaway.description}</p>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    giveaway.status === 'active'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {giveaway.status.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-blue-50 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Users className="h-4 w-4 text-blue-600" />
+                      <span className="text-xs text-blue-600 font-semibold">Entries</span>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {giveaway.total_entries}
+                    </p>
+                  </div>
+
+                  <div className="bg-green-50 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Trophy className="h-4 w-4 text-green-600" />
+                      <span className="text-xs text-green-600 font-semibold">Leads</span>
+                    </div>
+                    <p className="text-2xl font-bold text-green-600">
+                      {giveaway.total_leads_generated}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="h-4 w-4 text-gray-600" />
+                    <span className="text-xs font-semibold text-gray-700">
+                      Ends: {new Date(giveaway.ends_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ExternalLink className="h-4 w-4 text-purple-600" />
+                    <a
+                      href={`/giveaway/${giveaway.landing_page_slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-purple-600 hover:text-purple-700 font-medium truncate"
+                    >
+                      mumbies.com/giveaway/{giveaway.landing_page_slug}
+                    </a>
+                  </div>
+                </div>
+
+                <Button
+                  variant="outline"
+                  fullWidth
+                  size="sm"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/giveaway/${giveaway.landing_page_slug}`);
+                    alert('Link copied! Share it on social media.');
+                  }}
+                >
+                  Copy Link to Share
+                </Button>
+              </div>
+            ))}
+            {/* Fake Entry 1 */}
+            <div className="border border-gray-200 rounded-lg p-6 bg-white">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h4 className="font-bold text-lg">Win a Premium Starter Bundle!</h4>
+                  <p className="text-sm text-gray-600">Enter to win a Premium Starter Bundle worth $150!</p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                  ACTIVE
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Users className="h-4 w-4 text-blue-600" />
+                    <span className="text-xs text-blue-600 font-semibold">Entries</span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600">247</p>
+                </div>
+
+                <div className="bg-green-50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Trophy className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-green-600 font-semibold">Leads</span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-600">189</p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="h-4 w-4 text-gray-600" />
+                  <span className="text-xs font-semibold text-gray-700">
+                    Ends: {new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-purple-600 font-medium truncate">
+                    mumbies.com/giveaway/example-giveaway-1
+                  </span>
+                </div>
+              </div>
+
+              <Button variant="outline" fullWidth size="sm">
+                Copy Link to Share
+              </Button>
+            </div>
+            {/* Fake Entry 2 */}
+            <div className="border border-gray-200 rounded-lg p-6 bg-white">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h4 className="font-bold text-lg">Holiday Mega Pack Giveaway</h4>
+                  <p className="text-sm text-gray-600">Win our complete holiday collection valued at $300!</p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                  ACTIVE
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Users className="h-4 w-4 text-blue-600" />
+                    <span className="text-xs text-blue-600 font-semibold">Entries</span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600">532</p>
+                </div>
+
+                <div className="bg-green-50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Trophy className="h-4 w-4 text-green-600" />
+                    <span className="text-xs text-green-600 font-semibold">Leads</span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-600">421</p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="h-4 w-4 text-gray-600" />
+                  <span className="text-xs font-semibold text-gray-700">
+                    Ends: {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-purple-600 font-medium truncate">
+                    mumbies.com/giveaway/holiday-mega-pack
+                  </span>
+                </div>
+              </div>
+
+              <Button variant="outline" fullWidth size="sm">
+                Copy Link to Share
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Available Bundles */}
       <div>
@@ -249,89 +435,6 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
         </div>
       </div>
 
-      {/* Active Giveaways */}
-      {giveaways.length > 0 && (
-        <div>
-          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <Crown className="h-6 w-6 text-amber-600" />
-            Your Giveaways
-          </h3>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {giveaways.map((giveaway) => (
-              <div key={giveaway.id} className="border border-gray-200 rounded-lg p-6 bg-white">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h4 className="font-bold text-lg">{giveaway.title}</h4>
-                    <p className="text-sm text-gray-600">{giveaway.description}</p>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    giveaway.status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-700'
-                  }`}>
-                    {giveaway.status.toUpperCase()}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Users className="h-4 w-4 text-blue-600" />
-                      <span className="text-xs text-blue-600 font-semibold">Entries</span>
-                    </div>
-                    <p className="text-2xl font-bold text-blue-600">
-                      {giveaway.total_entries}
-                    </p>
-                  </div>
-
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Trophy className="h-4 w-4 text-green-600" />
-                      <span className="text-xs text-green-600 font-semibold">Leads</span>
-                    </div>
-                    <p className="text-2xl font-bold text-green-600">
-                      {giveaway.total_leads_generated}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="h-4 w-4 text-gray-600" />
-                    <span className="text-xs font-semibold text-gray-700">
-                      Ends: {new Date(giveaway.ends_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4 text-purple-600" />
-                    <a
-                      href={`/giveaway/${giveaway.landing_page_slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-purple-600 hover:text-purple-700 font-medium truncate"
-                    >
-                      mumbies.com/giveaway/{giveaway.landing_page_slug}
-                    </a>
-                  </div>
-                </div>
-
-                <Button
-                  variant="outline"
-                  fullWidth
-                  size="sm"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/giveaway/${giveaway.landing_page_slug}`);
-                    alert('Link copied! Share it on social media.');
-                  }}
-                >
-                  Copy Link to Share
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Create Giveaway Modal */}
       {selectedBundle && (

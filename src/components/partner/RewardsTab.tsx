@@ -220,49 +220,50 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
   return (
     <div className="space-y-6">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-8 text-white relative overflow-hidden">
+      {/* Info Section */}
+      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
-          <Trophy className="h-64 w-64" />
+          <Trophy className="h-48 w-48" />
         </div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-3">
             <div className="bg-white bg-opacity-20 rounded-full p-3">
-              <Trophy className="h-8 w-8" />
+              <Trophy className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold">Partner Challenges & Rewards</h2>
-              <p className="text-green-100">Complete challenges to earn bonuses and exclusive perks</p>
+              <h2 className="text-2xl font-bold">Partner Challenges & Rewards</h2>
+              <p className="text-sm text-green-100">Complete challenges to earn bonuses and exclusive perks</p>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="grid md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Active Challenges</span>
-                <Zap className="h-5 w-5" />
-              </div>
-              <p className="text-3xl font-bold">{activeRewards.length}</p>
-            </div>
-
-            <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Completed</span>
-                <CheckCircle className="h-5 w-5" />
-              </div>
-              <p className="text-3xl font-bold">{completedCount}</p>
-            </div>
-
-            <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">In Progress</span>
-                <Flame className="h-5 w-5" />
-              </div>
-              <p className="text-3xl font-bold">
-                {Object.values(myProgress).filter(p => p.status === 'in_progress').length}
-              </p>
-            </div>
+      {/* Stats - Three Across */}
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Active Challenges</span>
+            <Zap className="h-5 w-5 text-orange-600" />
           </div>
+          <p className="text-3xl font-bold">{activeRewards.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Completed</span>
+            <CheckCircle className="h-5 w-5 text-green-600" />
+          </div>
+          <p className="text-3xl font-bold">{completedCount}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">In Progress</span>
+            <Flame className="h-5 w-5 text-red-600" />
+          </div>
+          <p className="text-3xl font-bold">
+            {Object.values(myProgress).filter(p => p.status === 'in_progress').length}
+          </p>
         </div>
       </div>
 

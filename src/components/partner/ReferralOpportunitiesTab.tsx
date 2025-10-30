@@ -136,57 +136,59 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
 
   return (
     <div className="space-y-6">
-      {/* Header Stats */}
-      <div className="grid md:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <Clock className="h-8 w-8 text-gray-600" />
-            <span className="text-3xl font-bold text-gray-600">{pendingPartners.length}</span>
-          </div>
-          <h3 className="font-semibold text-gray-900">Pending</h3>
-          <p className="text-sm text-gray-700">Not yet approved</p>
+      {/* Info Section */}
+      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 opacity-10">
+          <Gift className="h-48 w-48" />
         </div>
-
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <AlertCircle className="h-8 w-8 text-blue-600" />
-            <span className="text-3xl font-bold text-blue-600">{activeNoSales.length}</span>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="bg-white bg-opacity-20 rounded-full p-3">
+              <Gift className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold">Partner Referral Program</h2>
+              <p className="text-sm text-green-100">
+                Help your referrals succeed and earn $1,000 when they reach $500 in sales within 6 months!
+              </p>
+            </div>
           </div>
-          <h3 className="font-semibold text-blue-900">No Sales Yet</h3>
-          <p className="text-sm text-blue-700">Need first sale</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <Target className="h-8 w-8 text-orange-600" />
-            <span className="text-3xl font-bold text-orange-600">{activeNeedsHelp.length}</span>
-          </div>
-          <h3 className="font-semibold text-orange-900">Need to Hit Goal</h3>
-          <p className="text-sm text-orange-700">Under $500 in sales</p>
-        </div>
-
-        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="h-8 w-8 text-emerald-600" />
-            <span className="text-3xl font-bold text-emerald-600">{qualified.length}</span>
-          </div>
-          <h3 className="font-semibold text-emerald-900">Qualified</h3>
-          <p className="text-sm text-emerald-700">$1,000 earned!</p>
         </div>
       </div>
 
-      {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-          <Gift className="h-5 w-5 text-blue-600" />
-          Help Your Referrals Succeed
-        </h3>
-        <ul className="space-y-2 text-sm text-gray-700">
-          <li>• <strong>Reach out personally</strong> to partners who haven't made their first sale yet</li>
-          <li>• <strong>Share tips and strategies</strong> that worked for you with partners close to the deadline</li>
-          <li>• <strong>Remind them of the 6-month deadline</strong> to reach $500 in sales</li>
-          <li>• <strong>You both win</strong> when they succeed - they get ongoing 5% commissions, you get $1,000!</li>
-        </ul>
+      {/* Stats */}
+      <div className="grid md:grid-cols-4 gap-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">No Sales Yet</span>
+            <AlertCircle className="h-5 w-5 text-blue-600" />
+          </div>
+          <p className="text-3xl font-bold">{activeNoSales.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Close to Goal</span>
+            <Target className="h-5 w-5 text-orange-600" />
+          </div>
+          <p className="text-3xl font-bold">{activeNeedsHelp.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Qualified</span>
+            <CheckCircle className="h-5 w-5 text-green-600" />
+          </div>
+          <p className="text-3xl font-bold">{qualified.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Pending</span>
+            <Clock className="h-5 w-5 text-gray-600" />
+          </div>
+          <p className="text-3xl font-bold">{pendingPartners.length}</p>
+        </div>
       </div>
 
       {/* Two Column Layout */}
