@@ -742,6 +742,19 @@ export default function PartnerDashboardPage() {
               </p>
             </div>
 
+            <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
+                <Gift className="h-5 w-5 text-amber-600" />
+              </div>
+              <p className="text-3xl font-bold text-amber-700">
+                ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
+              </p>
+              <p className="text-xs text-amber-700 mt-1">
+                {nonprofit.qualified_referrals_count || 0} qualified
+              </p>
+            </div>
+
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
@@ -760,19 +773,6 @@ export default function PartnerDashboardPage() {
               </Button>
               <p className="text-xs text-gray-600 text-center mt-2">
                 Convert to Mumbies balance for 10% bonus!
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-lg p-6">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-amber-900 text-sm font-medium">Referral Earnings</span>
-                <Gift className="h-5 w-5 text-amber-600" />
-              </div>
-              <p className="text-3xl font-bold text-amber-700">
-                ${(nonprofit.total_referral_earnings || 0).toFixed(2)}
-              </p>
-              <p className="text-xs text-amber-700 mt-1">
-                {nonprofit.qualified_referrals_count || 0} qualified
               </p>
             </div>
           </div>
