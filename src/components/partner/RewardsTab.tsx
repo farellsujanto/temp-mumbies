@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Trophy, Gift, Zap, Target, Calendar, TrendingUp, Award, Star, Flame, Crown, CheckCircle, Clock, Users, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
-import GiveawaySection from './GiveawaySection';
 
 interface Reward {
   id: string;
@@ -165,10 +164,13 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     );
   }
 
+  const salesChallenges = activeRewards.filter(r => r.requirement_type === 'sales');
+  const leadChallenges = activeRewards.filter(r => r.requirement_type === 'leads');
+
   return (
     <div className="space-y-6">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 rounded-lg p-8 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Trophy className="h-64 w-64" />
         </div>
@@ -178,8 +180,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               <Trophy className="h-8 w-8" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold">Partner Rewards</h2>
-              <p className="text-purple-100">Earn bonuses, free products, and exclusive perks</p>
+              <h2 className="text-3xl font-bold">Partner Challenges & Rewards</h2>
+              <p className="text-green-100">Complete challenges to earn bonuses and exclusive perks</p>
             </div>
           </div>
 
@@ -222,7 +224,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold">LIMITED TIME</span>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {activeRewards.filter(r => r.featured).map((reward) => {
               const progress = myProgress[reward.id];
               const progressPercent = progress ? progress.progress_percentage : 0;
@@ -344,16 +346,17 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
       )}
 
-      {/* All Active Challenges */}
-      {activeRewards.filter(r => !r.featured).length > 0 && (
+      {/* Three Column Layout: Sales, Leads, Coming Soon */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Sales Challenges */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <Target className="h-6 w-6 text-blue-600" />
-            <h3 className="text-2xl font-bold">More Challenges</h3>
+            <DollarSign className="h-6 w-6 text-green-600" />
+            <h3 className="text-xl font-bold">Sales Challenges</h3>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
-            {activeRewards.filter(r => !r.featured).map((reward) => {
+          <div className="space-y-4">
+            {salesChallenges.length > 0 ? salesChallenges.map((reward) => {
               const progress = myProgress[reward.id];
               const progressPercent = progress ? progress.progress_percentage : 0;
               const isCompleted = progress?.status === 'completed';
@@ -362,19 +365,19 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2.5 text-white`}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
                       {getRewardIcon(reward.reward_type, 'white')}
                     </div>
-                    <h4 className="font-bold text-gray-900 text-sm">{reward.title}</h4>
+                    <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
                   </div>
 
                   <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
 
-                  <div className="bg-amber-50 border border-amber-200 rounded p-2 mb-3">
-                    <p className="text-xs font-bold text-amber-700">{reward.reward_description}</p>
+                  <div className="bg-green-50 border border-green-200 rounded p-2 mb-3">
+                    <p className="text-xs font-bold text-green-700">{reward.reward_description}</p>
                   </div>
 
                   {progress && (
@@ -411,24 +414,102 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   )}
                 </div>
               );
-            })}
+            }) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <DollarSign className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-sm text-gray-600">No active sales challenges</p>
+              </div>
+            )}
           </div>
         </div>
-      )}
 
-      {/* Upcoming Rewards */}
-      {upcomingRewards.length > 0 && (
+        {/* Lead Challenges */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <Users className="h-6 w-6 text-blue-600" />
+            <h3 className="text-xl font-bold">Lead Challenges</h3>
+          </div>
+
+          <div className="space-y-4">
+            {leadChallenges.length > 0 ? leadChallenges.map((reward) => {
+              const progress = myProgress[reward.id];
+              const progressPercent = progress ? progress.progress_percentage : 0;
+              const isCompleted = progress?.status === 'completed';
+              const isClaimed = progress?.status === 'claimed';
+
+              return (
+                <div
+                  key={reward.id}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`bg-gradient-to-br ${getBadgeColor(reward.badge_color)} rounded-lg p-2 text-white`}>
+                      {getRewardIcon(reward.reward_type, 'white')}
+                    </div>
+                    <h4 className="font-bold text-gray-900 text-sm leading-tight">{reward.title}</h4>
+                  </div>
+
+                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded p-2 mb-3">
+                    <p className="text-xs font-bold text-blue-700">{reward.reward_description}</p>
+                  </div>
+
+                  {progress && (
+                    <div className="mb-3">
+                      <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full"
+                          style={{ width: `${Math.min(progressPercent, 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-600">
+                        {progress.current_value} / {progress.target_value}
+                      </p>
+                    </div>
+                  )}
+
+                  {isClaimed ? (
+                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded font-bold flex items-center justify-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Claimed
+                    </span>
+                  ) : isCompleted ? (
+                    <Button
+                      size="sm"
+                      fullWidth
+                      onClick={() => claimReward(reward.id, progress.id)}
+                    >
+                      Claim
+                    </Button>
+                  ) : (
+                    <p className="text-xs text-center text-gray-500 font-medium">
+                      {reward.requirement_description}
+                    </p>
+                  )}
+                </div>
+              );
+            }) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <Users className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-sm text-gray-600">No active lead challenges</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Coming Soon */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="h-6 w-6 text-purple-600" />
-            <h3 className="text-2xl font-bold">Coming Soon</h3>
+            <h3 className="text-xl font-bold">Coming Soon</h3>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
-            {upcomingRewards.map((reward) => (
+          <div className="space-y-4">
+            {upcomingRewards.length > 0 ? upcomingRewards.map((reward) => (
               <div
                 key={reward.id}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-5"
+                className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-4"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <Crown className="h-5 w-5 text-purple-600" />
@@ -437,34 +518,33 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                   </span>
                 </div>
 
-                <h4 className="font-bold text-gray-900 mb-2">{reward.title}</h4>
-                <p className="text-sm text-gray-600 mb-3">{reward.description}</p>
+                <h4 className="font-bold text-gray-900 mb-2 text-sm">{reward.title}</h4>
+                <p className="text-xs text-gray-600 mb-3 line-clamp-2">{reward.description}</p>
 
-                <div className="bg-white border border-purple-200 rounded p-3">
+                <div className="bg-white border border-purple-200 rounded p-2">
                   <p className="text-xs text-purple-600 font-semibold mb-1">Reward</p>
-                  <p className="text-sm font-bold text-purple-700">{reward.reward_description}</p>
+                  <p className="text-xs font-bold text-purple-700">{reward.reward_description}</p>
                 </div>
 
                 {reward.starts_at && (
-                  <div className="mt-3 flex items-center gap-2 text-sm text-purple-700">
-                    <Calendar className="h-4 w-4" />
+                  <div className="mt-3 flex items-center gap-2 text-xs text-purple-700">
+                    <Calendar className="h-3 w-3" />
                     <span className="font-medium">
                       Starts {new Date(reward.starts_at).toLocaleDateString()}
                     </span>
                   </div>
                 )}
               </div>
-            ))}
+            )) : (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-sm text-gray-600 mb-2">No upcoming challenges</p>
+                <p className="text-xs text-gray-500">Check back soon for new opportunities</p>
+              </div>
+            )}
           </div>
         </div>
-      )}
-
-      {/* Giveaway System */}
-      <GiveawaySection
-        partnerId={partnerId}
-        totalSales={totalSales}
-        organizationName={organizationName}
-      />
+      </div>
 
       {/* How Rewards Work */}
       <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6">
