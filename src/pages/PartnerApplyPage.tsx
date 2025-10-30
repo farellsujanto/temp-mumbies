@@ -19,6 +19,7 @@ export default function PartnerApplyPage() {
     missionStatement: '',
     city: '',
     state: '',
+    averageAdoptions: '',
     agreed: false,
   });
 
@@ -40,6 +41,7 @@ export default function PartnerApplyPage() {
       mission_statement: formData.missionStatement,
       location_city: formData.city,
       location_state: formData.state,
+      average_adoptions_per_year: formData.averageAdoptions ? parseInt(formData.averageAdoptions) : null,
       slug,
       social_links: {
         facebook: formData.facebook,
@@ -279,6 +281,21 @@ export default function PartnerApplyPage() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Average Number of Dog Adoptions Per Year
+                </label>
+                <input
+                  type="number"
+                  value={formData.averageAdoptions}
+                  onChange={(e) => setFormData({ ...formData, averageAdoptions: e.target.value })}
+                  placeholder="e.g., 500"
+                  min="0"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+                <p className="text-sm text-gray-500 mt-1">This helps us understand your organization's reach</p>
               </div>
             </div>
           </div>
