@@ -12,11 +12,11 @@ interface GiveawayData {
   ends_at: string;
   status: string;
   total_entries: number;
-  partner: {
+  nonprofits: {
     organization_name: string;
     logo_url: string;
   };
-  bundle: {
+  giveaway_bundles: {
     name: string;
     description: string;
     retail_value: number;
@@ -55,11 +55,11 @@ export default function GiveawayPage() {
         ends_at,
         status,
         total_entries,
-        partner:partner_id (
+        nonprofits!partner_id (
           organization_name,
           logo_url
         ),
-        bundle:bundle_id (
+        giveaway_bundles!bundle_id (
           name,
           description,
           retail_value,
@@ -164,10 +164,10 @@ export default function GiveawayPage() {
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-6">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <Gift className="h-6 w-6 text-purple-600" />
-                  <h3 className="font-bold text-lg">Prize: {giveaway!.bundle.name}</h3>
+                  <h3 className="font-bold text-lg">Prize: {giveaway!.giveaway_bundles.name}</h3>
                 </div>
                 <p className="text-3xl font-bold text-purple-600 mb-2">
-                  ${giveaway!.bundle.retail_value} Value
+                  ${giveaway!.giveaway_bundles.retail_value} Value
                 </p>
                 <p className="text-sm text-gray-600">
                   Winner will be announced on {new Date(giveaway!.ends_at).toLocaleDateString()}
@@ -178,7 +178,7 @@ export default function GiveawayPage() {
                 <p className="mb-2"><strong>What's next?</strong></p>
                 <p>
                   Share this giveaway with friends! The more people who enter, the more fun it is.
-                  Check your email for giveaway updates and special offers from {giveaway!.partner.organization_name}.
+                  Check your email for giveaway updates and special offers from {giveaway!.nonprofits.organization_name}.
                 </p>
               </div>
 
@@ -236,7 +236,7 @@ export default function GiveawayPage() {
                   <Gift className="h-5 w-5" />
                   <span className="text-sm font-semibold">Prize Value</span>
                 </div>
-                <p className="text-2xl font-bold">${giveaway!.bundle.retail_value}</p>
+                <p className="text-2xl font-bold">${giveaway!.giveaway_bundles.retail_value}</p>
               </div>
             </div>
           </div>
@@ -246,20 +246,20 @@ export default function GiveawayPage() {
             <div>
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
                 <img
-                  src={giveaway!.bundle.image_url}
-                  alt={giveaway!.bundle.name}
+                  src={giveaway!.giveaway_bundles.image_url}
+                  alt={giveaway!.giveaway_bundles.name}
                   className="w-full h-64 object-cover"
                 />
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-3">
                     <Gift className="inline h-6 w-6 text-purple-600 mr-2" />
-                    {giveaway!.bundle.name}
+                    {giveaway!.giveaway_bundles.name}
                   </h2>
-                  <p className="text-gray-700 mb-4">{giveaway!.bundle.description}</p>
+                  <p className="text-gray-700 mb-4">{giveaway!.giveaway_bundles.description}</p>
                   <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                     <p className="text-sm text-purple-600 font-semibold mb-1">Total Retail Value</p>
                     <p className="text-3xl font-bold text-purple-600">
-                      ${giveaway!.bundle.retail_value}
+                      ${giveaway!.giveaway_bundles.retail_value}
                     </p>
                   </div>
                 </div>
@@ -272,15 +272,15 @@ export default function GiveawayPage() {
                   Sponsored By
                 </h3>
                 <div className="flex items-center gap-4">
-                  {giveaway!.partner.logo_url && (
+                  {giveaway!.nonprofits.logo_url && (
                     <img
-                      src={giveaway!.partner.logo_url}
-                      alt={giveaway!.partner.organization_name}
+                      src={giveaway!.nonprofits.logo_url}
+                      alt={giveaway!.nonprofits.organization_name}
                       className="w-16 h-16 rounded-lg object-cover"
                     />
                   )}
                   <div>
-                    <p className="font-bold text-lg">{giveaway!.partner.organization_name}</p>
+                    <p className="font-bold text-lg">{giveaway!.nonprofits.organization_name}</p>
                     <p className="text-sm text-gray-600">Animal Rescue Partner</p>
                   </div>
                 </div>
@@ -369,7 +369,7 @@ export default function GiveawayPage() {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
                   <p className="mb-2"><strong>By entering:</strong></p>
                   <ul className="space-y-1">
-                    <li>• You agree to receive emails from {giveaway!.partner.organization_name} and Mumbies</li>
+                    <li>• You agree to receive emails from {giveaway!.nonprofits.organization_name} and Mumbies</li>
                     <li>• One entry per person</li>
                     <li>• Winner will be contacted by email</li>
                     <li>• Must be 18+ to enter</li>

@@ -171,8 +171,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
           Available Giveaway Bundles
         </h3>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {bundles.map((bundle) => {
+        <div className="grid md:grid-cols-3 gap-6">
+          {bundles.slice(0, 6).map((bundle) => {
             const unlocked = canUnlockBundle(bundle);
             const progress = Math.min((totalSales / bundle.sales_threshold) * 100, 100);
 
@@ -267,7 +267,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             Your Giveaways
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {giveaways.map((giveaway) => (
               <div key={giveaway.id} className="border border-gray-200 rounded-lg p-6 bg-white">
                 <div className="flex items-start justify-between mb-4">

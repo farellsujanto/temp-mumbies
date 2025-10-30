@@ -31,6 +31,7 @@ import ProductCard from '../components/ProductCard';
 import OpportunitiesTab from '../components/partner/OpportunitiesTab';
 import ReferralOpportunitiesTab from '../components/partner/ReferralOpportunitiesTab';
 import RewardsTab from '../components/partner/RewardsTab';
+import GiveawayEntriesTab from '../components/partner/GiveawayEntriesTab';
 
 interface NonprofitData {
   id: string;
@@ -629,6 +630,20 @@ export default function PartnerDashboardPage() {
             Overview
           </button>
           <button
+            onClick={() => setActiveTab('giveaways')}
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
+              activeTab === 'giveaways'
+                ? 'text-green-600 border-b-2 border-green-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Gift className="h-5 w-5" />
+            Giveaways
+            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-bold">
+              NEW
+            </span>
+          </button>
+          <button
             onClick={() => setActiveTab('rewards')}
             className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'rewards'
@@ -638,9 +653,6 @@ export default function PartnerDashboardPage() {
           >
             <Trophy className="h-5 w-5" />
             Rewards
-            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-bold">
-              NEW
-            </span>
           </button>
           <button
             onClick={() => setActiveTab('opportunities')}
@@ -1560,6 +1572,11 @@ export default function PartnerDashboardPage() {
           organizationName={nonprofit.organization_name}
           logoUrl={nonprofit.logo_url}
         />
+      )}
+
+      {/* Giveaways Tab */}
+      {activeTab === 'giveaways' && nonprofit && (
+        <GiveawayEntriesTab partnerId={nonprofit.id} />
       )}
 
       {/* Rewards Tab */}
