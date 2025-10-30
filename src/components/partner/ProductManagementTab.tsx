@@ -131,9 +131,9 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
 
   const loadAvailableProducts = async () => {
     if (productsLoaded) return;
-    setProductsLoaded(true);
 
-    const { data } = await supabase
+    console.log('Loading available products...');
+    const { data, error } = await supabase
       .from('products')
       .select(`
         id,
@@ -145,8 +145,14 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
       .eq('status', 'active')
       .order('name');
 
+    console.log('Products loaded:', { count: data?.length || 0, error });
+
     if (data) {
       setAvailableProducts(data);
+      setProductsLoaded(true);
+    } else {
+      console.error('Error loading products:', error);
+      setProductsLoaded(true);
     }
   };
 

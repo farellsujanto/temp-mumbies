@@ -149,6 +149,33 @@ export default function PartnerDashboardPage() {
   const [avgMonthlySpend, setAvgMonthlySpend] = useState(100);
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
   const [withdrawalMethod, setWithdrawalMethod] = useState<'cash' | 'giftcard'>('cash');
+  const [showWelcomeVideo, setShowWelcomeVideo] = useState(true);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('welcomeVideoDismissed');
+    const dismissedUntil = localStorage.getItem('welcomeVideoDismissedUntil');
+
+    if (dismissed === 'forever') {
+      setShowWelcomeVideo(false);
+    } else if (dismissedUntil) {
+      const dismissedTime = parseInt(dismissedUntil);
+      if (Date.now() < dismissedTime) {
+        setShowWelcomeVideo(false);
+      } else {
+        localStorage.removeItem('welcomeVideoDismissedUntil');
+      }
+    }
+  }, []);
+
+  const dismissWelcomeVideo = (duration: '24hours' | 'forever') => {
+    if (duration === 'forever') {
+      localStorage.setItem('welcomeVideoDismissed', 'forever');
+    } else {
+      const dismissUntil = Date.now() + (24 * 60 * 60 * 1000);
+      localStorage.setItem('welcomeVideoDismissedUntil', dismissUntil.toString());
+    }
+    setShowWelcomeVideo(false);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -712,43 +739,80 @@ export default function PartnerDashboardPage() {
       {activeTab === 'overview' && (
         <div className="space-y-8">
           {/* Welcome Video Info Box */}
-          <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white">
-            <div className="flex flex-col lg:flex-row gap-6 items-start">
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold mb-3">Welcome to the Partner Program!</h2>
-                <p className="text-green-100 mb-4">
-                  Watch this quick video to learn how to maximize your earnings and make the most of your partnership with Mumbies.
-                </p>
-                <ul className="space-y-2 text-sm text-green-50">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                    <span>Share your unique referral link to earn 5% on all sales</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                    <span>Refer other nonprofits and earn $1,000 per qualified partner</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-                    <span>Run giveaways to grow your audience and generate leads</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="w-full lg:w-96 flex-shrink-0">
-                <div className="bg-gray-900 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="bg-white bg-opacity-20 rounded-full p-4 inline-block mb-2">
-                      <MessageSquare className="h-8 w-8" />
+          {showWelcomeVideo && (
+            <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 rounded-lg p-6 text-white relative">
+              <div className="flex flex-col lg:flex-row gap-6 items-start">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold mb-3">Welcome to the Partner Program!</h2>
+                  <p className="text-green-100 mb-4">
+                    Watch this quick video to learn how to maximize your earnings and make the most of your partnership with Mumbies.
+                  </p>
+                  <ul className="space-y-2 text-sm text-green-50 mb-4">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                      <span>Share your unique referral link to earn 5% on all sales for life</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                      <span>Refer other nonprofits and earn $1,000 per qualified partner</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                      <span>Run giveaways to grow your audience and generate leads</span>
+                    </li>
+                  </ul>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => dismissWelcomeVideo('24hours')}
+                      className="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded transition-colors"
+                    >
+                      Hide for 24 hours
+                    </button>
+                    <button
+                      onClick={() => dismissWelcomeVideo('forever')}
+                      className="text-sm bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded transition-colors"
+                    >
+                      Don't show again
+                    </button>
+                  </div>
+                </div>
+                <div className="w-full lg:w-96 flex-shrink-0">
+                  <div className="bg-gray-900 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="bg-white bg-opacity-20 rounded-full p-4 inline-block mb-2">
+                        <MessageSquare className="h-8 w-8" />
+                      </div>
+                      <p className="text-sm text-gray-300">Video Coming Soon</p>
                     </div>
-                    <p className="text-sm text-gray-300">Video Coming Soon</p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Stats - Five Across */}
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
+                <DollarSign className="h-5 w-5 text-green-600" />
+              </div>
+              <p className="text-3xl font-bold text-green-600 mb-3">
+                ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
+              </p>
+              <Button
+                onClick={() => setShowWithdrawalModal(true)}
+                className="w-full text-sm py-2"
+                disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) === 0}
+              >
+                <CreditCard className="h-3 w-3 mr-1" />
+                Withdraw or Convert
+              </Button>
+              <p className="text-xs text-gray-600 text-center mt-2">
+                Convert to Mumbies balance for 10% bonus!
+              </p>
+            </div>
+
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-600 text-sm">Lifetime Earnings</span>
@@ -789,27 +853,6 @@ export default function PartnerDashboardPage() {
               </p>
               <p className="text-xs text-amber-700 mt-1">
                 {nonprofit.qualified_referrals_count || 0} qualified
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
-                <DollarSign className="h-5 w-5 text-green-600" />
-              </div>
-              <p className="text-3xl font-bold text-green-600 mb-3">
-                ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
-              </p>
-              <Button
-                onClick={() => setShowWithdrawalModal(true)}
-                className="w-full text-sm py-2"
-                disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) === 0}
-              >
-                <CreditCard className="h-3 w-3 mr-1" />
-                Withdraw or Convert
-              </Button>
-              <p className="text-xs text-gray-600 text-center mt-2">
-                Convert to Mumbies balance for 10% bonus!
               </p>
             </div>
           </div>
