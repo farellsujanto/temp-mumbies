@@ -239,9 +239,9 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       </div>
 
       {/* How It Works + Stats Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* How Rewards Work - Takes up 1 column */}
-        <div className="lg:col-span-1 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* How Rewards Work - 50% width */}
+        <div className="lg:w-1/2 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="font-bold text-base mb-3 flex items-center gap-2">
             <Star className="h-5 w-5 text-blue-600" />
             How Rewards Work
@@ -254,8 +254,8 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
           </ul>
         </div>
 
-        {/* Stats - Takes up 2 columns */}
-        <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+        {/* Stats - 50% width */}
+        <div className="lg:w-1/2 grid grid-cols-3 gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600 text-sm">Available</span>
