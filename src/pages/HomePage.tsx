@@ -115,7 +115,7 @@ export default function HomePage() {
     };
 
     for (const category of categories) {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('products')
         .select(`
           id,
@@ -132,7 +132,10 @@ export default function HomePage() {
         .eq('category', category)
         .limit(20);
 
-      if (data) {
+      if (error) {
+        console.error(`Error loading ${category} products:`, error);
+      } else if (data) {
+        console.log(`Loaded ${data.length} ${category} products`);
         const shuffled = [...data].sort(() => Math.random() - 0.5);
         results[category] = shuffled.slice(0, 8) as any;
       }
