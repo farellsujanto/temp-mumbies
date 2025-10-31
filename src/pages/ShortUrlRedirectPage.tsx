@@ -33,9 +33,11 @@ export default function ShortUrlRedirectPage() {
         })
         .eq('id', shortUrl.id);
 
+      // Always redirect to the main domain, not mumb.us
+      const mainDomain = 'https://partners.staging.mumbies.com';
       const fullUrl = shortUrl.destination_url.startsWith('http')
         ? shortUrl.destination_url
-        : `${window.location.origin}${shortUrl.destination_url}`;
+        : `${mainDomain}${shortUrl.destination_url}`;
 
       window.location.href = fullUrl;
     };

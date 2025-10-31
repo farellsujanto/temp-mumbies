@@ -64,7 +64,7 @@ export default function ProductShareButton({ productId, productName, productUrl 
       });
 
     if (!error) {
-      setAffiliateLink(`https://mumb.us/${shortCode}`);
+      setAffiliateLink(`https://mumb.us/s/${shortCode}`);
     }
 
     setGenerating(false);

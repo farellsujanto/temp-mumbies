@@ -303,8 +303,8 @@ export default function LeadRegistrationPage() {
                   </p>
                   <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
                     <img
-                      src="https://staging.mumbies.com/api/storage/v1/object/public/product-images/mumbies-original-chew-medium.webp"
-                      alt="Mumbies Original Chew"
+                      src="https://cdn.shopify.com/s/files/1/0771/6913/1816/files/Mumbies_products-18_a37800b8-1a65-4bfc-ba68-fdfe12952a8a.jpg?v=1734747630"
+                      alt="Buy 2, Get a FREE Chew"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -340,8 +340,8 @@ export default function LeadRegistrationPage() {
                   </p>
                   <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
                     <img
-                      src="https://staging.mumbies.com/api/storage/v1/object/public/product-images/mumbies-variety-pack.webp"
-                      alt="Mumbies Variety Pack"
+                      src="https://cdn.shopify.com/s/files/1/0771/6913/1816/files/Mumbies_BisonLiverLP-OfferGraphic.png?v=1740407847"
+                      alt="Mumbies Subscription"
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -374,8 +374,8 @@ export default function LeadRegistrationPage() {
                   </p>
                   <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
                     <img
-                      src="https://staging.mumbies.com/api/storage/v1/object/public/product-images/mumbies-bison-liver-treats.webp"
-                      alt="Mumbies Bundle"
+                      src="https://cdn.shopify.com/s/files/1/0771/6913/1816/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120"
+                      alt="Play-Time Variety Bundles"
                       className="w-full h-full object-cover"
                     />
                   </div>
