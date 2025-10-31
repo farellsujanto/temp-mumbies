@@ -777,12 +777,16 @@ export default function PartnerDashboardPage() {
                   </div>
                 </div>
                 <div className="w-full lg:w-96 flex-shrink-0">
-                  <div className="bg-gray-900 rounded-lg overflow-hidden aspect-video flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="bg-white bg-opacity-20 rounded-full p-4 inline-block mb-2">
-                        <MessageSquare className="h-8 w-8" />
+                  <div className="relative rounded-lg overflow-hidden aspect-video group cursor-pointer">
+                    <img
+                      src="https://images.pexels.com/photos/3756681/pexels-photo-3756681.jpeg?auto=compress&cs=tinysrgb&w=800"
+                      alt="Partner Portal Overview"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all flex items-center justify-center">
+                      <div className="bg-white bg-opacity-90 rounded-full p-6 group-hover:scale-110 transition-transform">
+                        <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-green-600 border-b-8 border-b-transparent ml-1" />
                       </div>
-                      <p className="text-sm text-gray-300">Video Coming Soon</p>
                     </div>
                   </div>
                 </div>

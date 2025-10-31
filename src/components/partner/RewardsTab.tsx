@@ -255,7 +255,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
         </div>
 
         {/* Stats - 50% width */}
-        <div className="lg:w-1/2 grid grid-cols-3 gap-4">
+        <div className="lg:w-1/2 grid grid-cols-4 gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600 text-sm">Available</span>
@@ -280,6 +280,14 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               <CheckCircle className="h-5 w-5 text-green-600" />
             </div>
             <p className="text-3xl font-bold">{completedCount}</p>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Conv. Increase</span>
+              <TrendingUp className="h-5 w-5 text-purple-600" />
+            </div>
+            <p className="text-3xl font-bold">{completedCount > 0 ? `+${(completedCount * 8).toFixed(0)}%` : '0%'}</p>
           </div>
         </div>
       </div>
@@ -369,10 +377,17 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Sales Challenges */}
         <div className="flex flex-col h-full">
-          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <DollarSign className="h-6 w-6 text-green-600" />
-            Sales Challenges
-          </h3>
+          <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-4 mb-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="bg-white bg-opacity-20 rounded-full p-2">
+                <DollarSign className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Sales Challenges</h3>
+                <p className="text-xs text-green-100">Drive revenue growth</p>
+              </div>
+            </div>
+          </div>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
@@ -418,10 +433,17 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
         {/* Lead Challenges */}
         <div className="flex flex-col h-full">
-          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <Users className="h-6 w-6 text-blue-600" />
-            Lead Challenges
-          </h3>
+          <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg p-4 mb-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="bg-white bg-opacity-20 rounded-full p-2">
+                <Users className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Lead Challenges</h3>
+                <p className="text-xs text-blue-100">Expand your audience</p>
+              </div>
+            </div>
+          </div>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
@@ -467,10 +489,17 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
         {/* Coming Soon */}
         <div className="flex flex-col h-full">
-          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <Calendar className="h-6 w-6 text-purple-600" />
-            Coming Soon
-          </h3>
+          <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-4 mb-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="bg-white bg-opacity-20 rounded-full p-2">
+                <Calendar className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Coming Soon</h3>
+                <p className="text-xs text-purple-100">New challenges ahead</p>
+              </div>
+            </div>
+          </div>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
