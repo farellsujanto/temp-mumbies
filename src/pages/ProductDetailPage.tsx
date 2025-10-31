@@ -7,6 +7,7 @@ import Button from '../components/Button';
 import Badge from '../components/Badge';
 import ProductCard from '../components/ProductCard';
 import ProductReviews from '../components/ProductReviews';
+import ProductShareButton from '../components/ProductShareButton';
 
 interface ProductVariant {
   id: string;
@@ -362,7 +363,14 @@ export default function ProductDetailPage() {
             </a>
           )}
 
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <h1 className="text-3xl font-bold flex-1">{product.name}</h1>
+            <ProductShareButton
+              productId={product.id}
+              productName={product.name}
+              productUrl={window.location.href}
+            />
+          </div>
 
           {reviewCount > 0 && (
             <div className="flex items-center gap-3 mb-4">

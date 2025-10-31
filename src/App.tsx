@@ -22,6 +22,7 @@ import LeadRegistrationPage from './pages/LeadRegistrationPage';
 import GiveawayPage from './pages/GiveawayPage';
 import TestPage from './pages/TestPage';
 import DiagnosticPage from './pages/DiagnosticPage';
+import ShortUrlRedirectPage from './pages/ShortUrlRedirectPage';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/diagnostic" element={<DiagnosticPage />} />
                 <Route path="/lead-registration" element={<LeadRegistrationPage />} />
+                <Route path="/s/:code" element={<ShortUrlRedirectPage />} />
                 <Route path="/shop" element={<ShopPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/login" element={<LoginPage />} />
