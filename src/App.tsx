@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import Layout from './components/Layout';
+import PasswordProtection from './components/PasswordProtection';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import LoginPage from './pages/LoginPage';
@@ -23,31 +24,33 @@ import GiveawayPage from './pages/GiveawayPage';
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/lead-registration" element={<LeadRegistrationPage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/product/:id" element={<ProductDetailPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/account" element={<AccountPage />} />
-              <Route path="/rescues" element={<RescuesPage />} />
-              <Route path="/rescues/:slug" element={<RescueProfilePage />} />
-              <Route path="/brands" element={<BrandsPage />} />
-              <Route path="/brands/:slug" element={<BrandProfilePage />} />
-              <Route path="/partner/apply" element={<PartnerApplyPage />} />
-              <Route path="/partner/login" element={<PartnerLoginPage />} />
-              <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
-              <Route path="/giveaway/:slug" element={<GiveawayPage />} />
-              <Route path="/impact" element={<ImpactPage />} />
-            </Routes>
-          </Layout>
-        </CartProvider>
-      </AuthProvider>
+      <PasswordProtection>
+        <AuthProvider>
+          <CartProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/lead-registration" element={<LeadRegistrationPage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/account" element={<AccountPage />} />
+                <Route path="/rescues" element={<RescuesPage />} />
+                <Route path="/rescues/:slug" element={<RescueProfilePage />} />
+                <Route path="/brands" element={<BrandsPage />} />
+                <Route path="/brands/:slug" element={<BrandProfilePage />} />
+                <Route path="/partner/apply" element={<PartnerApplyPage />} />
+                <Route path="/partner/login" element={<PartnerLoginPage />} />
+                <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
+                <Route path="/giveaway/:slug" element={<GiveawayPage />} />
+                <Route path="/impact" element={<ImpactPage />} />
+              </Routes>
+            </Layout>
+          </CartProvider>
+        </AuthProvider>
+      </PasswordProtection>
     </BrowserRouter>
   );
 }
