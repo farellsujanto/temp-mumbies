@@ -89,6 +89,32 @@ Deno.serve(async (req: Request) => {
         // Get the first image
         const imageUrl = product.images[0]?.src || null;
 
+        // Find or create brand
+        let brandId = null;
+        if (product.vendor) {
+          const { data: brand } = await supabase
+            .from("brands")
+            .select("id")
+            .eq("name", product.vendor)
+            .maybeSingle();
+
+          if (brand) {
+            brandId = brand.id;
+          } else {
+            const { data: newBrand } = await supabase
+              .from("brands")
+              .insert({
+                name: product.vendor,
+                slug: product.vendor.toLowerCase().replace(/\s+/g, "-"),
+                description: `Premium pet products from ${product.vendor}`,
+                is_featured: false,
+              })
+              .select("id")
+              .single();
+            brandId = newBrand?.id;
+          }
+        }
+
         // Upsert product to database
         const { data, error } = await supabase
           .from("products")
@@ -99,11 +125,11 @@ Deno.serve(async (req: Request) => {
             price: price,
             image_url: imageUrl,
             category: product.product_type || "uncategorized",
-            brand_name: product.vendor || "Mumbies",
-            in_stock: inventory > 0,
+            brand_id: brandId,
+            inventory_status: inventory > 0 ? "in_stock" : "out_of_stock",
             stock_quantity: inventory,
             tags: product.tags ? product.tags.split(",").map(t => t.trim()) : [],
-            updated_at: new Date().toISOString(),
+            is_active: true,
           }, {
             onConflict: "shopify_id",
           })
