@@ -193,38 +193,63 @@ export default function GiveawayPage() {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 rounded-lg p-8 md:p-12 text-white mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <Sparkles className="h-8 w-8" />
-              <span className="bg-white bg-opacity-20 backdrop-blur-sm px-4 py-1 rounded-full text-sm font-bold">
-                GIVEAWAY
-              </span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{giveaway!.title}</h1>
-            <p className="text-xl mb-6">{giveaway!.description}</p>
-
-            <div className="flex flex-wrap gap-4">
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <Calendar className="h-5 w-5" />
-                  <span className="text-sm font-semibold">Time Left</span>
+            <div className="flex flex-col lg:flex-row justify-between gap-8">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <Sparkles className="h-8 w-8" />
+                  <span className="bg-white bg-opacity-20 backdrop-blur-sm px-4 py-1 rounded-full text-sm font-bold">
+                    GIVEAWAY
+                  </span>
                 </div>
-                <p className="text-2xl font-bold">{getDaysRemaining()} Days</p>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">{giveaway!.title}</h1>
+                <p className="text-xl mb-6">{giveaway!.description}</p>
+
+                <div className="flex flex-wrap gap-4">
+                  <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Calendar className="h-5 w-5" />
+                      <span className="text-sm font-semibold">Time Left</span>
+                    </div>
+                    <p className="text-2xl font-bold">{getDaysRemaining()} Days</p>
+                  </div>
+
+                  <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Users className="h-5 w-5" />
+                      <span className="text-sm font-semibold">Entries</span>
+                    </div>
+                    <p className="text-2xl font-bold">{giveaway!.total_entries}</p>
+                  </div>
+
+                  <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Gift className="h-5 w-5" />
+                      <span className="text-sm font-semibold">Prize Value</span>
+                    </div>
+                    <p className="text-2xl font-bold">${giveaway!.giveaway_bundles.retail_value}</p>
+                  </div>
+                </div>
               </div>
 
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <Users className="h-5 w-5" />
-                  <span className="text-sm font-semibold">Entries</span>
+              {/* Sponsor Module - Right Side */}
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-6 lg:w-80 flex-shrink-0">
+                <h3 className="font-bold mb-4 flex items-center gap-2 text-white">
+                  <Heart className="h-5 w-5" />
+                  Sponsored By
+                </h3>
+                <div className="flex items-center gap-4">
+                  {giveaway!.nonprofits.logo_url && (
+                    <img
+                      src={giveaway!.nonprofits.logo_url}
+                      alt={giveaway!.nonprofits.organization_name}
+                      className="w-16 h-16 rounded-lg object-cover bg-white"
+                    />
+                  )}
+                  <div>
+                    <p className="font-bold text-lg text-white">{giveaway!.nonprofits.organization_name}</p>
+                    <p className="text-sm text-white text-opacity-90">Animal Rescue Partner</p>
+                  </div>
                 </div>
-                <p className="text-2xl font-bold">{giveaway!.total_entries}</p>
-              </div>
-
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-6 py-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <Gift className="h-5 w-5" />
-                  <span className="text-sm font-semibold">Prize Value</span>
-                </div>
-                <p className="text-2xl font-bold">${giveaway!.giveaway_bundles.retail_value}</p>
               </div>
             </div>
           </div>
@@ -236,7 +261,7 @@ export default function GiveawayPage() {
                 <img
                   src={giveaway!.giveaway_bundles.image_url}
                   alt={giveaway!.giveaway_bundles.name}
-                  className="w-full h-64 object-cover"
+                  className="w-full aspect-square object-cover"
                 />
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-3">
@@ -253,32 +278,12 @@ export default function GiveawayPage() {
                 </div>
               </div>
 
-              {/* Sponsor */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="font-bold mb-3 flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-red-600" />
-                  Sponsored By
-                </h3>
-                <div className="flex items-center gap-4">
-                  {giveaway!.nonprofits.logo_url && (
-                    <img
-                      src={giveaway!.nonprofits.logo_url}
-                      alt={giveaway!.nonprofits.organization_name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                  )}
-                  <div>
-                    <p className="font-bold text-lg">{giveaway!.nonprofits.organization_name}</p>
-                    <p className="text-sm text-gray-600">Animal Rescue Partner</p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Entry Form */}
             <div className="bg-white border border-gray-200 rounded-lg p-6 h-fit">
               <h2 className="text-2xl font-bold mb-4">Enter to Win!</h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-lg text-gray-600 mb-6">
                 Fill out the form below for your chance to win. It's free to enter!
               </p>
 
@@ -289,28 +294,30 @@ export default function GiveawayPage() {
               )}
 
               <form onSubmit={submitEntry} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                    placeholder="your@email.com"
-                  />
-                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
+                      placeholder="your@email.com"
+                    />
+                  </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-blue-800">
-                  <p className="mb-2"><strong>By entering:</strong></p>
-                  <ul className="space-y-1">
-                    <li>• You agree to receive emails from {giveaway!.nonprofits.organization_name} and Mumbies</li>
-                    <li>• One entry per person</li>
-                    <li>• Winner will be contacted by email</li>
-                    <li>• Must be 18+ to enter</li>
-                  </ul>
+                  <div className="flex-1 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                    <p className="mb-2 font-semibold">By entering:</p>
+                    <ul className="space-y-1">
+                      <li>• You agree to receive emails from {giveaway!.nonprofits.organization_name} and Mumbies</li>
+                      <li>• One entry per person</li>
+                      <li>• Winner will be contacted by email</li>
+                      <li>• Must be 18+ to enter</li>
+                    </ul>
+                  </div>
                 </div>
 
                 <Button
