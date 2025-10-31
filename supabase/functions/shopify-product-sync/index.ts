@@ -47,8 +47,9 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const shopifyDomain = Deno.env.get("SHOPIFY_STORE_DOMAIN");
-    const shopifyToken = Deno.env.get("SHOPIFY_ADMIN_API_TOKEN");
+    // These will be set via Supabase secrets or fallback to hardcoded values
+    const shopifyDomain = Deno.env.get("SHOPIFY_STORE_DOMAIN") || "getmumbies.myshopify.com";
+    const shopifyToken = Deno.env.get("SHOPIFY_ADMIN_API_TOKEN") || "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";
     const shopifyApiVersion = Deno.env.get("SHOPIFY_API_VERSION") || "2025-10";
 
     if (!shopifyDomain || !shopifyToken) {
