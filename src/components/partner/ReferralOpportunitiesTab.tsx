@@ -275,6 +275,41 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
         </div>
       </div>
 
+      {/* Stats Row */}
+      <div className="grid md:grid-cols-4 gap-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Pending</span>
+            <Clock className="h-5 w-5 text-gray-600" />
+          </div>
+          <p className="text-3xl font-bold">{pendingPartners.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Approved Unqualified</span>
+            <Users className="h-5 w-5 text-blue-600" />
+          </div>
+          <p className="text-3xl font-bold">{activeNoSales.length + activeNeedsHelp.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Qualified</span>
+            <CheckCircle className="h-5 w-5 text-green-600" />
+          </div>
+          <p className="text-3xl font-bold">{qualified.length}</p>
+        </div>
+
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Total Earnings</span>
+            <DollarSign className="h-5 w-5 text-emerald-600" />
+          </div>
+          <p className="text-3xl font-bold">${qualified.reduce((sum, p) => sum + p.bounty_amount, 0).toFixed(0)}</p>
+        </div>
+      </div>
+
       {/* Three Column Layout: Pending | Approved Unqualified | Qualified */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Pending Partners */}

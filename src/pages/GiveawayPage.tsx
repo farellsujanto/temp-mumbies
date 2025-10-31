@@ -232,7 +232,7 @@ export default function GiveawayPage() {
               </div>
 
               {/* Sponsor Module - Right Side */}
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-6 lg:w-80 flex-shrink-0">
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-6 lg:w-96 flex-shrink-0">
                 <h3 className="font-bold mb-4 flex items-center gap-2 text-white">
                   <Heart className="h-5 w-5" />
                   Sponsored By
@@ -242,11 +242,11 @@ export default function GiveawayPage() {
                     <img
                       src={giveaway!.nonprofits.logo_url}
                       alt={giveaway!.nonprofits.organization_name}
-                      className="w-16 h-16 rounded-lg object-cover bg-white"
+                      className="w-16 h-16 rounded-lg object-cover bg-white flex-shrink-0"
                     />
                   )}
-                  <div>
-                    <p className="font-bold text-lg text-white">{giveaway!.nonprofits.organization_name}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-lg text-white leading-tight break-words">{giveaway!.nonprofits.organization_name}</p>
                     <p className="text-sm text-white text-opacity-90">Animal Rescue Partner</p>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function GiveawayPage() {
                 <img
                   src={giveaway!.giveaway_bundles.image_url}
                   alt={giveaway!.giveaway_bundles.name}
-                  className="w-full aspect-square object-cover"
+                  className="w-full h-64 object-cover"
                 />
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-3">
@@ -294,30 +294,18 @@ export default function GiveawayPage() {
               )}
 
               <form onSubmit={submitEntry} className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-
-                  <div className="flex-1 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-                    <p className="mb-2 font-semibold">By entering:</p>
-                    <ul className="space-y-1">
-                      <li>• You agree to receive emails from {giveaway!.nonprofits.organization_name} and Mumbies</li>
-                      <li>• One entry per person</li>
-                      <li>• Winner will be contacted by email</li>
-                      <li>• Must be 18+ to enter</li>
-                    </ul>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
+                    placeholder="your@email.com"
+                  />
                 </div>
 
                 <Button
@@ -328,6 +316,16 @@ export default function GiveawayPage() {
                 >
                   {submitting ? 'Submitting...' : 'Enter Giveaway'}
                 </Button>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                  <p className="mb-2 font-semibold">By entering:</p>
+                  <ul className="space-y-1">
+                    <li>• You agree to receive emails from {giveaway!.nonprofits.organization_name} and Mumbies</li>
+                    <li>• One entry per person</li>
+                    <li>• Winner will be contacted by email</li>
+                    <li>• Must be 18+ to enter</li>
+                  </ul>
+                </div>
               </form>
             </div>
           </div>
