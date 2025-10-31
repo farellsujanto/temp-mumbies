@@ -21,6 +21,7 @@ import { ImpactPage } from './pages/ImpactPage';
 import LeadRegistrationPage from './pages/LeadRegistrationPage';
 import GiveawayPage from './pages/GiveawayPage';
 import TestPage from './pages/TestPage';
+import DiagnosticPage from './pages/DiagnosticPage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/test" element={<TestPage />} />
+                <Route path="/diagnostic" element={<DiagnosticPage />} />
                 <Route path="/lead-registration" element={<LeadRegistrationPage />} />
                 <Route path="/shop" element={<ShopPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
