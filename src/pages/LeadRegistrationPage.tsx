@@ -270,20 +270,12 @@ export default function LeadRegistrationPage() {
 
           <div className="px-8 py-10">
             <div className="max-w-2xl mx-auto">
-              {nonprofit.mission_statement && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-                  <p className="text-gray-700 text-center italic">
-                    "{nonprofit.mission_statement}"
-                  </p>
-                </div>
-              )}
-
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold mb-4">
-                  🎁 Claim Your Free Offer!
+                  Pick an Offer Below
                 </h2>
                 <p className="text-lg text-gray-700 mb-6">
-                  Choose your deal below and start shopping premium natural pet products
+                  Choose your deal and start shopping premium natural pet products
                 </p>
               </div>
 
@@ -294,7 +286,7 @@ export default function LeadRegistrationPage() {
                     setSelectedOffer('free-chew');
                     setShowEmailField(true);
                   }}
-                  className={`relative p-6 rounded-lg border-2 transition-all ${
+                  className={`relative p-4 rounded-lg border-2 transition-all ${
                     selectedOffer === 'free-chew'
                       ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
                       : 'border-gray-300 hover:border-green-300 hover:shadow-md'
@@ -305,11 +297,17 @@ export default function LeadRegistrationPage() {
                       <CheckCircle className="h-5 w-5" />
                     </div>
                   )}
-                  <Gift className="h-12 w-12 text-green-600 mx-auto mb-3" />
                   <h3 className="font-bold text-xl mb-2">FREE Original Chew</h3>
                   <p className="text-sm text-gray-600 mb-3">
                     Just pay shipping
                   </p>
+                  <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
+                    <img
+                      src="https://staging.mumbies.com/api/storage/v1/object/public/product-images/mumbies-original-chew-medium.webp"
+                      alt="Mumbies Original Chew"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="bg-amber-100 rounded-lg px-3 py-2">
                     <p className="text-amber-800 font-bold">$0.00</p>
                     <p className="text-xs text-amber-700">+ shipping</p>
@@ -322,7 +320,7 @@ export default function LeadRegistrationPage() {
                     setSelectedOffer('starter-pack');
                     setShowEmailField(true);
                   }}
-                  className={`relative p-6 rounded-lg border-2 transition-all ${
+                  className={`relative p-4 rounded-lg border-2 transition-all ${
                     selectedOffer === 'starter-pack'
                       ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
                       : 'border-gray-300 hover:border-green-300 hover:shadow-md'
@@ -336,11 +334,17 @@ export default function LeadRegistrationPage() {
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
                     POPULAR
                   </div>
-                  <Package className="h-12 w-12 text-green-600 mx-auto mb-3" />
                   <h3 className="font-bold text-xl mb-2">50% OFF Starter Pack</h3>
                   <p className="text-sm text-gray-600 mb-3">
                     Try our best sellers
                   </p>
+                  <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
+                    <img
+                      src="https://staging.mumbies.com/api/storage/v1/object/public/product-images/mumbies-variety-pack.webp"
+                      alt="Mumbies Variety Pack"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="bg-green-100 rounded-lg px-3 py-2">
                     <p className="text-green-800 font-bold">50% OFF</p>
                     <p className="text-xs text-green-700">Limited time</p>
@@ -353,7 +357,7 @@ export default function LeadRegistrationPage() {
                     setSelectedOffer('bundle-discount');
                     setShowEmailField(true);
                   }}
-                  className={`relative p-6 rounded-lg border-2 transition-all ${
+                  className={`relative p-4 rounded-lg border-2 transition-all ${
                     selectedOffer === 'bundle-discount'
                       ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
                       : 'border-gray-300 hover:border-green-300 hover:shadow-md'
@@ -364,11 +368,17 @@ export default function LeadRegistrationPage() {
                       <CheckCircle className="h-5 w-5" />
                     </div>
                   )}
-                  <Sparkles className="h-12 w-12 text-green-600 mx-auto mb-3" />
                   <h3 className="font-bold text-xl mb-2">20% OFF Any Bundle</h3>
                   <p className="text-sm text-gray-600 mb-3">
                     Stock up and save
                   </p>
+                  <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
+                    <img
+                      src="https://staging.mumbies.com/api/storage/v1/object/public/product-images/mumbies-bison-liver-treats.webp"
+                      alt="Mumbies Bundle"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="bg-blue-100 rounded-lg px-3 py-2">
                     <p className="text-blue-800 font-bold">20% OFF</p>
                     <p className="text-xs text-blue-700">Best value</p>

@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { Gift, Calendar, Users, Sparkles, CheckCircle, Heart } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Button from '../components/Button';
-import Layout from '../components/Layout';
 
 interface GiveawayData {
   id: string;
@@ -34,10 +33,6 @@ export default function GiveawayPage() {
 
   // Form fields
   const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [zipCode, setZipCode] = useState('');
 
   useEffect(() => {
     fetchGiveaway();
@@ -89,10 +84,10 @@ export default function GiveawayPage() {
       .insert({
         giveaway_id: giveaway!.id,
         email,
-        first_name: firstName,
-        last_name: lastName,
-        phone,
-        zip_code: zipCode
+        first_name: null,
+        last_name: null,
+        phone: null,
+        zip_code: null
       });
 
     if (submitError) {
@@ -118,39 +113,34 @@ export default function GiveawayPage() {
 
   if (loading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading giveaway...</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading giveaway...</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   if (error && !giveaway) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center px-4">
-          <div className="text-center max-w-md">
-            <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <Gift className="h-8 w-8 text-red-600" />
-            </div>
-            <h1 className="text-2xl font-bold mb-2">Giveaway Not Found</h1>
-            <p className="text-gray-600">
-              This giveaway may have ended or the link is invalid.
-            </p>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <Gift className="h-8 w-8 text-red-600" />
           </div>
+          <h1 className="text-2xl font-bold mb-2">Giveaway Not Found</h1>
+          <p className="text-gray-600">
+            This giveaway may have ended or the link is invalid.
+          </p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   if (submitted) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4">
           <div className="max-w-2xl w-full">
             <div className="bg-white border-2 border-green-300 rounded-lg p-8 text-center">
               <div className="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
@@ -195,12 +185,10 @@ export default function GiveawayPage() {
             </div>
           </div>
         </div>
-      </Layout>
     );
   }
 
   return (
-    <Layout>
       <div className="min-h-screen py-12 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
@@ -301,34 +289,6 @@ export default function GiveawayPage() {
               )}
 
               <form onSubmit={submitEntry} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    />
-                  </div>
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address *
@@ -338,31 +298,8 @@ export default function GiveawayPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ZIP Code
-                  </label>
-                  <input
-                    type="text"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
+                    placeholder="your@email.com"
                   />
                 </div>
 
@@ -389,6 +326,5 @@ export default function GiveawayPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }
