@@ -138,7 +138,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
   const completedGiveaways = giveaways.filter(g => g.status !== 'active');
 
   const lifetimeLeads = giveaways.reduce((sum, g) => sum + g.total_leads_generated, 0);
-  const lifetimeSales = lifetimeLeads * 50;
+  const lifetimeSales = lifetimeLeads * 50; // Estimate: $50 average per lead
+  const lifetimeCommissions = lifetimeSales * 0.05; // 5% commission rate
 
   return (
     <div className="space-y-6">
@@ -178,43 +179,35 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
           </ul>
         </div>
 
-        <div className="lg:w-1/2 grid grid-cols-2 gap-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Lifetime Leads</span>
-              <Users className="h-5 w-5 text-blue-600" />
+        <div className="lg:w-1/2">
+          <h3 className="text-2xl font-bold mb-4">Lifetime Giveaway Statistics</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Leads</span>
+                <Users className="h-5 w-5 text-blue-600" />
+              </div>
+              <p className="text-3xl font-bold">{lifetimeLeads}</p>
+              <p className="text-xs text-gray-600 mt-1">Generated</p>
             </div>
-            <p className="text-3xl font-bold">{lifetimeLeads}</p>
-            <p className="text-xs text-gray-600 mt-1">From all giveaways</p>
-          </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Est. Sales</span>
-              <TrendingUp className="h-5 w-5 text-green-600" />
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Sales</span>
+                <TrendingUp className="h-5 w-5 text-green-600" />
+              </div>
+              <p className="text-3xl font-bold">${lifetimeSales.toLocaleString()}</p>
+              <p className="text-xs text-gray-600 mt-1">Revenue</p>
             </div>
-            <p className="text-3xl font-bold">${lifetimeSales}</p>
-            <p className="text-xs text-gray-600 mt-1">Generated revenue</p>
-          </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Total Giveaways</span>
-              <Trophy className="h-5 w-5 text-amber-600" />
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Commissions</span>
+                <Trophy className="h-5 w-5 text-amber-600" />
+              </div>
+              <p className="text-3xl font-bold">${lifetimeCommissions.toLocaleString()}</p>
+              <p className="text-xs text-gray-600 mt-1">Earned</p>
             </div>
-            <p className="text-3xl font-bold">{giveaways.length}</p>
-            <p className="text-xs text-gray-600 mt-1">All time</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Avg Entries</span>
-              <CheckCircle className="h-5 w-5 text-purple-600" />
-            </div>
-            <p className="text-3xl font-bold">
-              {giveaways.length > 0 ? Math.round(giveaways.reduce((sum, g) => sum + g.total_entries, 0) / giveaways.length) : 0}
-            </p>
-            <p className="text-xs text-gray-600 mt-1">Per giveaway</p>
           </div>
         </div>
       </div>
@@ -225,7 +218,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
         <div className="lg:w-2/3">
           <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
             <Trophy className="h-6 w-6 text-purple-600" />
-            {activeGiveaway ? 'Available Bundles (End Current Giveaway First)' : 'Select Giveaway Bundle'}
+            Achievable Giveaways
           </h3>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -325,7 +318,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
           </h3>
 
           {activeGiveaway ? (
-            <div className="border border-amber-300 rounded-lg overflow-hidden bg-white">
+            <div className="border-4 border-amber-400 rounded-lg overflow-hidden bg-amber-50">
               <div className="h-40">
                 <img
                   src={activeGiveaway.bundle.image_url}
@@ -354,8 +347,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
 
                   <div className="bg-green-50 rounded-lg p-2">
                     <div className="flex items-center gap-1 mb-1">
-                      <Trophy className="h-3 w-3 text-green-600" />
-                      <span className="text-xs text-green-600 font-semibold">Leads</span>
+                      <CheckCircle className="h-3 w-3 text-green-600" />
+                      <span className="text-xs text-green-600 font-semibold">Conversions</span>
                     </div>
                     <p className="text-xl font-bold text-green-600">
                       {activeGiveaway.total_leads_generated}
