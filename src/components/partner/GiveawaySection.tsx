@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Gift, Users, Trophy, Calendar, ExternalLink, CheckCircle, Clock, AlertCircle, Crown, Sparkles } from 'lucide-react';
+import { Gift, Users, Trophy, Calendar, ExternalLink, CheckCircle, TrendingUp, Award, Sparkles, Crown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
 
@@ -49,13 +49,11 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
   const fetchGiveawayData = async () => {
     setLoading(true);
 
-    // Fetch available bundles
     const { data: bundlesData } = await supabase
       .from('giveaway_bundles')
       .select('*')
       .order('sales_threshold', { ascending: true });
 
-    // Fetch partner's giveaways
     const { data: giveawaysData } = await supabase
       .from('partner_giveaways')
       .select(`
@@ -136,9 +134,15 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     );
   }
 
+  const activeGiveaway = giveaways.find(g => g.status === 'active');
+  const completedGiveaways = giveaways.filter(g => g.status !== 'active');
+
+  const lifetimeLeads = giveaways.reduce((sum, g) => sum + g.total_leads_generated, 0);
+  const lifetimeSales = lifetimeLeads * 50;
+
   return (
     <div className="space-y-6">
-      {/* Info Section */}
+      {/* Header */}
       <div className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-lg p-6 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-10">
           <Gift className="h-48 w-48" />
@@ -158,77 +162,223 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
         </div>
       </div>
 
-      {/* Active Giveaways */}
-      {giveaways.length > 0 && (
-        <div>
+      {/* Instructions + Lifetime Stats */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="lg:w-1/2 bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h3 className="font-bold text-base mb-3 flex items-center gap-2">
+            <Gift className="h-5 w-5 text-blue-600" />
+            How Giveaways Work
+          </h3>
+          <ul className="space-y-2 text-sm text-gray-700">
+            <li>• <strong>Only one active giveaway</strong> at a time to maximize impact</li>
+            <li>• <strong>Select a bundle</strong> from available options based on your sales</li>
+            <li>• <strong>Share your landing page</strong> to collect entries and leads</li>
+            <li>• <strong>Track performance</strong> in real-time with entries and lead data</li>
+            <li>• <strong>Winner selected automatically</strong> when giveaway ends</li>
+          </ul>
+        </div>
+
+        <div className="lg:w-1/2 grid grid-cols-2 gap-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Lifetime Leads</span>
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
+            <p className="text-3xl font-bold">{lifetimeLeads}</p>
+            <p className="text-xs text-gray-600 mt-1">From all giveaways</p>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Est. Sales</span>
+              <TrendingUp className="h-5 w-5 text-green-600" />
+            </div>
+            <p className="text-3xl font-bold">${lifetimeSales}</p>
+            <p className="text-xs text-gray-600 mt-1">Generated revenue</p>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Total Giveaways</span>
+              <Trophy className="h-5 w-5 text-amber-600" />
+            </div>
+            <p className="text-3xl font-bold">{giveaways.length}</p>
+            <p className="text-xs text-gray-600 mt-1">All time</p>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Avg Entries</span>
+              <CheckCircle className="h-5 w-5 text-purple-600" />
+            </div>
+            <p className="text-3xl font-bold">
+              {giveaways.length > 0 ? Math.round(giveaways.reduce((sum, g) => sum + g.total_entries, 0) / giveaways.length) : 0}
+            </p>
+            <p className="text-xs text-gray-600 mt-1">Per giveaway</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Select Bundle + Active Giveaway */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Select Bundle - 2/3 */}
+        <div className="lg:w-2/3">
           <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <Crown className="h-6 w-6 text-amber-600" />
-            Your Active Giveaways
+            <Trophy className="h-6 w-6 text-purple-600" />
+            {activeGiveaway ? 'Available Bundles (End Current Giveaway First)' : 'Select Giveaway Bundle'}
           </h3>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {giveaways.map((giveaway) => (
-              <div key={giveaway.id} className="border border-gray-200 rounded-lg overflow-hidden bg-white">
-                <div className="h-40">
-                  <img
-                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440"
-                    alt={giveaway.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h4 className="font-bold text-lg">{giveaway.title}</h4>
-                    <p className="text-sm text-gray-600">{giveaway.description}</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {bundles.map((bundle) => {
+              const unlocked = canUnlockBundle(bundle);
+              const progress = Math.min((totalSales / bundle.sales_threshold) * 100, 100);
+
+              return (
+                <div
+                  key={bundle.id}
+                  className={`border-2 rounded-lg overflow-hidden ${
+                    unlocked ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-gray-50'
+                  }`}
+                >
+                  <div className="relative h-32">
+                    <img
+                      src={bundle.image_url}
+                      alt={bundle.name}
+                      className={`w-full h-full object-cover ${!unlocked && 'opacity-50 grayscale'}`}
+                    />
+                    <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${getTierBadge(bundle.tier)}`}>
+                      {bundle.tier.toUpperCase()}
+                    </div>
+                    {unlocked && (
+                      <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        UNLOCKED
+                      </div>
+                    )}
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    giveaway.status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-700'
-                  }`}>
-                    {giveaway.status.toUpperCase()}
+
+                  <div className="p-4">
+                    <h4 className="font-bold mb-2">{bundle.name}</h4>
+                    <p className="text-xs text-gray-600 mb-2">{bundle.description}</p>
+
+                    <div className="bg-white border border-gray-200 rounded-lg p-2 mb-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold">Value</span>
+                        <span className="text-sm font-bold text-purple-600">
+                          ${bundle.retail_value.toFixed(0)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-600">
+                        <span>Requires</span>
+                        <span className="font-semibold">
+                          ${bundle.sales_threshold.toLocaleString()} sales
+                        </span>
+                      </div>
+                    </div>
+
+                    {!unlocked && (
+                      <div>
+                        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
+                          <div
+                            className={`bg-gradient-to-r ${getTierColor(bundle.tier)} h-1.5 rounded-full`}
+                            style={{ width: `${progress}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-xs text-gray-600">
+                          ${(bundle.sales_threshold - totalSales).toFixed(0)} more to unlock
+                        </p>
+                      </div>
+                    )}
+
+                    {unlocked && !activeGiveaway && (
+                      <Button
+                        fullWidth
+                        size="sm"
+                        onClick={() => {
+                          setSelectedBundle(bundle);
+                          setGiveawayTitle(`Win a ${bundle.name}!`);
+                          setGiveawayDescription(`Enter to win a ${bundle.name} (${bundle.retail_value} value) from ${organizationName}!`);
+                        }}
+                      >
+                        <Gift className="h-4 w-4 mr-2" />
+                        Create Giveaway
+                      </Button>
+                    )}
+
+                    {activeGiveaway && (
+                      <Button fullWidth size="sm" disabled>
+                        End Current First
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Active Giveaway - 1/3 */}
+        <div className="lg:w-1/3">
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Crown className="h-6 w-6 text-amber-600" />
+            Active Giveaway
+          </h3>
+
+          {activeGiveaway ? (
+            <div className="border border-amber-300 rounded-lg overflow-hidden bg-white">
+              <div className="h-40">
+                <img
+                  src={activeGiveaway.bundle.image_url}
+                  alt={activeGiveaway.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <h4 className="font-bold">{activeGiveaway.title}</h4>
+                  <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                    ACTIVE
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Users className="h-4 w-4 text-blue-600" />
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-blue-50 rounded-lg p-2">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Users className="h-3 w-3 text-blue-600" />
                       <span className="text-xs text-blue-600 font-semibold">Entries</span>
                     </div>
-                    <p className="text-2xl font-bold text-blue-600">
-                      {giveaway.total_entries}
+                    <p className="text-xl font-bold text-blue-600">
+                      {activeGiveaway.total_entries}
                     </p>
                   </div>
 
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Trophy className="h-4 w-4 text-green-600" />
+                  <div className="bg-green-50 rounded-lg p-2">
+                    <div className="flex items-center gap-1 mb-1">
+                      <Trophy className="h-3 w-3 text-green-600" />
                       <span className="text-xs text-green-600 font-semibold">Leads</span>
                     </div>
-                    <p className="text-2xl font-bold text-green-600">
-                      {giveaway.total_leads_generated}
+                    <p className="text-xl font-bold text-green-600">
+                      {activeGiveaway.total_leads_generated}
                     </p>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="h-4 w-4 text-gray-600" />
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 mb-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Calendar className="h-3 w-3 text-gray-600" />
                     <span className="text-xs font-semibold text-gray-700">
-                      Ends: {new Date(giveaway.ends_at).toLocaleDateString()}
+                      Ends: {new Date(activeGiveaway.ends_at).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4 text-purple-600" />
+                    <ExternalLink className="h-3 w-3 text-purple-600" />
                     <a
-                      href={`/giveaway/${giveaway.landing_page_slug}`}
+                      href={`/giveaway/${activeGiveaway.landing_page_slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-purple-600 hover:text-purple-700 font-medium truncate"
+                      className="text-xs text-purple-600 hover:text-purple-700 font-medium truncate"
                     >
-                      mumbies.com/giveaway/{giveaway.landing_page_slug}
+                      View Landing Page
                     </a>
                   </div>
                 </div>
@@ -238,214 +388,53 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                   fullWidth
                   size="sm"
                   onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/giveaway/${giveaway.landing_page_slug}`);
+                    navigator.clipboard.writeText(`${window.location.origin}/giveaway/${activeGiveaway.landing_page_slug}`);
                     alert('Link copied! Share it on social media.');
                   }}
                 >
                   Copy Link to Share
                 </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="border border-gray-200 rounded-lg p-6 text-center bg-gray-50">
+              <Gift className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600 text-sm">
+                No active giveaway. Select a bundle to get started!
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Completed Giveaways */}
+      {completedGiveaways.length > 0 && (
+        <div>
+          <h3 className="text-2xl font-bold mb-4">Completed Giveaways</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            {completedGiveaways.map((giveaway) => (
+              <div key={giveaway.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <h4 className="font-bold mb-2">{giveaway.title}</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-gray-600">Entries:</span>
+                    <span className="font-bold ml-1">{giveaway.total_entries}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Leads:</span>
+                    <span className="font-bold ml-1">{giveaway.total_leads_generated}</span>
+                  </div>
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Ended: {new Date(giveaway.ends_at).toLocaleDateString()}
+                </p>
               </div>
             ))}
-            {/* Fake Entry 1 */}
-            <div className="border border-gray-200 rounded-lg p-6 bg-white">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h4 className="font-bold text-lg">Win a Premium Starter Bundle!</h4>
-                  <p className="text-sm text-gray-600">Enter to win a Premium Starter Bundle worth $150!</p>
-                </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                  ACTIVE
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-blue-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Users className="h-4 w-4 text-blue-600" />
-                    <span className="text-xs text-blue-600 font-semibold">Entries</span>
-                  </div>
-                  <p className="text-2xl font-bold text-blue-600">247</p>
-                </div>
-
-                <div className="bg-green-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Trophy className="h-4 w-4 text-green-600" />
-                    <span className="text-xs text-green-600 font-semibold">Leads</span>
-                  </div>
-                  <p className="text-2xl font-bold text-green-600">189</p>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="h-4 w-4 text-gray-600" />
-                  <span className="text-xs font-semibold text-gray-700">
-                    Ends: {new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ExternalLink className="h-4 w-4 text-purple-600" />
-                  <span className="text-sm text-purple-600 font-medium truncate">
-                    mumbies.com/giveaway/example-giveaway-1
-                  </span>
-                </div>
-              </div>
-
-              <Button variant="outline" fullWidth size="sm">
-                Copy Link to Share
-              </Button>
-            </div>
-            {/* Fake Entry 2 */}
-            <div className="border border-gray-200 rounded-lg p-6 bg-white">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h4 className="font-bold text-lg">Holiday Mega Pack Giveaway</h4>
-                  <p className="text-sm text-gray-600">Win our complete holiday collection valued at $300!</p>
-                </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                  ACTIVE
-                </span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="bg-blue-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Users className="h-4 w-4 text-blue-600" />
-                    <span className="text-xs text-blue-600 font-semibold">Entries</span>
-                  </div>
-                  <p className="text-2xl font-bold text-blue-600">532</p>
-                </div>
-
-                <div className="bg-green-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Trophy className="h-4 w-4 text-green-600" />
-                    <span className="text-xs text-green-600 font-semibold">Leads</span>
-                  </div>
-                  <p className="text-2xl font-bold text-green-600">421</p>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="h-4 w-4 text-gray-600" />
-                  <span className="text-xs font-semibold text-gray-700">
-                    Ends: {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ExternalLink className="h-4 w-4 text-purple-600" />
-                  <span className="text-sm text-purple-600 font-medium truncate">
-                    mumbies.com/giveaway/holiday-mega-pack
-                  </span>
-                </div>
-              </div>
-
-              <Button variant="outline" fullWidth size="sm">
-                Copy Link to Share
-              </Button>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Available Bundles */}
-      <div>
-        <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <Trophy className="h-6 w-6 text-purple-600" />
-          Available Giveaway Bundles
-        </h3>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {bundles.slice(0, 6).map((bundle) => {
-            const unlocked = canUnlockBundle(bundle);
-            const progress = Math.min((totalSales / bundle.sales_threshold) * 100, 100);
-
-            return (
-              <div
-                key={bundle.id}
-                className={`border-2 rounded-lg overflow-hidden ${
-                  unlocked ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-gray-50'
-                }`}
-              >
-                <div className="relative h-48">
-                  <img
-                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120&width=1440"
-                    alt={bundle.name}
-                    className={`w-full h-full object-cover ${!unlocked && 'opacity-50 grayscale'}`}
-                  />
-                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold ${getTierBadge(bundle.tier)}`}>
-                    {bundle.tier.toUpperCase()}
-                  </div>
-                  {unlocked && (
-                    <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      UNLOCKED
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-5">
-                  <h4 className="font-bold text-lg mb-2">{bundle.name}</h4>
-                  <p className="text-sm text-gray-600 mb-3">{bundle.description}</p>
-
-                  <div className="bg-white border border-gray-200 rounded-lg p-3 mb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-semibold">Retail Value</span>
-                      <span className="text-lg font-bold text-purple-600">
-                        ${bundle.retail_value.toFixed(0)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-gray-600">
-                      <span>Required Sales</span>
-                      <span className="font-semibold">
-                        ${bundle.sales_threshold.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  {!unlocked && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Progress</span>
-                        <span className="text-sm font-bold text-gray-700">
-                          ${totalSales.toFixed(0)} / ${bundle.sales_threshold.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className={`bg-gradient-to-r ${getTierColor(bundle.tier)} h-2 rounded-full`}
-                          style={{ width: `${progress}%` }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-2">
-                        ${(bundle.sales_threshold - totalSales).toFixed(0)} more to unlock
-                      </p>
-                    </div>
-                  )}
-
-                  {unlocked && (
-                    <Button
-                      fullWidth
-                      onClick={() => {
-                        setSelectedBundle(bundle);
-                        setGiveawayTitle(`Win a ${bundle.name}!`);
-                        setGiveawayDescription(`Enter to win a ${bundle.name} (${bundle.retail_value} value) from ${organizationName}!`);
-                      }}
-                    >
-                      <Gift className="h-4 w-4 mr-2" />
-                      Create Giveaway
-                    </Button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-
-      {/* Create Giveaway Modal */}
+      {/* Create Modal */}
       {selectedBundle && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
@@ -499,34 +488,26 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                 >
                   <option value={7}>7 days</option>
                   <option value={14}>14 days</option>
+                  <option value={21}>21 days</option>
                   <option value={30}>30 days</option>
-                  <option value={60}>60 days</option>
                 </select>
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-blue-800">
-                <strong>What happens next:</strong> Your giveaway landing page will be created instantly.
-                Share the link on TikTok, Instagram, Facebook, or email. Each person who enters becomes
-                a qualified lead in your dashboard!
-              </p>
-            </div>
-
             <div className="flex gap-3">
               <Button
-                variant="outline"
+                onClick={createGiveaway}
+                disabled={creatingGiveaway || !giveawayTitle}
                 fullWidth
-                onClick={() => setSelectedBundle(null)}
               >
-                Cancel
+                {creatingGiveaway ? 'Creating...' : 'Create Giveaway'}
               </Button>
               <Button
+                variant="outline"
+                onClick={() => setSelectedBundle(null)}
                 fullWidth
-                onClick={createGiveaway}
-                disabled={creatingGiveaway || !giveawayTitle || !giveawayDescription}
               >
-                {creatingGiveaway ? 'Creating...' : 'Launch Giveaway'}
+                Cancel
               </Button>
             </div>
           </div>
