@@ -797,9 +797,17 @@ export default function PartnerDashboardPage() {
                 <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
-              <p className="text-3xl font-bold text-green-600">
+              <p className="text-3xl font-bold text-green-600 mb-3">
                 ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
               </p>
+              <Button
+                onClick={() => setShowWithdrawalModal(true)}
+                size="sm"
+                fullWidth
+                disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) <= 0}
+              >
+                Withdraw
+              </Button>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
