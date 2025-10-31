@@ -20,6 +20,7 @@ import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import { ImpactPage } from './pages/ImpactPage';
 import LeadRegistrationPage from './pages/LeadRegistrationPage';
 import GiveawayPage from './pages/GiveawayPage';
+import TestPage from './pages/TestPage';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/test" element={<TestPage />} />
                 <Route path="/lead-registration" element={<LeadRegistrationPage />} />
                 <Route path="/shop" element={<ShopPage />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
