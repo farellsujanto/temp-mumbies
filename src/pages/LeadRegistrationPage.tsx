@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Heart, ShoppingBag, CheckCircle } from 'lucide-react';
+import { Heart, ShoppingBag, CheckCircle, Gift, Package, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
@@ -35,6 +35,8 @@ export default function LeadRegistrationPage() {
   const [submitting, setSubmitting] = useState(false);
   const [registered, setRegistered] = useState(false);
   const [error, setError] = useState('');
+  const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
+  const [showEmailField, setShowEmailField] = useState(false);
 
   useEffect(() => {
     if (!ref) {
@@ -132,7 +134,8 @@ export default function LeadRegistrationPage() {
         .insert({
           nonprofit_id: nonprofit.id,
           email: email.toLowerCase(),
-          source: 'lead_registration_page'
+          source: 'lead_registration_page',
+          notes: `Selected offer: ${selectedOffer}`
         });
 
       setRegistered(true);
@@ -162,9 +165,12 @@ export default function LeadRegistrationPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
-            <h1 className="text-4xl font-bold mb-4">Welcome to Mumbies!</h1>
-            <p className="text-xl text-gray-700 mb-6">
-              Check your email to complete your registration and start shopping.
+            <h1 className="text-4xl font-bold mb-4">Success! 🎉</h1>
+            <p className="text-xl text-gray-700 mb-2">
+              Your offer has been claimed!
+            </p>
+            <p className="text-lg text-gray-600 mb-6">
+              Check your email to complete your registration.
             </p>
             <div className="bg-white border-2 border-green-200 rounded-lg p-6 mb-8">
               <div className="flex items-center justify-center gap-3 mb-4">
@@ -190,27 +196,36 @@ export default function LeadRegistrationPage() {
                 Every purchase you make will automatically donate back to support {nonprofit.organization_name} for life!
               </p>
             </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+              <Button
+                onClick={() => navigate('/shop')}
+                size="lg"
+                className="px-8"
+              >
+                <ShoppingBag className="h-5 w-5 mr-2" />
+                Start Shopping Now
+              </Button>
+              <Button
+                onClick={() => window.location.href = `mailto:?subject=Check out Mumbies&body=I just found this awesome pet supply store that donates to ${nonprofit.organization_name}! Check it out: ${window.location.origin}/lead-registration?ref=${nonprofit.slug}`}
+                variant="outline"
+                size="lg"
+                className="px-8"
+              >
+                <Heart className="h-5 w-5 mr-2" />
+                Share with Friends
+              </Button>
+            </div>
           </div>
 
           {curatedProducts.length > 0 && (
             <div>
               <h2 className="text-2xl font-bold text-center mb-8">
-                Start Shopping {nonprofit.organization_name}'s Recommended Products
+                {nonprofit.organization_name}'s Recommended Products
               </h2>
               <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {curatedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
-              </div>
-              <div className="text-center mt-12">
-                <Button
-                  onClick={() => navigate('/shop')}
-                  size="lg"
-                  className="px-12"
-                >
-                  <ShoppingBag className="h-5 w-5 mr-2" />
-                  Browse All Products
-                </Button>
               </div>
             </div>
           )}
@@ -238,10 +253,16 @@ export default function LeadRegistrationPage() {
               )}
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              {nonprofit.organization_name} Invites You
+              Shop for Your Pet Essentials at Mumbies
             </h1>
+            <p className="text-green-100 text-xl mb-2">
+              & Automatically Donate for Life to
+            </p>
+            <p className="text-2xl font-bold">
+              {nonprofit.organization_name}
+            </p>
             {nonprofit.location_city && nonprofit.location_state && (
-              <p className="text-green-100 text-lg mb-2">
+              <p className="text-green-100 text-lg mt-2">
                 {nonprofit.location_city}, {nonprofit.location_state}
               </p>
             )}
@@ -258,39 +279,105 @@ export default function LeadRegistrationPage() {
               )}
 
               <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold mb-4">
-                  Save on All Your Natural Pet Essentials at Mumbies
+                <h2 className="text-3xl font-bold mb-4">
+                  🎁 Claim Your Free Offer!
                 </h2>
                 <p className="text-lg text-gray-700 mb-6">
-                  Register now and automatically donate back to {nonprofit.organization_name} with every purchase you make, for life!
+                  Choose your deal below and start shopping premium natural pet products
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6 mb-10">
-                <div className="text-center p-6 bg-gray-50 rounded-lg">
-                  <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <span className="text-2xl font-bold text-green-600">1</span>
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedOffer('free-chew');
+                    setShowEmailField(true);
+                  }}
+                  className={`relative p-6 rounded-lg border-2 transition-all ${
+                    selectedOffer === 'free-chew'
+                      ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
+                      : 'border-gray-300 hover:border-green-300 hover:shadow-md'
+                  }`}
+                >
+                  {selectedOffer === 'free-chew' && (
+                    <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
+                      <CheckCircle className="h-5 w-5" />
+                    </div>
+                  )}
+                  <Gift className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                  <h3 className="font-bold text-xl mb-2">FREE Original Chew</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Just pay shipping
+                  </p>
+                  <div className="bg-amber-100 rounded-lg px-3 py-2">
+                    <p className="text-amber-800 font-bold">$0.00</p>
+                    <p className="text-xs text-amber-700">+ shipping</p>
                   </div>
-                  <h3 className="font-semibold mb-2">Register Free</h3>
-                  <p className="text-sm text-gray-600">Quick and easy signup</p>
-                </div>
-                <div className="text-center p-6 bg-gray-50 rounded-lg">
-                  <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <span className="text-2xl font-bold text-green-600">2</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedOffer('starter-pack');
+                    setShowEmailField(true);
+                  }}
+                  className={`relative p-6 rounded-lg border-2 transition-all ${
+                    selectedOffer === 'starter-pack'
+                      ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
+                      : 'border-gray-300 hover:border-green-300 hover:shadow-md'
+                  }`}
+                >
+                  {selectedOffer === 'starter-pack' && (
+                    <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
+                      <CheckCircle className="h-5 w-5" />
+                    </div>
+                  )}
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                    POPULAR
                   </div>
-                  <h3 className="font-semibold mb-2">Shop Natural</h3>
-                  <p className="text-sm text-gray-600">Premium pet products</p>
-                </div>
-                <div className="text-center p-6 bg-gray-50 rounded-lg">
-                  <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <span className="text-2xl font-bold text-green-600">3</span>
+                  <Package className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                  <h3 className="font-bold text-xl mb-2">50% OFF Starter Pack</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Try our best sellers
+                  </p>
+                  <div className="bg-green-100 rounded-lg px-3 py-2">
+                    <p className="text-green-800 font-bold">50% OFF</p>
+                    <p className="text-xs text-green-700">Limited time</p>
                   </div>
-                  <h3 className="font-semibold mb-2">Give Back</h3>
-                  <p className="text-sm text-gray-600">Auto-donate for life</p>
-                </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedOffer('bundle-discount');
+                    setShowEmailField(true);
+                  }}
+                  className={`relative p-6 rounded-lg border-2 transition-all ${
+                    selectedOffer === 'bundle-discount'
+                      ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
+                      : 'border-gray-300 hover:border-green-300 hover:shadow-md'
+                  }`}
+                >
+                  {selectedOffer === 'bundle-discount' && (
+                    <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
+                      <CheckCircle className="h-5 w-5" />
+                    </div>
+                  )}
+                  <Sparkles className="h-12 w-12 text-green-600 mx-auto mb-3" />
+                  <h3 className="font-bold text-xl mb-2">20% OFF Any Bundle</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Stock up and save
+                  </p>
+                  <div className="bg-blue-100 rounded-lg px-3 py-2">
+                    <p className="text-blue-800 font-bold">20% OFF</p>
+                    <p className="text-xs text-blue-700">Best value</p>
+                  </div>
+                </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+              {showEmailField && selectedOffer && (
+                <form onSubmit={handleSubmit} className="max-w-md mx-auto animate-fadeIn">
                 <div className="mb-6">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -312,19 +399,20 @@ export default function LeadRegistrationPage() {
                   </div>
                 )}
 
-                <Button
-                  type="submit"
-                  disabled={submitting || !email}
-                  className="w-full"
-                  size="lg"
-                >
-                  {submitting ? 'Registering...' : 'Register & Start Shopping'}
-                </Button>
+                  <Button
+                    type="submit"
+                    disabled={submitting || !email}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {submitting ? 'Claiming Offer...' : 'Claim My Offer'}
+                  </Button>
 
-                <p className="text-xs text-gray-500 text-center mt-4">
-                  By registering, you agree to receive emails from Mumbies and {nonprofit.organization_name}
-                </p>
-              </form>
+                  <p className="text-xs text-gray-500 text-center mt-4">
+                    By claiming this offer, you agree to receive emails from Mumbies and {nonprofit.organization_name}
+                  </p>
+                </form>
+              )}
             </div>
           </div>
         </div>

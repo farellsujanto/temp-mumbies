@@ -977,9 +977,20 @@ export default function PartnerDashboardPage() {
               <div className="space-y-4">
                 {/* Profile/Shop Link */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">
-                    Profile & Curated Products Link
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Profile & Curated Products Link
+                    </label>
+                    <a
+                      href={`/rescues/${nonprofit.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-green-600 transition-colors"
+                      title="Open in new tab"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </div>
                   <p className="text-xs text-gray-600 mb-2">
                     Share with supporters to see your organization
                   </p>
@@ -1008,10 +1019,21 @@ export default function PartnerDashboardPage() {
 
                 {/* General Registration Link */}
                 <div className="pt-3 border-t border-gray-200">
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">
-                    <UserPlus className="h-4 w-4 inline mr-1" />
-                    Lead Registration Link
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      <UserPlus className="h-4 w-4 inline mr-1" />
+                      Lead Registration Link
+                    </label>
+                    <a
+                      href={`/lead-registration?ref=${nonprofit.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-green-600 transition-colors"
+                      title="Open in new tab"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </div>
                   <p className="text-xs text-gray-600 mb-2">
                     Give to new adopters to register
                   </p>

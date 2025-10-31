@@ -24,6 +24,12 @@ export default function ProductShareButton({ productId, productName, productUrl 
     }
   }, [user]);
 
+  useEffect(() => {
+    if (showModal && partnerSlug && !affiliateLink) {
+      generateAffiliateLink();
+    }
+  }, [showModal, partnerSlug]);
+
   const loadPartnerInfo = async () => {
     if (!user) return;
 
@@ -171,19 +177,15 @@ export default function ProductShareButton({ productId, productName, productUrl 
                       <h3 className="font-bold text-green-900">Partner Affiliate Link</h3>
                     </div>
                     <p className="text-sm text-green-800 mb-4">
-                      Generate a short link that earns you 5% commission on all sales!
+                      Your short affiliate link that earns you 5% commission on all sales!
                     </p>
 
-                    {!affiliateLink ? (
-                      <Button
-                        onClick={generateAffiliateLink}
-                        disabled={generating}
-                        fullWidth
-                        size="sm"
-                      >
-                        {generating ? 'Generating...' : 'Generate Affiliate Link'}
-                      </Button>
-                    ) : (
+                    {generating ? (
+                      <div className="text-center py-4">
+                        <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600 mb-2"></div>
+                        <p className="text-sm text-green-700">Generating your link...</p>
+                      </div>
+                    ) : affiliateLink ? (
                       <div className="space-y-2">
                         <div className="bg-white border border-green-300 rounded-lg p-3">
                           <p className="text-sm font-mono text-gray-900 break-all">
@@ -208,6 +210,8 @@ export default function ProductShareButton({ productId, productName, productUrl 
                           )}
                         </Button>
                       </div>
+                    ) : (
+                      <p className="text-sm text-red-600">Failed to generate link. Please try again.</p>
                     )}
                   </div>
                 </div>
