@@ -17,6 +17,7 @@ import BrandProfilePage from './pages/BrandProfilePage';
 import PartnerApplyPage from './pages/PartnerApplyPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import PartnerDashboardPage from './pages/PartnerDashboardPage';
+import PartnerProgramPage from './pages/PartnerProgramPage';
 import { ImpactPage } from './pages/ImpactPage';
 import LeadRegistrationPage from './pages/LeadRegistrationPage';
 import GiveawayPage from './pages/GiveawayPage';
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/rescues/:slug" element={<RescueProfilePage />} />
                 <Route path="/brands" element={<BrandsPage />} />
                 <Route path="/brands/:slug" element={<BrandProfilePage />} />
+                <Route path="/partners" element={<PartnerProgramPage />} />
                 <Route path="/partner/apply" element={<PartnerApplyPage />} />
                 <Route path="/partner/login" element={<PartnerLoginPage />} />
                 <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />

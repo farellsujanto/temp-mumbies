@@ -150,6 +150,8 @@ export default function PartnerDashboardPage() {
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
   const [withdrawalMethod, setWithdrawalMethod] = useState<'cash' | 'giftcard'>('cash');
   const [showWelcomeVideo, setShowWelcomeVideo] = useState(true);
+  const [sitestripeEnabled, setSitestripeEnabled] = useState(true);
+  const [savingSitestripe, setSavingSitestripe] = useState(false);
 
   useEffect(() => {
     const dismissed = localStorage.getItem('welcomeVideoDismissed');
@@ -234,6 +236,17 @@ export default function PartnerDashboardPage() {
     setContactName(nonprofitData.contact_name || '');
     setContactEmail(nonprofitData.contact_email || '');
     setWebsite(nonprofitData.website || '');
+
+    // Load SiteStripe preferences
+    const { data: prefs } = await supabase
+      .from('partner_preferences')
+      .select('sitestripe_enabled')
+      .eq('partner_id', nonprofitData.id)
+      .maybeSingle();
+
+    if (prefs) {
+      setSitestripeEnabled(prefs.sitestripe_enabled);
+    }
 
     setLoading(false);
   };
@@ -592,6 +605,25 @@ export default function PartnerDashboardPage() {
       alert('Error saving profile information. Please try again.');
     }
     setSavingProfile(false);
+  };
+
+  const saveSiteStripePreference = async () => {
+    if (!nonprofit) return;
+
+    setSavingSitestripe(true);
+    try {
+      await supabase
+        .from('partner_preferences')
+        .upsert({
+          partner_id: nonprofit.id,
+          sitestripe_enabled: sitestripeEnabled
+        });
+
+      alert('SiteStripe preference saved!');
+    } catch (error) {
+      alert('Error saving preference. Please try again.');
+    }
+    setSavingSitestripe(false);
   };
 
   if (loading) {
@@ -1614,6 +1646,55 @@ export default function PartnerDashboardPage() {
                 className="w-full"
               >
                 {savingProfile ? 'Saving...' : 'Save Profile Information'}
+              </Button>
+            </div>
+          </div>
+
+          {/* SiteStripe Settings */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <LinkIcon className="h-5 w-5" />
+              SiteStripe Settings
+            </h2>
+            <div className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>What is SiteStripe?</strong>
+                </p>
+                <p className="text-sm text-gray-600">
+                  SiteStripe is a thin banner that appears at the top of every page on Mumbies.us when you're logged in as a partner. It lets you instantly generate and copy affiliate links for any product or page you're viewing, making it easy to share and earn commissions.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                <div>
+                  <label className="font-medium text-gray-900 block mb-1">
+                    Enable SiteStripe
+                  </label>
+                  <p className="text-sm text-gray-600">
+                    Show the affiliate link banner when browsing
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSitestripeEnabled(!sitestripeEnabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    sitestripeEnabled ? 'bg-green-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      sitestripeEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <Button
+                onClick={saveSiteStripePreference}
+                disabled={savingSitestripe}
+                className="w-full"
+              >
+                {savingSitestripe ? 'Saving...' : 'Save SiteStripe Settings'}
               </Button>
             </div>
           </div>
