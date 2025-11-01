@@ -94,7 +94,7 @@ export default function PartnerProgramPage() {
             </p>
             <div className="flex gap-4 justify-center">
               <Link to="/partner/apply">
-                <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100">
+                <Button size="lg" className="bg-white text-green-600 hover:bg-green-50 shadow-lg">
                   Apply Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -377,7 +377,7 @@ export default function PartnerProgramPage() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to="/partner/apply">
-              <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100">
+              <Button size="lg" className="bg-white text-green-600 hover:bg-green-50 shadow-lg">
                 Apply for Partnership
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>

@@ -163,7 +163,7 @@ export default function RescuesPage() {
           <Button
             size="lg"
             onClick={() => window.location.href = '/partners'}
-            className="bg-white text-green-600 hover:bg-gray-50"
+            className="bg-white text-green-600 hover:bg-green-50 shadow-lg"
           >
             Learn More
           </Button>
@@ -171,7 +171,7 @@ export default function RescuesPage() {
             variant="outline"
             size="lg"
             onClick={() => window.location.href = '/partner/login'}
-            className="border-white text-white hover:bg-white hover:text-green-600"
+            className="border-2 border-white text-white hover:bg-white hover:text-green-600"
           >
             Existing Partner? Login
           </Button>
