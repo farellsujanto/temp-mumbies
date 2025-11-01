@@ -388,24 +388,30 @@ export default function HomePage() {
               </Button>
             </div>
             <div className="bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 rounded-3xl p-12 min-h-[450px] flex items-center justify-center shadow-2xl">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-white rounded-2xl p-6 shadow-2xl transform rotate-[-4deg] hover:rotate-0 transition-all hover:scale-105">
-                  <img
-                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Original_Chew_NoBackground.png?v=1729783903&width=400"
-                    alt="Mumbies Original Chew"
-                    className="w-full h-48 object-contain mx-auto mb-4"
-                  />
-                  <p className="text-base font-bold text-center text-gray-900">Original Chew</p>
+              {newArrivalProducts.length >= 2 ? (
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="bg-white rounded-2xl p-6 shadow-2xl transform rotate-[-4deg] hover:rotate-0 transition-all hover:scale-105">
+                    <img
+                      src={newArrivalProducts[0].image_url || 'https://images.pexels.com/photos/5731769/pexels-photo-5731769.jpeg?auto=compress&cs=tinysrgb&w=800'}
+                      alt={newArrivalProducts[0].name}
+                      className="w-full h-48 object-cover rounded-lg mx-auto mb-4"
+                    />
+                    <p className="text-base font-bold text-center text-gray-900 line-clamp-2">{newArrivalProducts[0].name}</p>
+                  </div>
+                  <div className="bg-white rounded-2xl p-6 shadow-2xl transform rotate-[4deg] hover:rotate-0 transition-all hover:scale-105 mt-12">
+                    <img
+                      src={newArrivalProducts[1].image_url || 'https://images.pexels.com/photos/5731770/pexels-photo-5731770.jpeg?auto=compress&cs=tinysrgb&w=800'}
+                      alt={newArrivalProducts[1].name}
+                      className="w-full h-48 object-cover rounded-lg mx-auto mb-4"
+                    />
+                    <p className="text-base font-bold text-center text-gray-900 line-clamp-2">{newArrivalProducts[1].name}</p>
+                  </div>
                 </div>
-                <div className="bg-white rounded-2xl p-6 shadow-2xl transform rotate-[4deg] hover:rotate-0 transition-all hover:scale-105 mt-12">
-                  <img
-                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Bison_Liver_Bites_NoBackground.png?v=1729783904&width=400"
-                    alt="Yummies Bison Liver"
-                    className="w-full h-48 object-contain mx-auto mb-4"
-                  />
-                  <p className="text-base font-bold text-center text-gray-900">Bison Liver</p>
+              ) : (
+                <div className="text-white text-center">
+                  <p className="text-xl">Loading new arrivals...</p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
