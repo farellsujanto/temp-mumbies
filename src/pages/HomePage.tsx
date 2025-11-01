@@ -220,23 +220,21 @@ export default function HomePage() {
                         )}
                       </div>
 
-                      <div className="relative z-10 order-1 md:order-2 flex items-center justify-center">
+                      <div className="relative z-10 order-1 md:order-2 flex items-center justify-center h-[400px]">
                         {banner.product_images && banner.product_images.length > 0 ? (
-                          <div className="relative w-full px-8" style={{ maxHeight: '300px' }}>
+                          <div className="relative w-full h-full flex items-center justify-center">
                             <img
                               src={banner.product_images[0]}
                               alt={banner.title}
-                              className="relative w-full h-auto object-contain drop-shadow-2xl"
-                              style={{ maxHeight: '300px' }}
+                              className="max-h-[350px] max-w-full w-auto h-auto object-contain drop-shadow-2xl"
                             />
                           </div>
                         ) : (
-                          <div className="relative">
-                            <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl transform scale-110"></div>
+                          <div className="relative w-full h-full flex items-center justify-center">
                             <img
                               src={banner.image_url}
                               alt={banner.title}
-                              className="relative w-full max-w-lg h-auto object-contain drop-shadow-2xl"
+                              className="max-h-[350px] max-w-full w-auto h-auto object-contain drop-shadow-2xl"
                             />
                           </div>
                         )}
@@ -283,41 +281,35 @@ export default function HomePage() {
         </div>
       )}
 
-      <div className="bg-gray-50 py-12 mb-16">
+      <div className="bg-white py-16 mb-16 border-t border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="flex items-start gap-4">
-              <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <Heart className="h-6 w-6 text-green-600" />
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Heart className="h-10 w-10 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Support Rescues</h3>
-                <p className="text-gray-600 text-sm">
-                  5% of every purchase goes directly to your chosen animal rescue organization
-                </p>
-              </div>
+              <h3 className="text-xl font-bold mb-2">Support Rescues</h3>
+              <p className="text-gray-600">
+                5% of sales help animals
+              </p>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <Award className="h-6 w-6 text-blue-600" />
+            <div className="text-center">
+              <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Award className="h-10 w-10 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Quality Products</h3>
-                <p className="text-gray-600 text-sm">
-                  Curated selection of natural, sustainable, and premium pet products
-                </p>
-              </div>
+              <h3 className="text-xl font-bold mb-2">Premium Quality</h3>
+              <p className="text-gray-600">
+                Curated sustainable products
+              </p>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="h-6 w-6 text-orange-600" />
+            <div className="text-center">
+              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <TrendingUp className="h-10 w-10 text-white" />
               </div>
-              <div>
-                <h3 className="text-lg font-bold mb-1">Track Your Impact</h3>
-                <p className="text-gray-600 text-sm">
-                  See exactly how your purchases are making a difference for animals in need
-                </p>
-              </div>
+              <h3 className="text-xl font-bold mb-2">Track Impact</h3>
+              <p className="text-gray-600">
+                See your difference
+              </p>
             </div>
           </div>
         </div>
@@ -376,51 +368,36 @@ export default function HomePage() {
         <section className="mb-16">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <p className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Ends Tonight</p>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">The New Arrivals Sale</h2>
+              <p className="text-sm font-semibold text-green-600 mb-2 uppercase tracking-wide">Limited Time</p>
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">New Arrivals</h2>
               <p className="text-xl text-gray-700 mb-6">
-                Find a new favorite with up to EXTRA 25% off 200+ of our latest launches
+                Discover the latest premium pet products
               </p>
               <Button
                 size="lg"
                 onClick={() => window.location.href = '/shop?filter=new'}
               >
-                Start Saving
+                Shop New Arrivals
               </Button>
             </div>
-            <div className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl p-8 min-h-[400px] flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-4">
-                {newArrivalProducts.length >= 2 ? (
-                  <>
-                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[-5deg]">
-                      <img
-                        src={newArrivalProducts[0].image_url || ''}
-                        alt={newArrivalProducts[0].name}
-                        className="w-32 h-32 object-contain rounded-lg mb-2"
-                      />
-                      <p className="text-sm font-semibold truncate">{newArrivalProducts[0].name}</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[5deg] mt-8">
-                      <img
-                        src={newArrivalProducts[1].image_url || ''}
-                        alt={newArrivalProducts[1].name}
-                        className="w-32 h-32 object-contain rounded-lg mb-2"
-                      />
-                      <p className="text-sm font-semibold truncate">{newArrivalProducts[1].name}</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[-5deg]">
-                      <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
-                      <p className="text-sm font-semibold">New Product</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 shadow-lg transform rotate-[5deg] mt-8">
-                      <div className="w-32 h-32 bg-gray-200 rounded-lg mb-2"></div>
-                      <p className="text-sm font-semibold">Hot Deal</p>
-                    </div>
-                  </>
-                )}
+            <div className="bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 rounded-2xl p-8 min-h-[400px] flex items-center justify-center">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-white rounded-xl p-6 shadow-xl transform rotate-[-3deg] hover:rotate-0 transition-transform">
+                  <img
+                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Original_Chew_NoBackground.png?v=1729783903&width=400"
+                    alt="Mumbies Original Chew"
+                    className="w-40 h-40 object-contain mx-auto mb-3"
+                  />
+                  <p className="text-sm font-bold text-center">Original Chew</p>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-xl transform rotate-[3deg] hover:rotate-0 transition-transform mt-8">
+                  <img
+                    src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Bison_Liver_Bites_NoBackground.png?v=1729783904&width=400"
+                    alt="Yummies Bison Liver"
+                    className="w-40 h-40 object-contain mx-auto mb-3"
+                  />
+                  <p className="text-sm font-bold text-center">Bison Liver</p>
+                </div>
               </div>
             </div>
           </div>

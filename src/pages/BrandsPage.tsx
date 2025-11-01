@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Shield, Users, Leaf, Lightbulb } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Brand {
@@ -63,32 +63,60 @@ export default function BrandsPage() {
           </p>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-2">Quality & Safety</h3>
-              <p className="text-gray-600 text-sm">
-                Premium ingredients, rigorous testing, and transparent manufacturing processes that prioritize
-                your pet's health and wellbeing.
-              </p>
+              <div className="flex items-start gap-4">
+                <div className="bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl p-4 flex-shrink-0">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Quality & Safety</h3>
+                  <p className="text-gray-600 text-sm">
+                    Premium ingredients, rigorous testing, and transparent manufacturing processes that prioritize
+                    your pet's health and wellbeing.
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-2">Ethical Practices</h3>
-              <p className="text-gray-600 text-sm">
-                Commitment to sustainability, humane sourcing, and responsible business practices that reflect
-                our values.
-              </p>
+              <div className="flex items-start gap-4">
+                <div className="bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl p-4 flex-shrink-0">
+                  <Leaf className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Ethical Practices</h3>
+                  <p className="text-gray-600 text-sm">
+                    Commitment to sustainability, humane sourcing, and responsible business practices that reflect
+                    our values.
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-2">Community Impact</h3>
-              <p className="text-gray-600 text-sm">
-                Partners who actively give back to animal welfare causes and support rescue organizations
-                through their business.
-              </p>
+              <div className="flex items-start gap-4">
+                <div className="bg-gradient-to-br from-purple-400 to-pink-600 rounded-xl p-4 flex-shrink-0">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Community Impact</h3>
+                  <p className="text-gray-600 text-sm">
+                    Partners who actively give back to animal welfare causes and support rescue organizations
+                    through their business.
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-2">Innovation & Care</h3>
-              <p className="text-gray-600 text-sm">
-                Brands that continuously improve their products based on pet health research and customer
-                feedback.
-              </p>
+              <div className="flex items-start gap-4">
+                <div className="bg-gradient-to-br from-amber-400 to-orange-600 rounded-xl p-4 flex-shrink-0">
+                  <Lightbulb className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Innovation & Care</h3>
+                  <p className="text-gray-600 text-sm">
+                    Brands that continuously improve their products based on pet health research and customer
+                    feedback.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
