@@ -201,7 +201,7 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
             {showSettings && (
               <div
                 ref={settingsRef}
-                className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 text-gray-900 overflow-hidden"
+                className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 text-gray-900 overflow-hidden z-[60]"
               >
                 <div className="p-4">
                   <h3 className="font-semibold text-sm mb-3">SiteStripe Settings</h3>
