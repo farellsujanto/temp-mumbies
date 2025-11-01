@@ -779,7 +779,7 @@ export default function PartnerDashboardPage() {
                 <div className="w-full lg:w-96 flex-shrink-0">
                   <div className="relative rounded-lg overflow-hidden aspect-video group cursor-pointer">
                     <img
-                      src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=800"
+                      src="https://images.pexels.com/photos/3760809/pexels-photo-3760809.jpeg?auto=compress&cs=tinysrgb&w=800"
                       alt="Partner Portal Overview"
                       className="w-full h-full object-cover"
                     />
@@ -799,7 +799,7 @@ export default function PartnerDashboardPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700 text-sm font-semibold">Available Balance</span>
+                <span className="text-gray-700 text-sm font-semibold">Mumbies Cash</span>
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold text-green-600 mb-3">

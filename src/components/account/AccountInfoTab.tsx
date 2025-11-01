@@ -16,12 +16,23 @@ export default function AccountInfoTab() {
       })
     : '';
 
+  const [shortUrl, setShortUrl] = useState<string | null>(null);
+  const [copiedShort, setCopiedShort] = useState(false);
+
   const handleCopyReferralCode = () => {
     if (userProfile?.referral_code) {
       const referralLink = `${window.location.origin}?ref=${userProfile.referral_code}`;
       navigator.clipboard.writeText(referralLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleCopyShortUrl = () => {
+    if (shortUrl) {
+      navigator.clipboard.writeText(shortUrl);
+      setCopiedShort(true);
+      setTimeout(() => setCopiedShort(false), 2000);
     }
   };
 
@@ -138,13 +149,28 @@ export default function AccountInfoTab() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg p-3 font-mono text-sm break-all">
-                  {window.location.origin}?ref={userProfile.referral_code}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Short Link (mumb.us)</label>
+                    <div className="bg-white rounded-lg p-3 font-mono text-sm break-all mb-2">
+                      mumb.us/{userProfile.referral_code}
+                    </div>
+                    <Button variant="outline" onClick={handleCopyShortUrl} fullWidth size="sm">
+                      <Copy className="h-4 w-4 mr-2" />
+                      {copiedShort ? 'Copied!' : 'Copy Short Link'}
+                    </Button>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Full Link</label>
+                    <div className="bg-white rounded-lg p-3 font-mono text-xs break-all mb-2">
+                      {window.location.origin}?ref={userProfile.referral_code}
+                    </div>
+                    <Button variant="outline" onClick={handleCopyReferralCode} fullWidth size="sm">
+                      <Copy className="h-4 w-4 mr-2" />
+                      {copied ? 'Copied!' : 'Copy Full Link'}
+                    </Button>
+                  </div>
                 </div>
-                <Button variant="outline" onClick={handleCopyReferralCode} fullWidth>
-                  <Copy className="h-4 w-4 mr-2" />
-                  {copied ? 'Copied!' : 'Copy Referral Link'}
-                </Button>
               </div>
             ) : (
               <p className="text-sm text-gray-500">Generating your referral code...</p>

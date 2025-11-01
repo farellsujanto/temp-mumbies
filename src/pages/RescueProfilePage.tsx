@@ -47,7 +47,7 @@ export default function RescueProfilePage() {
   const [bundleProducts, setBundleProducts] = useState<Product[]>([]);
   const [bundle, setBundle] = useState<Bundle | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'wishlist' | 'recommended' | 'bundle'>('recommended');
+  const [activeTab, setActiveTab] = useState<'wishlist' | 'recommended' | 'bundle'>('wishlist');
   const [hasExistingOrders, setHasExistingOrders] = useState(false);
 
   useEffect(() => {
@@ -336,19 +336,6 @@ export default function RescueProfilePage() {
 
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b border-gray-200 mb-8">
-        {recommendedProducts.length > 0 && (
-          <button
-            onClick={() => setActiveTab('recommended')}
-            className={`px-6 py-3 font-medium transition-colors ${
-              activeTab === 'recommended'
-                ? 'text-green-600 border-b-2 border-green-600'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Star className="h-4 w-4 inline mr-2" />
-            Recommended Products
-          </button>
-        )}
         {wishlistProducts.length > 0 && (
           <button
             onClick={() => setActiveTab('wishlist')}
@@ -360,6 +347,19 @@ export default function RescueProfilePage() {
           >
             <Heart className="h-4 w-4 inline mr-2" />
             Shelter Wishlist
+          </button>
+        )}
+        {recommendedProducts.length > 0 && (
+          <button
+            onClick={() => setActiveTab('recommended')}
+            className={`px-6 py-3 font-medium transition-colors ${
+              activeTab === 'recommended'
+                ? 'text-green-600 border-b-2 border-green-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Star className="h-4 w-4 inline mr-2" />
+            Recommended Products
           </button>
         )}
         {bundle && bundleProducts.length === 5 && (
