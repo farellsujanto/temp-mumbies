@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Package, Heart, Star, Gift, Plus, X, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
+import Tooltip from '../Tooltip';
 
 interface Product {
   id: string;
@@ -310,8 +311,28 @@ export default function ProductManagementTab({ partnerId }: ProductManagementTab
               <Package className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">Product Management</h2>
-              <p className="text-sm text-green-100">
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold">Product Management</h2>
+                <Tooltip
+                  iconClassName="text-white hover:text-cyan-100"
+                  content={
+                    <div>
+                      <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                        <Package className="h-5 w-5 text-blue-600" />
+                        How Product Management Works
+                      </h3>
+                      <ul className="space-y-2 text-sm">
+                        <li>• <strong>Wishlist</strong> - Curate your favorite products to showcase on your profile</li>
+                        <li>• <strong>Recommended</strong> - Highlight products you personally endorse for maximum impact</li>
+                        <li>• <strong>Bundle</strong> - Create a custom starter pack for new pet parents with multiple products</li>
+                        <li>• <strong>Search & Add</strong> - Browse all available products and add them to your lists</li>
+                        <li>• <strong>Drag to Reorder</strong> - Organize products in your preferred display order</li>
+                      </ul>
+                    </div>
+                  }
+                />
+              </div>
+              <p className="text-sm text-cyan-100">
                 Manage your wishlist, recommended products, and create a special bundle for new pet parents
               </p>
             </div>

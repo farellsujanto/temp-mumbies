@@ -22,13 +22,13 @@ export default function Tooltip({ content, children, iconClassName = "text-gray-
       </button>
 
       {isVisible && (
-        <div className="absolute z-50 left-1/2 -translate-x-1/2 bottom-full mb-2 w-80 pointer-events-none">
+        <div className="absolute z-50 left-1/2 -translate-x-1/2 top-full mt-2 w-96 pointer-events-none">
+          <div className="absolute left-1/2 -translate-x-1/2 -top-2 w-4 h-4 bg-blue-50 border-t border-l border-blue-200 transform rotate-45"></div>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-lg">
             <div className="text-sm text-gray-700">
               {content}
             </div>
           </div>
-          <div className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-4 h-4 bg-blue-50 border-b border-r border-blue-200 transform rotate-45"></div>
         </div>
       )}
     </div>
