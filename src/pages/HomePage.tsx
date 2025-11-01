@@ -283,33 +283,39 @@ export default function HomePage() {
 
       <div className="bg-white py-16 mb-16 border-t border-b border-gray-100">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Heart className="h-10 w-10 text-white" />
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="flex items-start gap-4">
+              <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl w-16 h-16 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <Heart className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Support Rescues</h3>
-              <p className="text-gray-600">
-                5% of sales help animals
-              </p>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">Support Rescues</h3>
+                <p className="text-lg text-gray-600">
+                  5% of sales help animals
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <Award className="h-10 w-10 text-white" />
+            <div className="flex items-start gap-4">
+              <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl w-16 h-16 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <Award className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Premium Quality</h3>
-              <p className="text-gray-600">
-                Curated sustainable products
-              </p>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">Premium Quality</h3>
+                <p className="text-lg text-gray-600">
+                  Curated sustainable products
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <TrendingUp className="h-10 w-10 text-white" />
+            <div className="flex items-start gap-4">
+              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl w-16 h-16 flex items-center justify-center flex-shrink-0 shadow-lg">
+                <TrendingUp className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Track Impact</h3>
-              <p className="text-gray-600">
-                See your difference
-              </p>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">Track Impact</h3>
+                <p className="text-lg text-gray-600">
+                  See your difference
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -366,37 +372,38 @@ export default function HomePage() {
         </section>
 
         <section className="mb-16">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-sm font-semibold text-green-600 mb-2 uppercase tracking-wide">Limited Time</p>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">New Arrivals</h2>
-              <p className="text-xl text-gray-700 mb-6">
+              <p className="text-sm font-bold text-green-600 mb-3 uppercase tracking-wide">LIMITED TIME</p>
+              <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">New Arrivals</h2>
+              <p className="text-xl text-gray-700 mb-8 leading-relaxed">
                 Discover the latest premium pet products
               </p>
               <Button
                 size="lg"
                 onClick={() => window.location.href = '/shop?filter=new'}
+                className="text-lg px-8 py-4"
               >
                 Shop New Arrivals
               </Button>
             </div>
-            <div className="bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 rounded-2xl p-8 min-h-[400px] flex items-center justify-center">
+            <div className="bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 rounded-3xl p-12 min-h-[450px] flex items-center justify-center shadow-2xl">
               <div className="grid grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-6 shadow-xl transform rotate-[-3deg] hover:rotate-0 transition-transform">
+                <div className="bg-white rounded-2xl p-6 shadow-2xl transform rotate-[-4deg] hover:rotate-0 transition-all hover:scale-105">
                   <img
                     src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Original_Chew_NoBackground.png?v=1729783903&width=400"
                     alt="Mumbies Original Chew"
-                    className="w-40 h-40 object-contain mx-auto mb-3"
+                    className="w-full h-48 object-contain mx-auto mb-4"
                   />
-                  <p className="text-sm font-bold text-center">Original Chew</p>
+                  <p className="text-base font-bold text-center text-gray-900">Original Chew</p>
                 </div>
-                <div className="bg-white rounded-xl p-6 shadow-xl transform rotate-[3deg] hover:rotate-0 transition-transform mt-8">
+                <div className="bg-white rounded-2xl p-6 shadow-2xl transform rotate-[4deg] hover:rotate-0 transition-all hover:scale-105 mt-12">
                   <img
                     src="https://mumbies.com/cdn/shop/files/Mumbies_ProductListing_Bison_Liver_Bites_NoBackground.png?v=1729783904&width=400"
                     alt="Yummies Bison Liver"
-                    className="w-40 h-40 object-contain mx-auto mb-3"
+                    className="w-full h-48 object-contain mx-auto mb-4"
                   />
-                  <p className="text-sm font-bold text-center">Bison Liver</p>
+                  <p className="text-base font-bold text-center text-gray-900">Bison Liver</p>
                 </div>
               </div>
             </div>
