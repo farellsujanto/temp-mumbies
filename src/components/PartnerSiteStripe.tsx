@@ -40,7 +40,7 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
       }
 
       if (existing) {
-        setShortUrl(`${window.location.origin}/s/${existing.short_code}`);
+        setShortUrl(`https://mumb.us/${existing.short_code}`);
         return;
       }
 
@@ -72,7 +72,7 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
       }
 
       if (data) {
-        setShortUrl(`${window.location.origin}/s/${data.short_code}`);
+        setShortUrl(`https://mumb.us/${data.short_code}`);
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -110,56 +110,44 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
 
   return (
     <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center gap-3 py-2.5 min-h-[44px]">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="flex items-center gap-2 py-2 min-h-[40px]">
           {/* Left side - Branding */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <LinkIcon className="h-4 w-4" />
-            <span className="text-sm font-semibold whitespace-nowrap">SiteStripe</span>
-            <span className="hidden lg:inline text-xs text-blue-100 whitespace-nowrap">
-              {partnerSlug}
-            </span>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <LinkIcon className="h-3.5 w-3.5" />
+            <span className="text-xs font-semibold whitespace-nowrap hidden sm:inline">SiteStripe</span>
           </div>
 
           {/* Center - URL and Copy Button */}
-          <div className="flex items-center gap-2 flex-1 justify-center min-w-0">
-            <div className="bg-white bg-opacity-20 rounded px-3 py-1.5 text-xs font-mono truncate hidden sm:block max-w-[200px] lg:max-w-[300px]">
+          <div className="flex items-center gap-1.5 flex-1 justify-center min-w-0">
+            <div className="bg-white bg-opacity-20 rounded px-2 py-1 text-xs font-mono truncate max-w-[120px] sm:max-w-[180px] lg:max-w-[240px]">
               {shortUrl || 'Generating...'}
             </div>
             <button
               onClick={copyToClipboard}
               disabled={!shortUrl || copied || shortUrl.includes('Error')}
-              className="bg-white text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 rounded-md text-sm font-medium transition-colors inline-flex items-center gap-2 whitespace-nowrap flex-shrink-0"
+              className="bg-white text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed px-2 py-1 rounded text-xs font-medium transition-colors inline-flex items-center gap-1 whitespace-nowrap flex-shrink-0"
             >
-              {copied ? (
-                <>
-                  <CheckCircle className="h-4 w-4" />
-                  <span className="hidden sm:inline">Copied!</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  <span className="hidden sm:inline">Get Link</span>
-                </>
-              )}
+              <Copy className="h-3 w-3" />
+              <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>
             </button>
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-0.5 flex-shrink-0">
             <button
               onClick={() => navigate('/partner/dashboard')}
-              className="text-white hover:text-blue-100 transition-colors p-1.5 rounded"
-              title="Dashboard Settings"
+              className="text-white hover:text-blue-100 transition-colors p-1 rounded"
+              title="Dashboard"
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={hideSiteStripe}
-              className="text-white hover:text-blue-100 transition-colors p-1.5 rounded"
-              title="Hide SiteStripe"
+              className="text-white hover:text-blue-100 transition-colors p-1 rounded"
+              title="Hide"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
