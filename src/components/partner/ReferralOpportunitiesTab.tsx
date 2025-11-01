@@ -193,24 +193,30 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
           <div className="bg-white bg-opacity-20 rounded-full p-3">
             <Gift className="h-6 w-6" />
           </div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold">Partner Referral Program</h2>
-            <Tooltip
-              content={
-                <div>
-                  <h4 className="font-semibold text-base mb-2 flex items-center gap-2">
-                    <Gift className="h-5 w-5 text-amber-600" />
-                    How Partner Referrals Work
-                  </h4>
-                  <ol className="space-y-2 text-sm">
-                    <li>1. Share your referral link with other nonprofits</li>
-                    <li>2. They apply using your link and get approved</li>
-                    <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
-                    <li>4. Earnings are automatically added to your balance</li>
-                  </ol>
-                </div>
-              }
-            />
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold">Partner Referral Program</h2>
+              <Tooltip
+                iconClassName="text-white hover:text-teal-100"
+                content={
+                  <div>
+                    <h4 className="font-semibold text-base mb-2 flex items-center gap-2">
+                      <Gift className="h-5 w-5 text-amber-600" />
+                      How Partner Referrals Work
+                    </h4>
+                    <ol className="space-y-2 text-sm">
+                      <li>1. Share your referral link with other nonprofits</li>
+                      <li>2. They apply using your link and get approved</li>
+                      <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
+                      <li>4. Earnings are automatically added to your balance</li>
+                    </ol>
+                  </div>
+                }
+              />
+            </div>
+            <p className="text-sm text-teal-100">
+              Help your referrals succeed and earn $1,000 when they reach $500 in sales within 6 months!
+            </p>
           </div>
         </div>
       </div>

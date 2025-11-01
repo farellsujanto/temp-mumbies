@@ -4,9 +4,10 @@ import { HelpCircle } from 'lucide-react';
 interface TooltipProps {
   content: ReactNode;
   children?: ReactNode;
+  iconClassName?: string;
 }
 
-export default function Tooltip({ content, children }: TooltipProps) {
+export default function Tooltip({ content, children, iconClassName = "text-gray-400 hover:text-gray-600" }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   return (
@@ -15,7 +16,7 @@ export default function Tooltip({ content, children }: TooltipProps) {
         type="button"
         onMouseEnter={() => setIsVisible(true)}
         onMouseLeave={() => setIsVisible(false)}
-        className="text-gray-400 hover:text-gray-600 transition-colors"
+        className={`transition-colors ${iconClassName}`}
       >
         {children || <HelpCircle className="h-4 w-4" />}
       </button>

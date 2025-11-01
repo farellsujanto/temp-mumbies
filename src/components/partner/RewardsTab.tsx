@@ -237,31 +237,34 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
   return (
     <div className="space-y-6">
-      {/* Info Section */}
       {/* Header with Tooltip */}
       <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-lg p-6 text-white">
         <div className="flex items-center gap-3">
           <div className="bg-white bg-opacity-20 rounded-full p-3">
             <Trophy className="h-6 w-6" />
           </div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold">Partner Challenges & Rewards</h2>
-            <Tooltip
-              content={
-                <div>
-                  <h3 className="font-bold text-base mb-2 flex items-center gap-2">
-                    <Star className="h-5 w-5 text-blue-600" />
-                    How Rewards Work
-                  </h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• <strong>Start challenges</strong> to activate automatic progress tracking</li>
-                    <li>• <strong>Complete goals</strong> to unlock cash bonuses, products, and perks</li>
-                    <li>• <strong>Stack multiple challenges</strong> simultaneously for faster rewards</li>
-                    <li>• <strong>Claim instantly</strong> when you reach 100% completion</li>
-                  </ul>
-                </div>
-              }
-            />
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold">Partner Challenges & Rewards</h2>
+              <Tooltip
+                iconClassName="text-white hover:text-purple-100"
+                content={
+                  <div>
+                    <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                      <Star className="h-5 w-5 text-blue-600" />
+                      How Rewards Work
+                    </h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• <strong>Start challenges</strong> to activate automatic progress tracking</li>
+                      <li>• <strong>Complete goals</strong> to unlock cash bonuses, products, and perks</li>
+                      <li>• <strong>Stack multiple challenges</strong> simultaneously for faster rewards</li>
+                      <li>• <strong>Claim instantly</strong> when you reach 100% completion</li>
+                    </ul>
+                  </div>
+                }
+              />
+            </div>
+            <p className="text-sm text-purple-100">Complete challenges to earn bonuses and exclusive perks</p>
           </div>
         </div>
       </div>

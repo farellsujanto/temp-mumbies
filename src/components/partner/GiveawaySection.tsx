@@ -150,25 +150,31 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
           <div className="bg-white bg-opacity-20 rounded-full p-3">
             <Sparkles className="h-6 w-6" />
           </div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold">Giveaway Marketing</h2>
-            <Tooltip
-              content={
-                <div>
-                  <h3 className="font-bold text-base mb-2 flex items-center gap-2">
-                    <Gift className="h-5 w-5 text-blue-600" />
-                    How Giveaways Work
-                  </h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• <strong>Achieve and unlock incredible free giveaways</strong></li>
-                    <li>• <strong>Mumbies provides and ships the products</strong></li>
-                    <li>• <strong>Share your landing page</strong> to collect entries and leads</li>
-                    <li>• <strong>Track performance</strong> in real-time with entries and lead data</li>
-                    <li>• <strong>Winner selected automatically</strong> when giveaway ends</li>
-                  </ul>
-                </div>
-              }
-            />
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold">Giveaway Marketing</h2>
+              <Tooltip
+                iconClassName="text-white hover:text-amber-100"
+                content={
+                  <div>
+                    <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                      <Gift className="h-5 w-5 text-blue-600" />
+                      How Giveaways Work
+                    </h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• <strong>Achieve and unlock incredible free giveaways</strong></li>
+                      <li>• <strong>Mumbies provides and ships the products</strong></li>
+                      <li>• <strong>Share your landing page</strong> to collect entries and leads</li>
+                      <li>• <strong>Track performance</strong> in real-time with entries and lead data</li>
+                      <li>• <strong>Winner selected automatically</strong> when giveaway ends</li>
+                    </ul>
+                  </div>
+                }
+              />
+            </div>
+            <p className="text-sm text-amber-100">
+              Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
+            </p>
           </div>
         </div>
       </div>

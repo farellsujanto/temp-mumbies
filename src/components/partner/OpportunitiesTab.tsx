@@ -366,25 +366,31 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
           <div className="bg-white bg-opacity-20 rounded-full p-3">
             <Gift className="h-6 w-6" />
           </div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold">Lead Incentives</h2>
-            <Tooltip
-              content={
-                <div>
-                  <h3 className="font-bold text-base mb-2 flex items-center gap-2">
-                    <Gift className="h-5 w-5 text-blue-600" />
-                    How Lead Incentives Work
-                  </h3>
-                  <ul className="space-y-2 text-sm">
-                    <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
-                    <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
-                    <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
-                    <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
-                    <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
-                  </ul>
-                </div>
-              }
-            />
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold">Lead Incentives</h2>
+              <Tooltip
+                iconClassName="text-white hover:text-indigo-100"
+                content={
+                  <div>
+                    <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                      <Gift className="h-5 w-5 text-blue-600" />
+                      How Lead Incentives Work
+                    </h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
+                      <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
+                      <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
+                      <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
+                      <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
+                    </ul>
+                  </div>
+                }
+              />
+            </div>
+            <p className="text-sm text-indigo-100">
+              Send gift incentives to leads using your balance to boost conversions before they expire!
+            </p>
           </div>
         </div>
       </div>
