@@ -156,7 +156,7 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
+    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-40">
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
         <div className="flex items-center gap-2 py-2 min-h-[40px]">
           {/* Left side - Branding */}

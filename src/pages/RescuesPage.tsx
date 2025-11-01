@@ -160,21 +160,18 @@ export default function RescuesPage() {
           Join hundreds of animal rescues and nonprofits earning sustainable income with Mumbies
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button
-            size="lg"
+          <button
             onClick={() => window.location.href = '/partners'}
-            className="bg-white text-green-600 hover:bg-green-50 shadow-lg"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium rounded-lg bg-white text-green-600 hover:bg-green-50 shadow-lg transition-colors"
           >
             Learn More
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
+          </button>
+          <button
             onClick={() => window.location.href = '/partner/login'}
-            className="border-2 border-white text-white hover:bg-white hover:text-green-600"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium rounded-lg border-2 border-white text-white hover:bg-white hover:text-green-600 transition-colors"
           >
             Existing Partner? Login
-          </Button>
+          </button>
         </div>
         <p className="mt-6 text-sm">
           Questions? Email us at partners@mumbies.com
