@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link as LinkIcon, Copy, CheckCircle, X, Settings } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import Button from './Button';
 
 interface PartnerSiteStripeProps {
   partnerId: string;
@@ -13,12 +12,46 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
   const [copied, setCopied] = useState(false);
   const [shortUrl, setShortUrl] = useState<string>('');
   const [isVisible, setIsVisible] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
+  const [autoGenerate, setAutoGenerate] = useState(true);
   const location = useLocation();
-  const navigate = useNavigate();
+  const settingsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    generateShortUrl();
-  }, [location.pathname, partnerSlug]);
+    loadPreferences();
+  }, [partnerId]);
+
+  useEffect(() => {
+    if (autoGenerate) {
+      generateShortUrl();
+    }
+  }, [location.pathname, partnerSlug, autoGenerate]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+        setShowSettings(false);
+      }
+    }
+
+    if (showSettings) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showSettings]);
+
+  const loadPreferences = async () => {
+    const { data } = await supabase
+      .from('partner_preferences')
+      .select('sitestripe_enabled, sitestripe_auto_generate')
+      .eq('partner_id', partnerId)
+      .maybeSingle();
+
+    if (data) {
+      setIsVisible(data.sitestripe_enabled ?? true);
+      setAutoGenerate(data.sitestripe_auto_generate ?? true);
+    }
+  };
 
   const generateShortUrl = async () => {
     try {
@@ -90,26 +123,40 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
     }
   };
 
-  const hideSiteStripe = async () => {
-    // Update preference in database
+  const toggleSiteStripe = async (enabled: boolean) => {
     const { error } = await supabase
       .from('partner_preferences')
       .upsert({
         partner_id: partnerId,
-        sitestripe_enabled: false
+        sitestripe_enabled: enabled
       }, {
         onConflict: 'partner_id'
       });
 
     if (!error) {
-      setIsVisible(false);
+      setIsVisible(enabled);
+    }
+  };
+
+  const toggleAutoGenerate = async (enabled: boolean) => {
+    const { error } = await supabase
+      .from('partner_preferences')
+      .upsert({
+        partner_id: partnerId,
+        sitestripe_auto_generate: enabled
+      }, {
+        onConflict: 'partner_id'
+      });
+
+    if (!error) {
+      setAutoGenerate(enabled);
     }
   };
 
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50 overflow-hidden">
+    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
         <div className="flex items-center gap-2 py-2 min-h-[40px]">
           {/* Left side - Branding */}
@@ -134,21 +181,73 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex items-center gap-0.5 flex-shrink-0">
+          <div className="flex items-center gap-0.5 flex-shrink-0 relative">
             <button
-              onClick={() => navigate('/partner/dashboard')}
+              onClick={() => setShowSettings(!showSettings)}
               className="text-white hover:text-blue-100 transition-colors p-1 rounded"
-              title="Dashboard"
+              title="Settings"
             >
               <Settings className="h-3.5 w-3.5" />
             </button>
             <button
-              onClick={hideSiteStripe}
+              onClick={() => toggleSiteStripe(false)}
               className="text-white hover:text-blue-100 transition-colors p-1 rounded"
-              title="Hide"
+              title="Hide SiteStripe"
             >
               <X className="h-3.5 w-3.5" />
             </button>
+
+            {/* Settings Dropdown */}
+            {showSettings && (
+              <div
+                ref={settingsRef}
+                className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 text-gray-900 overflow-hidden"
+              >
+                <div className="p-4">
+                  <h3 className="font-semibold text-sm mb-3">SiteStripe Settings</h3>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium">Auto-generate links</div>
+                        <div className="text-xs text-gray-500">Create short links automatically</div>
+                      </div>
+                      <button
+                        onClick={() => toggleAutoGenerate(!autoGenerate)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          autoGenerate ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            autoGenerate ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium">Show SiteStripe</div>
+                        <div className="text-xs text-gray-500">Display the toolbar</div>
+                      </div>
+                      <button
+                        onClick={() => toggleSiteStripe(!isVisible)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          isVisible ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            isVisible ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
