@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trophy, Gift, Zap, Target, Calendar, TrendingUp, Award, Star, Flame, Crown, CheckCircle, Clock, Users, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
+import Tooltip from '../Tooltip';
 
 interface Reward {
   id: string;
@@ -237,41 +238,36 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
   return (
     <div className="space-y-6">
       {/* Info Section */}
-      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-lg p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-10">
-          <Trophy className="h-48 w-48" />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="bg-white bg-opacity-20 rounded-full p-3">
-              <Trophy className="h-6 w-6" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">Partner Challenges & Rewards</h2>
-              <p className="text-sm text-green-100">Complete challenges to earn bonuses and exclusive perks</p>
-            </div>
+      {/* Header with Tooltip */}
+      <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 rounded-lg p-6 text-white">
+        <div className="flex items-center gap-3">
+          <div className="bg-white bg-opacity-20 rounded-full p-3">
+            <Trophy className="h-6 w-6" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">Partner Challenges & Rewards</h2>
+            <Tooltip
+              content={
+                <div>
+                  <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                    <Star className="h-5 w-5 text-blue-600" />
+                    How Rewards Work
+                  </h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• <strong>Start challenges</strong> to activate automatic progress tracking</li>
+                    <li>• <strong>Complete goals</strong> to unlock cash bonuses, products, and perks</li>
+                    <li>• <strong>Stack multiple challenges</strong> simultaneously for faster rewards</li>
+                    <li>• <strong>Claim instantly</strong> when you reach 100% completion</li>
+                  </ul>
+                </div>
+              }
+            />
           </div>
         </div>
       </div>
 
-      {/* How It Works + Stats Grid */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* How Rewards Work - 50% width */}
-        <div className="lg:w-1/2 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-            <Star className="h-5 w-5 text-blue-600" />
-            How Rewards Work
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li>• <strong>Start challenges</strong> to activate automatic progress tracking</li>
-            <li>• <strong>Complete goals</strong> to unlock cash bonuses, products, and perks</li>
-            <li>• <strong>Stack multiple challenges</strong> simultaneously for faster rewards</li>
-            <li>• <strong>Claim instantly</strong> when you reach 100% completion</li>
-          </ul>
-        </div>
-
-        {/* Stats - 50% width */}
-        <div className="lg:w-1/2 grid grid-cols-4 gap-4">
+      {/* Stats Grid - Full Width */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600 text-sm">Available</span>
@@ -298,13 +294,12 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             <p className="text-3xl font-bold">{completedCount}</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Conv. Increase</span>
-              <TrendingUp className="h-5 w-5 text-purple-600" />
-            </div>
-            <p className="text-3xl font-bold">{completedCount > 0 ? `+${(completedCount * 8).toFixed(0)}%` : '0%'}</p>
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Conv. Increase</span>
+            <TrendingUp className="h-5 w-5 text-purple-600" />
           </div>
+          <p className="text-3xl font-bold">{completedCount > 0 ? `+${(completedCount * 8).toFixed(0)}%` : '0%'}</p>
         </div>
       </div>
 

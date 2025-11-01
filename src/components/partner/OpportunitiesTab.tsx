@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail, CheckCircle, History } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
+import Tooltip from '../Tooltip';
 
 interface Lead {
   id: string;
@@ -359,45 +360,37 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
         </div>
       )}
 
-      {/* Info Section */}
-      <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 rounded-lg p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-10">
-          <Gift className="h-48 w-48" />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="bg-white bg-opacity-20 rounded-full p-3">
-              <Gift className="h-6 w-6" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">Gift Incentives</h2>
-              <p className="text-sm text-indigo-100">
-                Send gift incentives to leads using your balance to boost conversions before they expire!
-              </p>
-            </div>
+      {/* Header with Tooltip */}
+      <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 rounded-lg p-6 text-white">
+        <div className="flex items-center gap-3">
+          <div className="bg-white bg-opacity-20 rounded-full p-3">
+            <Gift className="h-6 w-6" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">Lead Incentives</h2>
+            <Tooltip
+              content={
+                <div>
+                  <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                    <Gift className="h-5 w-5 text-blue-600" />
+                    How Lead Incentives Work
+                  </h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
+                    <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
+                    <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
+                    <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
+                    <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
+                  </ul>
+                </div>
+              }
+            />
           </div>
         </div>
       </div>
 
-      {/* Grid Layout - How it Works + Stats */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* How it Works - 50% width */}
-        <div className="lg:w-1/2 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-            <Gift className="h-5 w-5 text-blue-600" />
-            How Gift Incentives Work
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
-            <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
-            <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
-            <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
-            <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
-          </ul>
-        </div>
-
-        {/* Stats - 50% width */}
-        <div className="lg:w-1/2 grid grid-cols-2 gap-4">
+      {/* Stats Grid - Full Width */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600 text-sm">Expiring Leads</span>
@@ -425,14 +418,13 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
             <p className="text-xs text-gray-600 mt-1">Sent</p>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Conversions</span>
-              <CheckCircle className="h-5 w-5 text-green-600" />
-            </div>
-            <p className="text-3xl font-bold">{conversions}</p>
-            <p className="text-xs text-gray-600 mt-1">All-time</p>
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-gray-600 text-sm">Conversions</span>
+            <CheckCircle className="h-5 w-5 text-green-600" />
           </div>
+          <p className="text-3xl font-bold">{conversions}</p>
+          <p className="text-xs text-gray-600 mt-1">All-time</p>
         </div>
       </div>
 

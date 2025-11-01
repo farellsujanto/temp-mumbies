@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, Mail, CheckCircle, Target, Calendar, Copy, Send, Users } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
+import Tooltip from '../Tooltip';
 
 interface ReferralPartner {
   id: string;
@@ -186,94 +187,85 @@ export default function ReferralOpportunitiesTab({ partnerId, organizationName }
 
   return (
     <div className="space-y-6">
-      {/* Info Section */}
-      <div className="bg-gradient-to-br from-teal-600 via-emerald-600 to-green-600 rounded-lg p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-10">
-          <Gift className="h-48 w-48" />
+      {/* Header with Tooltip */}
+      <div className="bg-gradient-to-br from-teal-600 via-emerald-600 to-green-600 rounded-lg p-6 text-white">
+        <div className="flex items-center gap-3">
+          <div className="bg-white bg-opacity-20 rounded-full p-3">
+            <Gift className="h-6 w-6" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">Partner Referral Program</h2>
+            <Tooltip
+              content={
+                <div>
+                  <h4 className="font-semibold text-base mb-2 flex items-center gap-2">
+                    <Gift className="h-5 w-5 text-amber-600" />
+                    How Partner Referrals Work
+                  </h4>
+                  <ol className="space-y-2 text-sm">
+                    <li>1. Share your referral link with other nonprofits</li>
+                    <li>2. They apply using your link and get approved</li>
+                    <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
+                    <li>4. Earnings are automatically added to your balance</li>
+                  </ol>
+                </div>
+              }
+            />
+          </div>
         </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="bg-white bg-opacity-20 rounded-full p-3">
-              <Gift className="h-6 w-6" />
-            </div>
+      </div>
+
+      {/* Referral Tools - Full Width */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Referral Link */}
             <div>
-              <h2 className="text-2xl font-bold">Partner Referral Program</h2>
-              <p className="text-sm text-teal-100">
-                Help your referrals succeed and earn $1,000 when they reach $500 in sales within 6 months!
-              </p>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Link</label>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  readOnly
+                  value={referralLink}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
+                />
+                <Button onClick={copyReferralCode}>
+                  {referralCopied ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Send Email Invite */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Send Email Invite</label>
+              <div className="flex gap-3">
+                <input
+                  type="email"
+                  value={referralEmail}
+                  onChange={(e) => setReferralEmail(e.target.value)}
+                  placeholder="nonprofit@example.com"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+                <Button
+                  onClick={sendReferralEmail}
+                  disabled={sendingReferral || !referralEmail}
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  {sendingReferral ? 'Sending...' : 'Send Invite'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Referral Tools */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left: Referral Link & Email */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold mb-4">Share Your Referral Link</h3>
-
-          {/* Referral Link */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Your Referral Link</label>
-            <div className="flex gap-3">
-              <input
-                type="text"
-                readOnly
-                value={referralLink}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm"
-              />
-              <Button onClick={copyReferralCode}>
-                {referralCopied ? (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-
-          {/* Send Email Invite */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Send Email Invite</label>
-            <div className="flex gap-3">
-              <input
-                type="email"
-                value={referralEmail}
-                onChange={(e) => setReferralEmail(e.target.value)}
-                placeholder="nonprofit@example.com"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <Button
-                onClick={sendReferralEmail}
-                disabled={sendingReferral || !referralEmail}
-              >
-                <Send className="h-4 w-4 mr-2" />
-                {sendingReferral ? 'Sending...' : 'Send Invite'}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: How it Works */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-          <h4 className="font-semibold text-lg text-gray-900 mb-3 flex items-center gap-2">
-            <Gift className="h-5 w-5 text-amber-600" />
-            How Partner Referrals Work
-          </h4>
-          <ol className="space-y-2 text-sm text-gray-700">
-            <li>1. Share your referral link with other nonprofits</li>
-            <li>2. They apply using your link and get approved</li>
-            <li>3. When they reach $500 in sales within 6 months, you earn $1,000</li>
-            <li>4. Earnings are automatically added to your balance</li>
-          </ol>
-        </div>
-      </div>
 
       {/* Stats Row */}
       <div className="grid md:grid-cols-4 gap-6">

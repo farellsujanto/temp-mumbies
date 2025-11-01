@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Gift, Users, Trophy, Calendar, ExternalLink, CheckCircle, TrendingUp, Award, Sparkles, Crown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
+import Tooltip from '../Tooltip';
 
 interface GiveawayBundle {
   id: string;
@@ -143,45 +144,39 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-lg p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 opacity-10">
-          <Gift className="h-48 w-48" />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-center gap-3">
-            <div className="bg-white bg-opacity-20 rounded-full p-3">
-              <Sparkles className="h-6 w-6" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold">Giveaway Marketing</h2>
-              <p className="text-sm text-amber-100">
-                Run Mumbies-sponsored giveaways to grow your audience and generate qualified leads!
-              </p>
-            </div>
+      {/* Header with Tooltip */}
+      <div className="bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-lg p-6 text-white">
+        <div className="flex items-center gap-3">
+          <div className="bg-white bg-opacity-20 rounded-full p-3">
+            <Sparkles className="h-6 w-6" />
+          </div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">Giveaway Marketing</h2>
+            <Tooltip
+              content={
+                <div>
+                  <h3 className="font-bold text-base mb-2 flex items-center gap-2">
+                    <Gift className="h-5 w-5 text-blue-600" />
+                    How Giveaways Work
+                  </h3>
+                  <ul className="space-y-2 text-sm">
+                    <li>• <strong>Achieve and unlock incredible free giveaways</strong></li>
+                    <li>• <strong>Mumbies provides and ships the products</strong></li>
+                    <li>• <strong>Share your landing page</strong> to collect entries and leads</li>
+                    <li>• <strong>Track performance</strong> in real-time with entries and lead data</li>
+                    <li>• <strong>Winner selected automatically</strong> when giveaway ends</li>
+                  </ul>
+                </div>
+              }
+            />
           </div>
         </div>
       </div>
 
-      {/* Instructions + Lifetime Stats */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="lg:w-1/2 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-            <Gift className="h-5 w-5 text-blue-600" />
-            How Giveaways Work
-          </h3>
-          <ul className="space-y-2 text-sm text-gray-700">
-            <li>• <strong>Achieve and unlock incredible free giveaways</strong></li>
-            <li>• <strong>Mumbies provides and ships the products</strong></li>
-            <li>• <strong>Share your landing page</strong> to collect entries and leads</li>
-            <li>• <strong>Track performance</strong> in real-time with entries and lead data</li>
-            <li>• <strong>Winner selected automatically</strong> when giveaway ends</li>
-          </ul>
-        </div>
-
-        <div className="lg:w-1/2">
-          <h3 className="text-2xl font-bold mb-4">Lifetime Giveaway Statistics</h3>
-          <div className="grid grid-cols-3 gap-4">
+      {/* Lifetime Stats */}
+      <div>
+        <h3 className="text-2xl font-bold mb-4">Lifetime Giveaway Statistics</h3>
+        <div className="grid grid-cols-3 gap-4">
             <div className="bg-white border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-600 text-sm">Leads</span>
@@ -200,14 +195,13 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
               <p className="text-xs text-gray-600 mt-1">Revenue</p>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Commissions</span>
-                <Trophy className="h-5 w-5 text-amber-600" />
-              </div>
-              <p className="text-3xl font-bold">${lifetimeCommissions.toLocaleString()}</p>
-              <p className="text-xs text-gray-600 mt-1">Earned</p>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-600 text-sm">Commissions</span>
+              <Trophy className="h-5 w-5 text-amber-600" />
             </div>
+            <p className="text-3xl font-bold">${lifetimeCommissions.toLocaleString()}</p>
+            <p className="text-xs text-gray-600 mt-1">Earned</p>
           </div>
         </div>
       </div>

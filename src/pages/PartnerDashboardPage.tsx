@@ -692,7 +692,7 @@ export default function PartnerDashboardPage() {
             }`}
           >
             <Target className="h-5 w-5" />
-            Opportunities
+            Leads
           </button>
           <button
             onClick={() => setActiveTab('referrals')}
