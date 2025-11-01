@@ -109,46 +109,44 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
+    <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between gap-4 py-2.5 min-h-[44px]">
+        <div className="flex items-center gap-3 py-2.5 min-h-[44px]">
           {/* Left side - Branding */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <LinkIcon className="h-4 w-4" />
-              <span className="text-sm font-semibold">SiteStripe</span>
-            </div>
-            <div className="hidden md:block text-xs text-blue-100">
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <LinkIcon className="h-4 w-4" />
+            <span className="text-sm font-semibold whitespace-nowrap">SiteStripe</span>
+            <span className="hidden lg:inline text-xs text-blue-100 whitespace-nowrap">
               {partnerSlug}
-            </div>
+            </span>
           </div>
 
           {/* Center - URL and Copy Button */}
-          <div className="flex items-center gap-2 flex-1 justify-center">
-            <div className="bg-white bg-opacity-20 rounded px-3 py-1.5 text-xs font-mono max-w-xs truncate hidden sm:block">
+          <div className="flex items-center gap-2 flex-1 justify-center min-w-0">
+            <div className="bg-white bg-opacity-20 rounded px-3 py-1.5 text-xs font-mono truncate hidden sm:block max-w-[200px] lg:max-w-[300px]">
               {shortUrl || 'Generating...'}
             </div>
             <button
               onClick={copyToClipboard}
               disabled={!shortUrl || copied || shortUrl.includes('Error')}
-              className="bg-white text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 rounded-md text-sm font-medium transition-colors inline-flex items-center gap-2"
+              className="bg-white text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 rounded-md text-sm font-medium transition-colors inline-flex items-center gap-2 whitespace-nowrap flex-shrink-0"
             >
               {copied ? (
                 <>
                   <CheckCircle className="h-4 w-4" />
-                  <span>Copied!</span>
+                  <span className="hidden sm:inline">Copied!</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  <span>Get Link</span>
+                  <span className="hidden sm:inline">Get Link</span>
                 </>
               )}
             </button>
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <button
               onClick={() => navigate('/partner/dashboard')}
               className="text-white hover:text-blue-100 transition-colors p-1.5 rounded"
