@@ -14,7 +14,6 @@ import {
   ArrowRight,
   Link as LinkIcon
 } from 'lucide-react';
-import Layout from '../components/Layout';
 import Button from '../components/Button';
 
 export default function PartnerProgramPage() {
@@ -82,7 +81,7 @@ export default function PartnerProgramPage() {
   ];
 
   return (
-    <Layout>
+    <div>
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -390,10 +389,10 @@ export default function PartnerProgramPage() {
             </Link>
           </div>
           <p className="text-sm text-green-100 mt-6">
-            Questions? Email us at partners@mumbies.us
+            Questions? Email us at partners@mumbies.com
           </p>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

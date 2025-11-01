@@ -31,7 +31,7 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
       const { data: existing, error: fetchError } = await supabase
         .from('short_urls')
         .select('short_code')
-        .eq('partner_id', partnerId)
+        .eq('partner_slug', partnerSlug)
         .eq('destination_url', currentPath)
         .maybeSingle();
 
@@ -47,14 +47,20 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
       // Generate new short code (6 characters)
       const shortCode = Math.random().toString(36).substring(2, 8);
 
+      // Extract product_id from path if it's a product page
+      let productId = null;
+      if (currentPath.startsWith('/product/')) {
+        productId = currentPath.split('/product/')[1];
+      }
+
       // Create short URL record
       const { data, error } = await supabase
         .from('short_urls')
         .insert({
-          partner_id: partnerId,
           short_code: shortCode,
           destination_url: currentPath,
-          is_active: true
+          partner_slug: partnerSlug,
+          product_id: productId
         })
         .select('short_code')
         .single();
@@ -91,6 +97,8 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
       .upsert({
         partner_id: partnerId,
         sitestripe_enabled: false
+      }, {
+        onConflict: 'partner_id'
       });
 
     if (!error) {
@@ -103,12 +111,12 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
   return (
     <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between py-2">
+        <div className="flex items-center justify-between gap-4 py-2.5 min-h-[44px]">
           {/* Left side - Branding */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <div className="flex items-center gap-2">
               <LinkIcon className="h-4 w-4" />
-              <span className="text-sm font-semibold">Partner SiteStripe</span>
+              <span className="text-sm font-semibold">SiteStripe</span>
             </div>
             <div className="hidden md:block text-xs text-blue-100">
               {partnerSlug}
@@ -116,42 +124,41 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
           </div>
 
           {/* Center - URL and Copy Button */}
-          <div className="flex items-center gap-2">
-            <div className="bg-white bg-opacity-20 rounded px-3 py-1 text-sm font-mono max-w-xs truncate hidden sm:block">
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <div className="bg-white bg-opacity-20 rounded px-3 py-1.5 text-xs font-mono max-w-xs truncate hidden sm:block">
               {shortUrl || 'Generating...'}
             </div>
-            <Button
+            <button
               onClick={copyToClipboard}
-              disabled={!shortUrl || copied}
-              size="sm"
-              className="bg-white text-blue-600 hover:bg-blue-50 flex items-center gap-2"
+              disabled={!shortUrl || copied || shortUrl.includes('Error')}
+              className="bg-white text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 rounded-md text-sm font-medium transition-colors inline-flex items-center gap-2"
             >
               {copied ? (
                 <>
                   <CheckCircle className="h-4 w-4" />
-                  <span className="hidden sm:inline">Copied!</span>
+                  <span>Copied!</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  <span className="hidden sm:inline">Get Link</span>
+                  <span>Get Link</span>
                 </>
               )}
-            </Button>
+            </button>
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={() => navigate('/partner/dashboard')}
-              className="text-white hover:text-blue-100 transition-colors p-1"
+              className="text-white hover:text-blue-100 transition-colors p-1.5 rounded"
               title="Dashboard Settings"
             >
               <Settings className="h-4 w-4" />
             </button>
             <button
               onClick={hideSiteStripe}
-              className="text-white hover:text-blue-100 transition-colors p-1"
+              className="text-white hover:text-blue-100 transition-colors p-1.5 rounded"
               title="Hide SiteStripe"
             >
               <X className="h-4 w-4" />
