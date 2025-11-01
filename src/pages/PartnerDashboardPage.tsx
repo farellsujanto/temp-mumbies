@@ -947,7 +947,7 @@ export default function PartnerDashboardPage() {
                     </span>
                     <div className="flex items-center gap-3 mb-3">
                       <Gift className="h-6 w-6 text-amber-600" />
-                      <h3 className="text-lg font-bold">Cash Balance</h3>
+                      <h3 className="text-lg font-bold">Mumbies Cash</h3>
                     </div>
                     <p className="text-2xl font-bold text-amber-600 mb-2">
                       ${((nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) * 1.1).toFixed(2)}

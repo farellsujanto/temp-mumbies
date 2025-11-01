@@ -16,8 +16,8 @@ export default function Tooltip({ content, children, iconClassName = "text-gray-
     if (isVisible && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
       setPosition({
-        top: rect.bottom + window.scrollY + 8, // 8px below the trigger
-        left: rect.left + window.scrollX + rect.width / 2 // Centered horizontally
+        top: rect.bottom + 8, // 8px below the trigger (using viewport coordinates)
+        left: rect.left + rect.width / 2 // Centered horizontally
       });
     }
   }, [isVisible]);
@@ -37,7 +37,7 @@ export default function Tooltip({ content, children, iconClassName = "text-gray-
 
       {isVisible && (
         <div
-          className="absolute z-[9999] pointer-events-none"
+          className="fixed z-[9999] pointer-events-none"
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
