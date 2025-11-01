@@ -1,5 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import Navigation from './Navigation';
 import Footer from './Footer';
@@ -11,6 +12,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user } = useAuth();
+  const location = useLocation();
   const [showSiteStripe, setShowSiteStripe] = useState(false);
   const [partnerId, setPartnerId] = useState<string | null>(null);
   const [partnerSlug, setPartnerSlug] = useState<string>('');
@@ -21,10 +23,17 @@ export default function Layout({ children }: LayoutProps) {
     } else {
       setShowSiteStripe(false);
     }
-  }, [user]);
+  }, [user, location.pathname]);
 
   const checkPartnerStatus = async () => {
     if (!user) return;
+
+    // Only show on product pages
+    const isProductPage = location.pathname.startsWith('/product/');
+    if (!isProductPage) {
+      setShowSiteStripe(false);
+      return;
+    }
 
     // Check if user is a partner
     const { data: nonprofitData } = await supabase

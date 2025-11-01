@@ -21,39 +21,56 @@ export default function PartnerSiteStripe({ partnerId, partnerSlug }: PartnerSit
   }, [location.pathname, partnerSlug]);
 
   const generateShortUrl = async () => {
-    // Get current page URL
-    const currentPath = location.pathname;
+    try {
+      setShortUrl(''); // Reset while generating
 
-    // Check if there's already a short URL for this path + partner
-    const { data: existing } = await supabase
-      .from('short_urls')
-      .select('short_code')
-      .eq('partner_id', partnerId)
-      .eq('destination_url', currentPath)
-      .maybeSingle();
+      // Get current page URL
+      const currentPath = location.pathname;
 
-    if (existing) {
-      setShortUrl(`${window.location.origin}/r/${existing.short_code}`);
-      return;
-    }
+      // Check if there's already a short URL for this path + partner
+      const { data: existing, error: fetchError } = await supabase
+        .from('short_urls')
+        .select('short_code')
+        .eq('partner_id', partnerId)
+        .eq('destination_url', currentPath)
+        .maybeSingle();
 
-    // Generate new short code (6 characters)
-    const shortCode = Math.random().toString(36).substring(2, 8);
+      if (fetchError) {
+        console.error('Error fetching short URL:', fetchError);
+      }
 
-    // Create short URL record
-    const { data, error } = await supabase
-      .from('short_urls')
-      .insert({
-        partner_id: partnerId,
-        short_code: shortCode,
-        destination_url: currentPath,
-        is_active: true
-      })
-      .select('short_code')
-      .single();
+      if (existing) {
+        setShortUrl(`${window.location.origin}/s/${existing.short_code}`);
+        return;
+      }
 
-    if (data && !error) {
-      setShortUrl(`${window.location.origin}/r/${data.short_code}`);
+      // Generate new short code (6 characters)
+      const shortCode = Math.random().toString(36).substring(2, 8);
+
+      // Create short URL record
+      const { data, error } = await supabase
+        .from('short_urls')
+        .insert({
+          partner_id: partnerId,
+          short_code: shortCode,
+          destination_url: currentPath,
+          is_active: true
+        })
+        .select('short_code')
+        .single();
+
+      if (error) {
+        console.error('Error creating short URL:', error);
+        setShortUrl('Error generating link');
+        return;
+      }
+
+      if (data) {
+        setShortUrl(`${window.location.origin}/s/${data.short_code}`);
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setShortUrl('Error');
     }
   };
 
