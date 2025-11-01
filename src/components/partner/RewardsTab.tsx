@@ -407,7 +407,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             Sales Challenges
           </h3>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '800px' }}>
             <div className="space-y-4">
             {availableSalesChallenges.length > 0 ? availableSalesChallenges.map((reward) => {
               return (
@@ -466,7 +466,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             Lead Challenges
           </h3>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '800px' }}>
             <div className="space-y-4">
             {availableLeadChallenges.length > 0 ? availableLeadChallenges.map((reward) => {
               return (
@@ -525,7 +525,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
             Coming Soon
           </h3>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '800px' }}>
             <div className="space-y-4">
             {upcomingRewards.length > 0 ? upcomingRewards.map((reward) => (
               <div

@@ -171,8 +171,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             How Giveaways Work
           </h3>
           <ul className="space-y-2 text-sm text-gray-700">
-            <li>• <strong>Only one active giveaway</strong> at a time to maximize impact</li>
-            <li>• <strong>Select a bundle</strong> from available options based on your sales</li>
+            <li>• <strong>Achieve and unlock incredible free giveaways</strong></li>
+            <li>• <strong>Mumbies provides and ships the products</strong></li>
             <li>• <strong>Share your landing page</strong> to collect entries and leads</li>
             <li>• <strong>Track performance</strong> in real-time with entries and lead data</li>
             <li>• <strong>Winner selected automatically</strong> when giveaway ends</li>
