@@ -779,14 +779,15 @@ export default function PartnerDashboardPage() {
                 <div className="w-full lg:w-96 flex-shrink-0">
                   <div className="relative rounded-lg overflow-hidden aspect-video group cursor-pointer">
                     <img
-                      src="https://images.pexels.com/photos/3756681/pexels-photo-3756681.jpeg?auto=compress&cs=tinysrgb&w=800"
+                      src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=800"
                       alt="Partner Portal Overview"
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-40 transition-all flex items-center justify-center">
-                      <div className="bg-white bg-opacity-90 rounded-full p-6 group-hover:scale-110 transition-transform">
-                        <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-green-600 border-b-8 border-b-transparent ml-1" />
-                      </div>
+                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                      <svg className="w-20 h-20 opacity-70 group-hover:opacity-90 group-hover:scale-110 transition-all" viewBox="0 0 68 48" fill="none">
+                        <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00" fill-opacity="0.8"/>
+                        <path d="M 45,24 27,14 27,34" fill="#fff"/>
+                      </svg>
                     </div>
                   </div>
                 </div>

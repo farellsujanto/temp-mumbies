@@ -201,6 +201,22 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
     return `${days} days left`;
   };
 
+  const getChallengeImage = (title: string) => {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('black friday')) {
+      return 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=400';
+    } else if (titleLower.includes('holiday') || titleLower.includes('christmas')) {
+      return 'https://images.pexels.com/photos/749353/pexels-photo-749353.jpeg?auto=compress&cs=tinysrgb&w=400';
+    } else if (titleLower.includes('summer')) {
+      return 'https://images.pexels.com/photos/1209843/pexels-photo-1209843.jpeg?auto=compress&cs=tinysrgb&w=400';
+    } else if (titleLower.includes('lead') || titleLower.includes('referral')) {
+      return 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400';
+    } else if (titleLower.includes('milestone') || titleLower.includes('sales')) {
+      return 'https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=400';
+    }
+    return 'https://images.pexels.com/photos/2072183/pexels-photo-2072183.jpeg?auto=compress&cs=tinysrgb&w=400';
+  };
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -314,58 +330,67 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border-2 border-orange-300 rounded-lg p-4 hover:shadow-2xl transition-all transform hover:-translate-y-1"
+                  className="bg-white border-2 border-orange-300 rounded-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-1"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
-                    <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={getChallengeImage(reward.title)}
+                      alt={reward.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-2 left-3 flex items-center gap-2">
+                      {getRewardIcon(reward.reward_type, 'text-white h-5 w-5')}
+                      <h4 className="font-bold text-white leading-tight">{reward.title}</h4>
+                    </div>
                   </div>
+                  <div className="p-4">
+                    <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                  <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-3">
+                      <p className="text-xs font-semibold text-amber-800">{reward.reward_description}</p>
+                    </div>
 
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 mb-3">
-                    <p className="text-xs font-semibold text-amber-800">{reward.reward_description}</p>
-                  </div>
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-gray-700">Progress</span>
+                        <span className="text-xs font-bold text-green-600">
+                          {progress.current_value} / {progress.target_value}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
+                        <div
+                          className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full"
+                          style={{ width: `${Math.min(progressPercent, 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-600">{progressPercent}% complete</p>
+                    </div>
 
-                  <div className="mb-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-gray-700">Progress</span>
-                      <span className="text-xs font-bold text-green-600">
-                        {progress.current_value} / {progress.target_value}
+                    {timeLeft && (
+                      <div className="flex items-center gap-2 text-xs text-orange-600 mb-2">
+                        <Clock className="h-3 w-3" />
+                        <span className="font-semibold">{timeLeft}</span>
+                      </div>
+                    )}
+
+                    {isClaimed ? (
+                      <span className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded font-bold flex items-center justify-center gap-1">
+                        <CheckCircle className="h-3 w-3" />
+                        Claimed
                       </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-1">
-                      <div
-                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full"
-                        style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-xs text-gray-600">{progressPercent}% complete</p>
+                    ) : isCompleted ? (
+                      <Button
+                        size="sm"
+                        fullWidth
+                        onClick={() => claimReward(reward.id, progress.id)}
+                      >
+                        Claim Reward
+                      </Button>
+                    ) : (
+                      <p className="text-xs text-center text-gray-500 font-medium">Keep going!</p>
+                    )}
                   </div>
-
-                  {timeLeft && (
-                    <div className="flex items-center gap-2 text-xs text-orange-600 mb-2">
-                      <Clock className="h-3 w-3" />
-                      <span className="font-semibold">{timeLeft}</span>
-                    </div>
-                  )}
-
-                  {isClaimed ? (
-                    <span className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded font-bold flex items-center justify-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      Claimed
-                    </span>
-                  ) : isCompleted ? (
-                    <Button
-                      size="sm"
-                      fullWidth
-                      onClick={() => claimReward(reward.id, progress.id)}
-                    >
-                      Claim Reward
-                    </Button>
-                  ) : (
-                    <p className="text-xs text-center text-gray-500 font-medium">Keep going!</p>
-                  )}
                 </div>
               );
             })}
@@ -377,17 +402,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Sales Challenges */}
         <div className="flex flex-col h-full">
-          <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-4 mb-4 text-white">
-            <div className="flex items-center gap-3">
-              <div className="bg-white bg-opacity-20 rounded-full p-2">
-                <DollarSign className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">Sales Challenges</h3>
-                <p className="text-xs text-green-100">Drive revenue growth</p>
-              </div>
-            </div>
-          </div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <DollarSign className="h-6 w-6 text-green-600" />
+            Sales Challenges
+          </h3>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
@@ -395,30 +413,40 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border-2 border-green-200 rounded-lg p-4 hover:border-green-400 transition-colors"
+                  className="bg-white border-2 border-green-200 rounded-lg overflow-hidden hover:border-green-400 transition-colors"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
-                    <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={getChallengeImage(reward.title)}
+                      alt={reward.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-2 left-3 flex items-center gap-2">
+                      {getRewardIcon(reward.reward_type, 'text-white h-5 w-5')}
+                      <h4 className="font-bold text-white leading-tight">{reward.title}</h4>
+                    </div>
                   </div>
+                  <div className="p-4">
 
-                  <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
+                    <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-3">
-                    <p className="text-xs font-semibold text-green-800">{reward.reward_description}</p>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-3">
+                      <p className="text-xs font-semibold text-green-800">{reward.reward_description}</p>
+                    </div>
+
+                    <p className="text-xs text-gray-600 mb-3">
+                      <strong>Goal:</strong> {reward.requirement_description}
+                    </p>
+
+                    <Button
+                      size="sm"
+                      fullWidth
+                      onClick={() => openActivateModal(reward)}
+                    >
+                      Start Challenge
+                    </Button>
                   </div>
-
-                  <p className="text-xs text-gray-600 mb-3">
-                    <strong>Goal:</strong> {reward.requirement_description}
-                  </p>
-
-                  <Button
-                    size="sm"
-                    fullWidth
-                    onClick={() => openActivateModal(reward)}
-                  >
-                    Start Challenge
-                  </Button>
                 </div>
               );
             }) : (
@@ -433,17 +461,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
         {/* Lead Challenges */}
         <div className="flex flex-col h-full">
-          <div className="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg p-4 mb-4 text-white">
-            <div className="flex items-center gap-3">
-              <div className="bg-white bg-opacity-20 rounded-full p-2">
-                <Users className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">Lead Challenges</h3>
-                <p className="text-xs text-blue-100">Expand your audience</p>
-              </div>
-            </div>
-          </div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Users className="h-6 w-6 text-blue-600" />
+            Lead Challenges
+          </h3>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
@@ -451,30 +472,40 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
               return (
                 <div
                   key={reward.id}
-                  className="bg-white border-2 border-blue-200 rounded-lg p-4 hover:border-blue-400 transition-colors"
+                  className="bg-white border-2 border-blue-200 rounded-lg overflow-hidden hover:border-blue-400 transition-colors"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    {getRewardIcon(reward.reward_type, getIconColor(reward.badge_color))}
-                    <h4 className="font-bold text-gray-900 leading-tight">{reward.title}</h4>
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={getChallengeImage(reward.title)}
+                      alt={reward.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-2 left-3 flex items-center gap-2">
+                      {getRewardIcon(reward.reward_type, 'text-white h-5 w-5')}
+                      <h4 className="font-bold text-white leading-tight">{reward.title}</h4>
+                    </div>
                   </div>
+                  <div className="p-4">
 
-                  <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
+                    <p className="text-xs text-gray-600 mb-3">{reward.description}</p>
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mb-3">
-                    <p className="text-xs font-semibold text-blue-800">{reward.reward_description}</p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 mb-3">
+                      <p className="text-xs font-semibold text-blue-800">{reward.reward_description}</p>
+                    </div>
+
+                    <p className="text-xs text-gray-600 mb-3">
+                      <strong>Goal:</strong> {reward.requirement_description}
+                    </p>
+
+                    <Button
+                      size="sm"
+                      fullWidth
+                      onClick={() => openActivateModal(reward)}
+                    >
+                      Start Challenge
+                    </Button>
                   </div>
-
-                  <p className="text-xs text-gray-600 mb-3">
-                    <strong>Goal:</strong> {reward.requirement_description}
-                  </p>
-
-                  <Button
-                    size="sm"
-                    fullWidth
-                    onClick={() => openActivateModal(reward)}
-                  >
-                    Start Challenge
-                  </Button>
                 </div>
               );
             }) : (
@@ -489,17 +520,10 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
 
         {/* Coming Soon */}
         <div className="flex flex-col h-full">
-          <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-4 mb-4 text-white">
-            <div className="flex items-center gap-3">
-              <div className="bg-white bg-opacity-20 rounded-full p-2">
-                <Calendar className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold">Coming Soon</h3>
-                <p className="text-xs text-purple-100">New challenges ahead</p>
-              </div>
-            </div>
-          </div>
+          <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Calendar className="h-6 w-6 text-purple-600" />
+            Coming Soon
+          </h3>
 
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex-1 overflow-y-auto" style={{ maxHeight: '600px' }}>
             <div className="space-y-4">
