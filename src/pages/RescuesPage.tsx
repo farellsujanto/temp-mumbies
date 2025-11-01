@@ -155,17 +155,30 @@ export default function RescuesPage() {
       )}
 
       <div className="mt-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-12 text-center text-white">
-        <h2 className="text-3xl font-bold mb-4">Is Your Organization Missing?</h2>
+        <h2 className="text-3xl font-bold mb-4">Ready to Start Earning?</h2>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
-          Partner with Mumbies and earn 5% on every purchase made by your supporters
+          Join hundreds of animal rescues and nonprofits earning sustainable income with Mumbies
         </p>
-        <Button
-          variant="secondary"
-          size="lg"
-          onClick={() => window.location.href = '/partner/apply'}
-        >
-          Apply to Partner
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Button
+            size="lg"
+            onClick={() => window.location.href = '/partners'}
+            className="bg-white text-green-600 hover:bg-gray-50"
+          >
+            Learn More
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => window.location.href = '/partner/login'}
+            className="border-white text-white hover:bg-white hover:text-green-600"
+          >
+            Existing Partner? Login
+          </Button>
+        </div>
+        <p className="mt-6 text-sm">
+          Questions? Email us at partners@mumbies.com
+        </p>
       </div>
     </div>
   );
