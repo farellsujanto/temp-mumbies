@@ -56,7 +56,7 @@ export default function AccountInfoTab() {
           <p className="text-gray-600">Member since {memberSince}</p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-gray-600 mb-1">Mumbies Cash Balance</p>
+          <p className="text-sm text-gray-600 mb-1">Cash Balance</p>
           <p className="text-2xl font-bold text-green-600">
             ${(userProfile?.total_cashback_earned || 0).toFixed(2)}
           </p>
@@ -105,7 +105,7 @@ export default function AccountInfoTab() {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold mb-2">Invite Your Friends</h3>
-                <p className="text-gray-700 mb-1">Get $40 in Mumbies Cash</p>
+                <p className="text-gray-700 mb-1">Get $40 in Store Credit</p>
                 <p className="text-sm text-gray-600">Your friend gets $40 off their first order</p>
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function AccountInfoTab() {
                 <div className="bg-white rounded-lg p-4">
                   <p className="text-sm text-gray-600">
                     <strong className="text-gray-900">How it works:</strong><br />
-                    Refer an animal rescue or nonprofit. When they become a qualified partner, you earn $1,000 in Mumbies Cash.
+                    Refer an animal rescue or nonprofit. When they become a qualified partner, you earn $1,000 in Store Credit.
                   </p>
                 </div>
               </div>

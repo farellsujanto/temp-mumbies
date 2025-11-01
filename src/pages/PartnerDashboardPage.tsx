@@ -799,7 +799,7 @@ export default function PartnerDashboardPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700 text-sm font-semibold">Mumbies Cash</span>
+                <span className="text-gray-700 text-sm font-semibold">Cash Balance</span>
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold text-green-600 mb-3">
@@ -915,7 +915,7 @@ export default function PartnerDashboardPage() {
                     </span>
                     <div className="flex items-center gap-3 mb-3">
                       <Gift className="h-6 w-6 text-amber-600" />
-                      <h3 className="text-lg font-bold">Mumbies Cash</h3>
+                      <h3 className="text-lg font-bold">Cash Balance</h3>
                     </div>
                     <p className="text-2xl font-bold text-amber-600 mb-2">
                       ${((nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) * 1.1).toFixed(2)}
@@ -937,7 +937,7 @@ export default function PartnerDashboardPage() {
                 {withdrawalMethod === 'giftcard' && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
                     <p className="text-sm text-gray-700 mb-2">
-                      <strong>Convert to Mumbies Cash</strong> and get 10% extra!
+                      <strong>Convert to Store Credit</strong> and get 10% extra!
                     </p>
                     <ul className="text-sm text-gray-700 space-y-1 ml-4">
                       <li>• ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)} becomes ${((nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) * 1.1).toFixed(2)}</li>
@@ -963,7 +963,7 @@ export default function PartnerDashboardPage() {
                       setShowWithdrawalModal(false);
                     }}
                   >
-                    {withdrawalMethod === 'cash' ? 'Withdraw Cash' : 'Convert to Mumbies Cash'}
+                    {withdrawalMethod === 'cash' ? 'Withdraw Cash' : 'Convert to Store Credit'}
                   </Button>
                 </div>
               </div>

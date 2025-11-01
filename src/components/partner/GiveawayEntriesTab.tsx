@@ -19,6 +19,10 @@ interface GiveawayEntry {
   delivered_at: string | null;
   shipping_address: any;
   created_at: string;
+  lead_status: 'new_lead' | 'active' | 'expired' | 'existing_customer';
+  is_new_lead: boolean;
+  first_purchase_date: string | null;
+  lifetime_gmv: number;
 }
 
 interface PartnerGiveaway {
@@ -382,7 +386,7 @@ export default function GiveawayEntriesTab({ partnerId }: GiveawayEntriesTabProp
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
               <Mail className="h-5 w-5 text-blue-600" />
-              All Entries ({entries.length} Leads)
+              All Entries ({entries.length})
             </h3>
 
             <div className="overflow-x-auto">
@@ -390,36 +394,45 @@ export default function GiveawayEntriesTab({ partnerId }: GiveawayEntriesTabProp
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="text-left px-4 py-3 font-semibold">Name</th>
-                    <th className="text-left px-4 py-3 font-semibold">Email</th>
-                    <th className="text-left px-4 py-3 font-semibold">Phone</th>
-                    <th className="text-left px-4 py-3 font-semibold">ZIP</th>
-                    <th className="text-left px-4 py-3 font-semibold">Entered</th>
-                    <th className="text-left px-4 py-3 font-semibold">Status</th>
+                    <th className="text-left px-4 py-3 font-semibold">Date of Entry</th>
+                    <th className="text-left px-4 py-3 font-semibold">Lead Status</th>
+                    <th className="text-left px-4 py-3 font-semibold">Lifetime GMV</th>
                   </tr>
                 </thead>
                 <tbody>
                   {entries.map((entry) => (
-                    <tr key={entry.id} className={`border-b border-gray-100 ${entry.winner_selected ? 'bg-green-50' : ''}`}>
+                    <tr key={entry.id} className={`border-b border-gray-100 ${entry.winner_selected ? 'bg-amber-50' : ''}`}>
                       <td className="px-4 py-3">
                         {entry.first_name} {entry.last_name}
                         {entry.winner_selected && (
                           <Trophy className="inline h-4 w-4 text-amber-600 ml-2" />
                         )}
                       </td>
-                      <td className="px-4 py-3">{entry.email}</td>
-                      <td className="px-4 py-3">{entry.phone || '-'}</td>
-                      <td className="px-4 py-3">{entry.zip_code || '-'}</td>
                       <td className="px-4 py-3">{new Date(entry.created_at).toLocaleDateString()}</td>
                       <td className="px-4 py-3">
-                        {entry.winner_selected ? (
-                          <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                            Winner
-                          </span>
-                        ) : (
-                          <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
-                            Entry
+                        {entry.lead_status === 'new_lead' && (
+                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                            New Lead
                           </span>
                         )}
+                        {entry.lead_status === 'active' && (
+                          <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                            Active
+                          </span>
+                        )}
+                        {entry.lead_status === 'expired' && (
+                          <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+                            Expired
+                          </span>
+                        )}
+                        {entry.lead_status === 'existing_customer' && (
+                          <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
+                            Existing Customer
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-green-700">
+                        ${(entry.lifetime_gmv || 0).toFixed(2)}
                       </td>
                     </tr>
                   ))}
