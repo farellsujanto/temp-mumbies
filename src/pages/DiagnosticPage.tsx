@@ -115,22 +115,22 @@ export default function DiagnosticPage() {
       });
     }
 
-    // 6. Check partners table
+    // 6. Check nonprofits table
     try {
       const { data, error } = await supabase
-        .from('partners')
-        .select('id, name, type')
+        .from('nonprofits')
+        .select('id, organization_name, type')
         .limit(5);
 
       addResult({
-        name: 'Partners Table',
+        name: 'Nonprofits Table',
         status: error ? 'error' : 'success',
-        message: error ? error.message : `Found ${data?.length || 0} partners`,
+        message: error ? error.message : `Found ${data?.length || 0} nonprofits`,
         details: error || data
       });
     } catch (err: any) {
       addResult({
-        name: 'Partners Table',
+        name: 'Nonprofits Table',
         status: 'error',
         message: err.message || 'Query failed',
         details: err

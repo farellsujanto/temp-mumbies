@@ -73,7 +73,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
 
   const fetchMumbiesCashBalance = async () => {
     const { data } = await supabase
-      .from('partners')
+      .from('nonprofits')
       .select('mumbies_cash_balance')
       .eq('id', partnerId)
       .maybeSingle();

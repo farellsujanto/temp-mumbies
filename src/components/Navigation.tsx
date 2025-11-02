@@ -24,9 +24,9 @@ export default function Navigation() {
     if (!user) return;
 
     const { data } = await supabase
-      .from('partners')
+      .from('nonprofits')
       .select('id, mumbies_cash_balance')
-      .eq('user_id', user.id)
+      .eq('auth_user_id', user.id)
       .maybeSingle();
 
     if (data) {
