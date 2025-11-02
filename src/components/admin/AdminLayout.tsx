@@ -55,9 +55,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       ]
     },
     {
-      section: 'Partner Management',
+      section: 'User Management',
       items: [
+        { to: '/admin/accounts', icon: UserIcon, label: 'All Accounts' },
         { to: '/admin/partners', icon: Users, label: 'Partners' },
+      ]
+    },
+    {
+      section: 'Operations',
+      items: [
         { to: '/admin/payouts', icon: DollarSign, label: 'Payouts' },
         { to: '/admin/leads', icon: UserPlus, label: 'Leads' },
         { to: '/admin/giveaways', icon: Gift, label: 'Giveaways' },

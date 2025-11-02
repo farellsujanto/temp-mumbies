@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Users, DollarSign, UserCheck, UserX, Wallet, TrendingUp, AlertCircle, Gift } from 'lucide-react';
+import { Users, DollarSign, UserCheck, UserX, Wallet, TrendingUp, AlertCircle, Gift, User as UserIcon } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 
 interface DashboardStats {

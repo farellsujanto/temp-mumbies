@@ -27,6 +27,7 @@ import DiagnosticPage from './pages/DiagnosticPage';
 import ShortUrlRedirectPage from './pages/ShortUrlRedirectPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminPartnersPage from './pages/admin/AdminPartnersPage';
+import AdminAccountsPage from './pages/admin/AdminAccountsPage';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<AdminDashboardPage />} />
                       <Route path="/partners" element={<AdminPartnersPage />} />
+                      <Route path="/accounts" element={<AdminAccountsPage />} />
                     </Routes>
                   </ProtectedRoute>
                 }
