@@ -22,7 +22,12 @@ import {
   Target,
   Trophy,
   X,
-  Home
+  Home,
+  History,
+  Bell,
+  Clock,
+  Award,
+  AlertCircle
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -155,6 +160,15 @@ export default function PartnerDashboardPage() {
   const [showWelcomeVideo, setShowWelcomeVideo] = useState(true);
   const [sitestripeEnabled, setSitestripeEnabled] = useState(true);
   const [savingSitestripe, setSavingSitestripe] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Array<{
+    id: string;
+    type: 'reward' | 'giveaway' | 'lead' | 'referral' | 'commission';
+    title: string;
+    message: string;
+    timestamp: Date;
+    read: boolean;
+  }>>([]);
 
   useEffect(() => {
     const dismissed = localStorage.getItem('welcomeVideoDismissed');
@@ -672,14 +686,18 @@ export default function PartnerDashboardPage() {
               <p className="text-gray-600">Partner Dashboard</p>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-4">
+            {/* Mumbies Cash Balance - Always Visible */}
             <button
-              onClick={() => setActiveTab('settings')}
-              className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-lg px-4 py-2.5 hover:from-blue-100 hover:to-cyan-100 transition-colors cursor-pointer"
+              onClick={() => {
+                setActiveTab('settings');
+                setSettingsTab('transactions');
+              }}
+              className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-lg px-4 py-2 hover:from-blue-100 hover:to-cyan-100 transition-colors"
             >
               <div className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-blue-600" />
-                <div>
+                <div className="text-left">
                   <p className="text-xs text-gray-600 font-medium">Mumbies Cash</p>
                   <p className="text-lg font-bold text-blue-600">
                     ${(nonprofit.mumbies_cash_balance || 0).toFixed(2)}
@@ -687,9 +705,82 @@ export default function PartnerDashboardPage() {
                 </div>
               </div>
             </button>
+
+            {/* Notifications Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Notifications"
+              >
+                <Bell className="h-6 w-6" />
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
+              </button>
+
+              {/* Notifications Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+                  <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 className="font-bold text-lg">Notifications</h3>
+                    {notifications.filter(n => !n.read).length > 0 && (
+                      <button
+                        onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
+                        className="text-xs text-blue-600 hover:text-blue-800"
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+                  {notifications.length === 0 ? (
+                    <div className="p-8 text-center text-gray-500">
+                      <Bell className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                      <p className="font-medium">No notifications yet</p>
+                      <p className="text-sm mt-1">You'll see updates about leads, rewards, and more here</p>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-200">
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`p-4 hover:bg-gray-50 transition-colors ${!notification.read ? 'bg-blue-50' : ''}`}
+                        >
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0">
+                              {notification.type === 'lead' && <AlertCircle className="h-5 w-5 text-orange-600" />}
+                              {notification.type === 'reward' && <Award className="h-5 w-5 text-purple-600" />}
+                              {notification.type === 'giveaway' && <Gift className="h-5 w-5 text-pink-600" />}
+                              {notification.type === 'referral' && <Users className="h-5 w-5 text-green-600" />}
+                              {notification.type === 'commission' && <DollarSign className="h-5 w-5 text-green-600" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-gray-900">{notification.title}</p>
+                              <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                              <p className="text-xs text-gray-400 mt-1">
+                                {new Date(notification.timestamp).toLocaleString()}
+                              </p>
+                            </div>
+                            {!notification.read && (
+                              <div className="flex-shrink-0">
+                                <div className="h-2 w-2 bg-blue-600 rounded-full"></div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Sign Out Link */}
             <button
               onClick={handleSignOut}
-              className="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
               <LogOut className="h-4 w-4" />
               Sign Out

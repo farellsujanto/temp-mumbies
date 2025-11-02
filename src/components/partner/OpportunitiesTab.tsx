@@ -376,8 +376,14 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                 </Button>
                 <Button
                   fullWidth
-                  onClick={handleConfirmSend}
-                  disabled={sendingGift !== null || mumbiesCashBalance < previewAmount}
+                  onClick={() => {
+                    if (mumbiesCashBalance < previewAmount) {
+                      alert(`Insufficient Mumbies Cash balance!\n\nYou need $${previewAmount.toFixed(2)} but only have $${mumbiesCashBalance.toFixed(2)}.\n\nConvert some of your Cash Balance to Mumbies Cash to send gifts.`);
+                      return;
+                    }
+                    handleConfirmSend();
+                  }}
+                  disabled={sendingGift !== null}
                 >
                   Confirm & Send Gift
                 </Button>
@@ -515,8 +521,19 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                     </div>
                     <Button
                       size="sm"
-                      onClick={() => handleShowPreview(lead, giftAmount[lead.id] || 5)}
-                      disabled={sendingGift === lead.id || (giftAmount[lead.id] || 5) > mumbiesCashBalance || (giftAmount[lead.id] || 5) > 25}
+                      onClick={() => {
+                        const amount = giftAmount[lead.id] || 5;
+                        if (amount > mumbiesCashBalance) {
+                          alert(`Insufficient Mumbies Cash balance!\n\nYou need $${amount.toFixed(2)} but only have $${mumbiesCashBalance.toFixed(2)}.\n\nConvert some of your Cash Balance to Mumbies Cash to send gifts.`);
+                          return;
+                        }
+                        if (amount > 25) {
+                          alert('Maximum gift amount is $25.00');
+                          return;
+                        }
+                        handleShowPreview(lead, amount);
+                      }}
+                      disabled={sendingGift === lead.id}
                     >
                       {sendingGift === lead.id ? 'Sending...' : `Send $${(giftAmount[lead.id] || 5).toFixed(2)}`}
                     </Button>
