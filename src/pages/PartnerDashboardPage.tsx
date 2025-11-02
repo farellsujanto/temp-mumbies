@@ -169,6 +169,16 @@ export default function PartnerDashboardPage() {
     timestamp: Date;
     read: boolean;
   }>>([]);
+  const [transactions, setTransactions] = useState<Array<{
+    id: string;
+    transaction_type: string;
+    amount: number;
+    balance_type: string;
+    balance_after: number;
+    description: string;
+    created_at: string;
+  }>>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
 
   useEffect(() => {
     const dismissed = localStorage.getItem('welcomeVideoDismissed');
@@ -203,6 +213,29 @@ export default function PartnerDashboardPage() {
     }
     loadPartnerData();
   }, [user]);
+
+  useEffect(() => {
+    if (activeTab === 'settings' && settingsTab === 'transactions' && user) {
+      loadTransactions();
+    }
+  }, [activeTab, settingsTab, user]);
+
+  const loadTransactions = async () => {
+    if (!user) return;
+    setLoadingTransactions(true);
+
+    const { data, error } = await supabase
+      .from('partner_transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (!error && data) {
+      setTransactions(data);
+    }
+    setLoadingTransactions(false);
+  };
 
   const loadPartnerData = async () => {
     if (!user) return;
@@ -1700,12 +1733,43 @@ export default function PartnerDashboardPage() {
               <Button
                 fullWidth
                 disabled={parseFloat(withdrawalAmount || '0') <= 0 || parseFloat(withdrawalAmount || '0') > (nonprofit.total_commissions_earned + nonprofit.total_referral_earnings)}
-                onClick={() => {
+                onClick={async () => {
+                  const amount = parseFloat(withdrawalAmount);
+
                   if (withdrawalMethod === 'cash') {
-                    alert(`Cash withdrawal of $${parseFloat(withdrawalAmount).toFixed(2)} initiated! This feature will be fully functional soon.`);
+                    alert(`Cash withdrawal of $${amount.toFixed(2)} initiated! This feature will be fully functional soon.\n\nNote: Cash withdrawals require payout method configuration and admin approval.`);
                   } else {
-                    alert(`Converting $${parseFloat(withdrawalAmount).toFixed(2)} to $${(parseFloat(withdrawalAmount) * 1.1).toFixed(2)} Mumbies Cash! This feature will be fully functional soon.`);
+                    // Convert to Mumbies Cash
+                    try {
+                      const { data, error } = await supabase.rpc('convert_cash_to_mumbies', {
+                        p_user_id: user?.id,
+                        p_nonprofit_id: nonprofit.id,
+                        p_amount: amount
+                      });
+
+                      if (error) throw error;
+
+                      alert(`Success! Converted $${amount.toFixed(2)} to $${(amount * 1.1).toFixed(2)} Mumbies Cash!\n\nYour Mumbies Cash is now available for:\n• Shopping on Mumbies.com\n• Sending gifts to leads\n• Running giveaways`);
+
+                      // Refresh nonprofit data
+                      const { data: updated } = await supabase
+                        .from('nonprofits')
+                        .select('*')
+                        .eq('id', nonprofit.id)
+                        .single();
+
+                      if (updated) {
+                        setNonprofit(updated);
+                      }
+
+                      // Reload transactions to show the new ones
+                      await loadTransactions();
+                    } catch (err: any) {
+                      alert(`Error: ${err.message || 'Failed to convert balance'}`);
+                      return;
+                    }
                   }
+
                   setShowWithdrawalModal(false);
                   setWithdrawalAmount('');
                   setWithdrawalMethod('cash');
@@ -2140,21 +2204,64 @@ export default function PartnerDashboardPage() {
                     <thead className="bg-gray-50 border-b-2 border-gray-200">
                       <tr>
                         <th className="text-left p-3 text-sm font-semibold text-gray-700">Date</th>
+                        <th className="text-left p-3 text-sm font-semibold text-gray-700">Type</th>
                         <th className="text-left p-3 text-sm font-semibold text-gray-700">Description</th>
                         <th className="text-right p-3 text-sm font-semibold text-gray-700">Amount</th>
-                        <th className="text-right p-3 text-sm font-semibold text-gray-700">Closing Balance</th>
+                        <th className="text-right p-3 text-sm font-semibold text-gray-700">Balance After</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-gray-200">
-                        <td colSpan={4} className="p-8 text-center text-gray-500">
-                          <div className="flex flex-col items-center gap-2">
-                            <History className="h-12 w-12 text-gray-300" />
-                            <p className="font-medium">No transactions yet</p>
-                            <p className="text-sm">Your transaction history will appear here</p>
-                          </div>
-                        </td>
-                      </tr>
+                      {loadingTransactions ? (
+                        <tr className="border-b border-gray-200">
+                          <td colSpan={5} className="p-8 text-center text-gray-500">
+                            Loading transactions...
+                          </td>
+                        </tr>
+                      ) : transactions.length === 0 ? (
+                        <tr className="border-b border-gray-200">
+                          <td colSpan={5} className="p-8 text-center text-gray-500">
+                            <div className="flex flex-col items-center gap-2">
+                              <History className="h-12 w-12 text-gray-300" />
+                              <p className="font-medium">No transactions yet</p>
+                              <p className="text-sm">Your transaction history will appear here</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        transactions.map((txn) => (
+                          <tr key={txn.id} className="border-b border-gray-200 hover:bg-gray-50">
+                            <td className="p-3 text-sm text-gray-700">
+                              {new Date(txn.created_at).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </td>
+                            <td className="p-3 text-sm">
+                              <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                                txn.balance_type === 'mumbies_cash'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-green-100 text-green-800'
+                              }`}>
+                                {txn.balance_type === 'mumbies_cash' ? 'Mumbies Cash' : 'Cash Balance'}
+                              </span>
+                            </td>
+                            <td className="p-3 text-sm text-gray-700">
+                              {txn.description}
+                            </td>
+                            <td className={`p-3 text-sm font-semibold text-right ${
+                              txn.amount >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {txn.amount >= 0 ? '+' : ''} ${Math.abs(txn.amount).toFixed(2)}
+                            </td>
+                            <td className="p-3 text-sm text-gray-900 text-right font-medium">
+                              ${txn.balance_after.toFixed(2)}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
