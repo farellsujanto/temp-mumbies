@@ -12,8 +12,8 @@ export default function CheckoutPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [applyCashBalance, setApplyCashBalance] = useState(false);
 
-  // Mock cash balance - in production, this would come from userProfile
-  const cashBalance = 15.50;
+  // Get actual Mumbies Cash balance from user profile
+  const cashBalance = userProfile?.total_cashback_earned || 0;
 
   if (items.length === 0 && !showSuccess) {
     window.location.href = '/cart';

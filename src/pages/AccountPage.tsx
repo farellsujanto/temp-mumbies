@@ -12,7 +12,7 @@ import PaymentMethodsTab from '../components/account/PaymentMethodsTab';
 type TabType = 'info' | 'orders' | 'subscriptions' | 'impact' | 'addresses' | 'payments';
 
 export default function AccountPage() {
-  const { user, loading, signOut } = useAuth();
+  const { user, userProfile, loading, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('info');
 
   if (loading) {
@@ -47,10 +47,20 @@ export default function AccountPage() {
           <h1 className="text-3xl font-bold">My Account</h1>
           <p className="text-gray-600">{user.email}</p>
         </div>
-        <Button variant="ghost" onClick={signOut}>
-          <LogOut className="h-5 w-5 mr-2" />
-          Logout
-        </Button>
+        <div className="flex items-center gap-4">
+          {userProfile?.total_cashback_earned > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
+              <p className="text-xs text-gray-600 font-medium">Mumbies Cash</p>
+              <p className="text-lg font-bold text-blue-600">
+                ${userProfile.total_cashback_earned.toFixed(2)}
+              </p>
+            </div>
+          )}
+          <Button variant="ghost" onClick={signOut}>
+            <LogOut className="h-5 w-5 mr-2" />
+            Logout
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm">

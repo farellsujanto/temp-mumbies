@@ -87,7 +87,7 @@ interface Referral {
 
 interface Activity {
   id: string;
-  type: 'order' | 'referral' | 'lead';
+  type: 'order' | 'referral' | 'lead' | 'conversion';
   amount: number;
   commission?: number;
   description: string;
@@ -474,6 +474,28 @@ export default function PartnerDashboardPage() {
           amount: -inc.amount,
           description: `Sent $${inc.amount.toFixed(2)} gift to ${inc.partner_leads?.email || 'lead'}`,
           date: inc.created_at,
+        });
+      });
+    }
+
+    // Add conversion transactions
+    const { data: conversions } = await supabase
+      .from('partner_transactions')
+      .select('*')
+      .eq('nonprofit_id', nonprofitId)
+      .eq('transaction_type', 'conversion')
+      .eq('balance_type', 'mumbies_cash')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (conversions) {
+      conversions.forEach((conv) => {
+        activities.push({
+          id: conv.id,
+          type: 'conversion',
+          amount: conv.amount,
+          description: conv.description,
+          date: conv.created_at,
         });
       });
     }
@@ -1177,6 +1199,8 @@ export default function PartnerDashboardPage() {
                         <div className={`p-2 rounded-full ${
                           activity.type === 'order'
                             ? 'bg-blue-100'
+                            : activity.type === 'conversion'
+                            ? 'bg-cyan-100'
                             : activity.type === 'lead' && activity.amount < 0
                             ? 'bg-purple-100'
                             : activity.type === 'lead'
@@ -1185,6 +1209,9 @@ export default function PartnerDashboardPage() {
                         }`}>
                           {activity.type === 'order' && (
                             <ShoppingBag className="h-4 w-4 text-blue-600" />
+                          )}
+                          {activity.type === 'conversion' && (
+                            <CreditCard className="h-4 w-4 text-cyan-600" />
                           )}
                           {activity.type === 'lead' && activity.amount < 0 && (
                             <Gift className="h-4 w-4 text-purple-600" />
@@ -1230,6 +1257,11 @@ export default function PartnerDashboardPage() {
                         )}
                         {activity.type === 'referral' && (
                           <p className="font-semibold text-amber-600">
+                            +${activity.amount.toFixed(2)}
+                          </p>
+                        )}
+                        {activity.type === 'conversion' && (
+                          <p className="font-semibold text-cyan-600">
                             +${activity.amount.toFixed(2)}
                           </p>
                         )}
