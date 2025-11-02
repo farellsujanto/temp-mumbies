@@ -423,7 +423,7 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       </div>
 
       {/* Stats Grid - Full Width */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-4">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-gray-600 text-sm">Expiring Leads</span>
@@ -431,15 +431,6 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
             </div>
             <p className="text-3xl font-bold">{expiringLeads.length}</p>
             <p className="text-xs text-gray-600 mt-1">Within 30 days</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Mumbies Cash</span>
-              <DollarSign className="h-5 w-5 text-green-600" />
-            </div>
-            <p className="text-3xl font-bold">${mumbiesCashBalance.toFixed(2)}</p>
-            <p className="text-xs text-gray-600 mt-1">Available</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-4">
