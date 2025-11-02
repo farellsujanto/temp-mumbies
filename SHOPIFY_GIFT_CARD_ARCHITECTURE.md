@@ -1,11 +1,23 @@
-# Shopify Gift Card Integration Architecture
-## Production-Grade System Design for Mumbies Cash
+# E-Commerce Platform Integration Architecture
+## Production-Grade, Platform-Independent System Design for Mumbies Cash
+
+**🔑 CRITICAL DESIGN PRINCIPLE: PLATFORM INDEPENDENCE**
+
+This architecture is designed to be **100% platform-agnostic**. While we currently use Shopify, all core data, balances, and transaction history live in **Supabase** (our source of truth). This means:
+
+- ✅ Can switch from Shopify to WooCommerce, BigCommerce, or custom platform
+- ✅ Zero data loss when migrating platforms
+- ✅ Complete transaction history preserved forever
+- ✅ Balances never tied to a specific e-commerce platform
+- ✅ Works with multiple platforms simultaneously
+
+**Philosophy**: Supabase owns the data, e-commerce platforms are just checkout processors.
 
 ---
 
 ## 🎯 Core Problem
 
-**Challenge**: Mumbies Cash exists in our Supabase database, but orders are processed through Shopify. We need to:
+**Challenge**: Mumbies Cash exists in our Supabase database, but orders are processed through e-commerce platforms (currently Shopify). We need to:
 1. Use Mumbies Cash as payment during Shopify checkout
 2. Ensure no money is lost or double-spent
 3. Maintain single source of truth

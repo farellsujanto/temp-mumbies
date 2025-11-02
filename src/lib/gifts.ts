@@ -2,20 +2,21 @@ import { supabase } from './supabase';
 
 export interface LeadGift {
   id: string;
-  partner_id: string;
+  nonprofit_id: string;
   gift_code: string;
   amount: number;
   recipient_email: string;
   recipient_name: string | null;
   message: string | null;
-  status: 'sent' | 'redeemed' | 'expired' | 'refunded';
-  sent_at: string;
-  redeemed_at: string | null;
-  expires_at: string;
-  customer_id: string | null;
-  order_id: string | null;
+  status: 'active' | 'redeemed' | 'expired' | 'refunded';
   created_at: string;
-  updated_at: string;
+  expires_at: string;
+  redeemed_at: string | null;
+  refunded_at: string | null;
+  redeemed_by_user_id: string | null;
+  used_in_order_id: string | null;
+  used_in_platform: string | null;
+  metadata: any;
 }
 
 export interface SendGiftParams {
@@ -56,7 +57,7 @@ export async function sendGiftToLead(params: SendGiftParams): Promise<SendGiftRe
 
     // Get partner's current balance
     const { data: partner, error: partnerError } = await supabase
-      .from('partners')
+      .from('nonprofits')
       .select('mumbies_cash_balance, organization_name')
       .eq('id', partnerId)
       .maybeSingle();
@@ -87,9 +88,9 @@ export async function sendGiftToLead(params: SendGiftParams): Promise<SendGiftRe
     const giftCode = generateGiftCode();
 
     // Send gift atomically using database function
-    const { data: giftId, error: giftError } = await supabase
-      .rpc('send_gift_atomic', {
-        p_partner_id: partnerId,
+    const { data: result, error: giftError } = await supabase
+      .rpc('send_gift_to_lead_secure', {
+        p_nonprofit_id: partnerId,
         p_gift_code: giftCode,
         p_amount: amount,
         p_recipient_email: leadEmail,
@@ -117,17 +118,15 @@ export async function sendGiftToLead(params: SendGiftParams): Promise<SendGiftRe
     // TODO: Send email notification to recipient
     // This would typically call an edge function or email service
     console.log('Gift sent:', {
-      giftId,
-      giftCode,
+      result,
       recipient: leadEmail,
-      amount,
       from: partner.organization_name
     });
 
     return {
       success: true,
-      giftId,
-      giftCode
+      giftId: result.gift_id,
+      giftCode: result.gift_code
     };
   } catch (error) {
     console.error('Unexpected error sending gift:', error);
@@ -140,10 +139,10 @@ export async function sendGiftToLead(params: SendGiftParams): Promise<SendGiftRe
 
 export async function getPartnerGifts(partnerId: string): Promise<LeadGift[]> {
   const { data, error } = await supabase
-    .from('lead_gifts')
+    .from('gift_incentives')
     .select('*')
-    .eq('partner_id', partnerId)
-    .order('sent_at', { ascending: false });
+    .eq('nonprofit_id', partnerId)
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching gifts:', error);
@@ -155,7 +154,7 @@ export async function getPartnerGifts(partnerId: string): Promise<LeadGift[]> {
 
 export async function getGiftByCode(giftCode: string): Promise<LeadGift | null> {
   const { data, error } = await supabase
-    .from('lead_gifts')
+    .from('gift_incentives')
     .select('*')
     .eq('gift_code', giftCode)
     .maybeSingle();
@@ -168,12 +167,12 @@ export async function getGiftByCode(giftCode: string): Promise<LeadGift | null> 
   return data;
 }
 
-export async function redeemGift(giftCode: string, customerId: string): Promise<{ success: boolean; amount?: number; error?: string }> {
+export async function redeemGift(giftCode: string, userId: string): Promise<{ success: boolean; amount?: number; error?: string }> {
   try {
-    const { data: amount, error } = await supabase
-      .rpc('redeem_gift', {
+    const { data: result, error } = await supabase
+      .rpc('redeem_lead_gift', {
         p_gift_code: giftCode,
-        p_customer_id: customerId
+        p_user_id: userId
       });
 
     if (error) {
@@ -186,7 +185,7 @@ export async function redeemGift(giftCode: string, customerId: string): Promise<
 
     return {
       success: true,
-      amount
+      amount: result.amount
     };
   } catch (error) {
     console.error('Unexpected error redeeming gift:', error);
@@ -207,6 +206,8 @@ export function calculateDaysUntilExpiry(expiresAt: string): number {
 
 export function formatGiftStatus(status: string): { label: string; className: string } {
   switch (status) {
+    case 'active':
+      return { label: 'Active', className: 'bg-blue-100 text-blue-800' };
     case 'sent':
       return { label: 'Sent', className: 'bg-blue-100 text-blue-800' };
     case 'redeemed':
