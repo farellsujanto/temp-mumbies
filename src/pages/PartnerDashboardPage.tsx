@@ -918,9 +918,13 @@ export default function PartnerDashboardPage() {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
               <div className="bg-white rounded-lg max-w-2xl w-full p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Convert Cash Balance to Mumbies Cash</h2>
+                  <h2 className="text-2xl font-bold">Manage Your Cash Balance</h2>
                   <button
-                    onClick={() => setShowWithdrawalModal(false)}
+                    onClick={() => {
+                      setShowWithdrawalModal(false);
+                      setWithdrawalAmount('');
+                      setWithdrawalMethod('cash');
+                    }}
                     className="text-gray-500 hover:text-gray-700"
                   >
                     <X className="h-6 w-6" />
@@ -980,22 +984,36 @@ export default function PartnerDashboardPage() {
 
                 {parseFloat(withdrawalAmount || '0') > 0 && (
                   <div className="grid md:grid-cols-2 gap-4 mb-6">
-                    {/* Cash Withdrawal - Disabled */}
-                    <div className={`border-2 rounded-lg p-6 text-left opacity-50 cursor-not-allowed border-gray-200`}>
+                    {/* Cash Withdrawal */}
+                    <button
+                      onClick={() => setWithdrawalMethod('cash')}
+                      className={`border-2 rounded-lg p-6 text-left transition-all ${
+                        withdrawalMethod === 'cash'
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
                       <div className="flex items-center gap-3 mb-3">
-                        <DollarSign className="h-6 w-6 text-gray-600" />
-                        <h3 className="text-lg font-bold text-gray-700">Cash Withdrawal</h3>
+                        <DollarSign className="h-6 w-6 text-green-600" />
+                        <h3 className="text-lg font-bold text-gray-900">Cash Withdrawal</h3>
                       </div>
-                      <p className="text-2xl font-bold text-gray-600 mb-2">
+                      <p className="text-2xl font-bold text-green-600 mb-2">
                         ${parseFloat(withdrawalAmount || '0').toFixed(2)}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        Use the "Withdraw" button on overview tab for cash withdrawals
+                      <p className="text-sm text-gray-600">
+                        Withdraw to your configured payout method
                       </p>
-                    </div>
+                    </button>
 
                     {/* Mumbies Cash Conversion */}
-                    <div className={`border-2 rounded-lg p-6 text-left transition-all relative border-blue-500 bg-blue-50`}>
+                    <button
+                      onClick={() => setWithdrawalMethod('giftcard')}
+                      className={`border-2 rounded-lg p-6 text-left transition-all relative ${
+                        withdrawalMethod === 'giftcard'
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
                       <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
                         +10% BONUS
                       </span>
@@ -1009,11 +1027,25 @@ export default function PartnerDashboardPage() {
                       <p className="text-sm text-gray-600">
                         Get 10% extra to shop, send gifts, or run giveaways
                       </p>
-                    </div>
+                    </button>
                   </div>
                 )}
 
-                {parseFloat(withdrawalAmount || '0') > 0 && (
+                {parseFloat(withdrawalAmount || '0') > 0 && withdrawalMethod === 'cash' && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-gray-700 mb-2">
+                      <strong>Cash Withdrawal</strong> will be sent to your payout method
+                    </p>
+                    <ul className="text-sm text-gray-700 space-y-1 ml-4">
+                      <li>• ${parseFloat(withdrawalAmount || '0').toFixed(2)} will be withdrawn from your Cash Balance</li>
+                      <li>• Sent to your configured payout method (PayPal, Bank Transfer, or Check)</li>
+                      <li>• Processing time: 5-7 business days</li>
+                      <li>• You'll receive confirmation via email</li>
+                    </ul>
+                  </div>
+                )}
+
+                {parseFloat(withdrawalAmount || '0') > 0 && withdrawalMethod === 'giftcard' && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                     <p className="text-sm text-gray-700 mb-2">
                       <strong>Convert to Mumbies Cash</strong> and get 10% extra!
@@ -1034,6 +1066,7 @@ export default function PartnerDashboardPage() {
                     onClick={() => {
                       setShowWithdrawalModal(false);
                       setWithdrawalAmount('');
+                      setWithdrawalMethod('cash');
                     }}
                   >
                     Cancel
@@ -1042,12 +1075,17 @@ export default function PartnerDashboardPage() {
                     fullWidth
                     disabled={parseFloat(withdrawalAmount || '0') <= 0 || parseFloat(withdrawalAmount || '0') > (nonprofit.total_commissions_earned + nonprofit.total_referral_earnings)}
                     onClick={() => {
-                      alert(`Converting $${parseFloat(withdrawalAmount).toFixed(2)} to $${(parseFloat(withdrawalAmount) * 1.1).toFixed(2)} Mumbies Cash! This feature will be fully functional soon.`);
+                      if (withdrawalMethod === 'cash') {
+                        alert(`Cash withdrawal of $${parseFloat(withdrawalAmount).toFixed(2)} initiated! This feature will be fully functional soon.`);
+                      } else {
+                        alert(`Converting $${parseFloat(withdrawalAmount).toFixed(2)} to $${(parseFloat(withdrawalAmount) * 1.1).toFixed(2)} Mumbies Cash! This feature will be fully functional soon.`);
+                      }
                       setShowWithdrawalModal(false);
                       setWithdrawalAmount('');
+                      setWithdrawalMethod('cash');
                     }}
                   >
-                    Convert to Mumbies Cash
+                    {withdrawalMethod === 'cash' ? 'Withdraw Cash' : 'Convert to Mumbies Cash'}
                   </Button>
                 </div>
               </div>
@@ -1583,7 +1621,7 @@ export default function PartnerDashboardPage() {
       {activeTab === 'opportunities' && nonprofit && (
         <OpportunitiesTab
           partnerId={nonprofit.id}
-          partnerBalance={nonprofit.total_commissions_earned + nonprofit.total_referral_earnings}
+          partnerBalance={nonprofit.mumbies_cash_balance || 0}
           organizationName={nonprofit.organization_name}
           logoUrl={nonprofit.logo_url}
         />
@@ -1936,62 +1974,122 @@ export default function PartnerDashboardPage() {
 
           {settingsTab === 'transactions' && (
             <div className="space-y-6">
-              {/* Mumbies Cash Transactions */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-blue-600" />
-                  Mumbies Cash Transactions
-                </h2>
-                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600 font-medium">Current Mumbies Cash Balance</p>
-                      <p className="text-2xl font-bold text-blue-600">${(nonprofit.mumbies_cash_balance || 0).toFixed(2)}</p>
-                    </div>
-                    <Button onClick={() => setShowWithdrawalModal(true)}>
-                      {nonprofit.mumbies_cash_balance > 0 ? 'Convert to Cash' : 'Deposit'}
+              {/* Summary Cards Side-by-Side */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Mumbies Cash Summary */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-blue-600" />
+                    Mumbies Cash Balance
+                  </h3>
+                  <div className="mb-4">
+                    <p className="text-3xl font-bold text-blue-600">${(nonprofit.mumbies_cash_balance || 0).toFixed(2)}</p>
+                    <p className="text-sm text-gray-600 mt-1">Available to spend</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setShowWithdrawalModal(true)}
+                      fullWidth
+                      size="sm"
+                    >
+                      {nonprofit.mumbies_cash_balance > 0 ? 'Manage' : 'Deposit'}
+                    </Button>
+                    <Button
+                      onClick={() => window.location.href = '/shop'}
+                      variant="outline"
+                      fullWidth
+                      size="sm"
+                    >
+                      Shop
                     </Button>
                   </div>
                   {nonprofit.mumbies_cash_balance === 0 && (nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) === 0 && (
-                    <p className="text-sm text-gray-600 mt-3">
-                      You need to earn commissions before you can convert them to Mumbies Cash balance.
+                    <p className="text-xs text-gray-600 mt-3">
+                      Earn commissions to convert to Mumbies Cash
                     </p>
                   )}
                 </div>
-                <div className="text-sm text-gray-600">
-                  <p className="mb-2"><strong>Coming soon:</strong> View your Mumbies Cash transaction history here.</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Conversions from Cash Balance</li>
-                    <li>Gift purchases and sends</li>
-                    <li>Shopping transactions</li>
-                    <li>Giveaway expenses</li>
-                  </ul>
+
+                {/* Cash Balance Summary */}
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                    Cash Balance
+                  </h3>
+                  <div className="mb-4">
+                    <p className="text-3xl font-bold text-green-600">
+                      ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Available to withdraw</p>
+                  </div>
+                  <Button
+                    onClick={() => setShowWithdrawalModal(true)}
+                    fullWidth
+                    size="sm"
+                    disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) <= 0}
+                  >
+                    Withdraw or Convert
+                  </Button>
                 </div>
               </div>
 
-              {/* Cash Balance Payouts */}
+              {/* Transaction History Ledger */}
               <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  Cash Balance Payouts
-                </h2>
-                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold mb-6">Transaction History</h2>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-gray-700">
+                    <strong>Note:</strong> Your complete transaction history will appear here once you start making transactions. This includes Mumbies Cash conversions, gift sends, withdrawals, and shopping activity.
+                  </p>
+                </div>
+
+                {/* Ledger Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                      <tr>
+                        <th className="text-left p-3 text-sm font-semibold text-gray-700">Date</th>
+                        <th className="text-left p-3 text-sm font-semibold text-gray-700">Description</th>
+                        <th className="text-right p-3 text-sm font-semibold text-gray-700">Amount</th>
+                        <th className="text-right p-3 text-sm font-semibold text-gray-700">Closing Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-200">
+                        <td colSpan={4} className="p-8 text-center text-gray-500">
+                          <div className="flex flex-col items-center gap-2">
+                            <History className="h-12 w-12 text-gray-300" />
+                            <p className="font-medium">No transactions yet</p>
+                            <p className="text-sm">Your transaction history will appear here</p>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-6 text-sm text-gray-600">
+                  <p className="font-semibold mb-2">Transaction types you'll see here:</p>
+                  <div className="grid md:grid-cols-2 gap-3">
                     <div>
-                      <p className="text-sm text-gray-600 font-medium">Current Cash Balance</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
-                      </p>
+                      <p className="font-medium text-blue-600 mb-1">Mumbies Cash:</p>
+                      <ul className="list-disc list-inside space-y-1 text-xs">
+                        <li>Conversions from Cash Balance (+10% bonus)</li>
+                        <li>Gift sends to leads</li>
+                        <li>Shopping on Mumbies.us</li>
+                        <li>Giveaway expenses</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-medium text-green-600 mb-1">Cash Balance:</p>
+                      <ul className="list-disc list-inside space-y-1 text-xs">
+                        <li>Affiliate commissions earned</li>
+                        <li>Referral bonuses</li>
+                        <li>Withdrawals to payout method</li>
+                        <li>Conversions to Mumbies Cash</li>
+                      </ul>
                     </div>
                   </div>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <p className="mb-2"><strong>Coming soon:</strong> View your cash payout history here.</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Withdrawal requests</li>
-                    <li>Payout status</li>
-                    <li>Payment method details</li>
-                  </ul>
                 </div>
               </div>
             </div>
