@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Users, DollarSign, Gift, TrendingUp, AlertCircle } from 'lucide-react';
+import { Users, DollarSign, UserCheck, UserX, Wallet, TrendingUp, AlertCircle, Gift } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 
 interface DashboardStats {
+  totalPartners: number;
   activePartners: number;
   pendingApplications: number;
+  suspendedPartners: number;
+  totalMumbiesCash: number;
   pendingPayouts: number;
+  leadsLast30Days: number;
   activeGiveaways: number;
-  totalGMV30Days: number;
 }
 
 export default function AdminDashboardPage() {
@@ -22,38 +25,45 @@ export default function AdminDashboardPage() {
 
   const fetchDashboardStats = async () => {
     try {
-      // Fetch all stats in parallel
       const [
+        { count: totalPartners },
         { count: activePartners },
         { count: pendingApplications },
+        { count: suspendedPartners },
+        { data: nonprofits },
         { data: transactions },
-        { count: activeGiveaways },
-        { data: recentOrders }
+        { count: recentLeads },
+        { count: activeGiveaways }
       ] = await Promise.all([
+        supabase.from('nonprofits').select('*', { count: 'exact', head: true }),
         supabase.from('nonprofits').select('*', { count: 'exact', head: true }).eq('status', 'active'),
         supabase.from('nonprofits').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('nonprofits').select('*', { count: 'exact', head: true }).eq('status', 'suspended'),
+        supabase.from('nonprofits').select('mumbies_cash_balance'),
         supabase
           .from('partner_transactions')
           .select('amount')
           .eq('transaction_type', 'commission')
-          .is('payout_status', null)
-          .or('payout_status.eq.pending'),
-        supabase.from('partner_giveaways').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+          .or('payout_status.is.null,payout_status.eq.pending'),
         supabase
-          .from('orders')
-          .select('total_amount')
-          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+          .from('partner_leads')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
+        supabase.from('partner_giveaways').select('*', { count: 'exact', head: true }).eq('status', 'active')
       ]);
 
+      const totalMumbiesCash = nonprofits?.reduce((sum, n) => sum + parseFloat(n.mumbies_cash_balance?.toString() || '0'), 0) || 0;
       const pendingPayouts = transactions?.reduce((sum, t) => sum + Math.abs(parseFloat(t.amount.toString())), 0) || 0;
-      const totalGMV30Days = recentOrders?.reduce((sum, o) => sum + parseFloat(o.total_amount.toString()), 0) || 0;
 
       setStats({
+        totalPartners: totalPartners || 0,
         activePartners: activePartners || 0,
         pendingApplications: pendingApplications || 0,
+        suspendedPartners: suspendedPartners || 0,
+        totalMumbiesCash,
         pendingPayouts,
+        leadsLast30Days: recentLeads || 0,
         activeGiveaways: activeGiveaways || 0,
-        totalGMV30Days,
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -77,8 +87,8 @@ export default function AdminDashboardPage() {
       <div className="space-y-8">
         {/* Page Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Platform overview and key metrics</p>
+          <h1 className="text-3xl font-bold text-gray-900">Partner Management</h1>
+          <p className="text-gray-600 mt-1">Overview and key metrics</p>
         </div>
 
         {/* Pending Actions Alert */}
@@ -100,41 +110,88 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* Key Metrics */}
+        {/* Partner Statistics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <MetricCard
+            title="Total Partners"
+            value={stats?.totalPartners || 0}
+            icon={Users}
+            iconColor="text-gray-600"
+            bgColor="bg-gray-50"
+            link="/admin/partners?status=all"
+          />
           <MetricCard
             title="Active Partners"
             value={stats?.activePartners || 0}
-            icon={Users}
-            iconColor="text-blue-600"
-            bgColor="bg-blue-50"
-          />
-          <MetricCard
-            title="Pending Payouts"
-            value={`$${(stats?.pendingPayouts || 0).toFixed(2)}`}
-            icon={DollarSign}
+            icon={UserCheck}
             iconColor="text-green-600"
             bgColor="bg-green-50"
-            action={
-              stats && stats.pendingPayouts > 0
-                ? { label: 'Process Payouts', to: '/admin/payouts' }
-                : undefined
-            }
+            link="/admin/partners?status=active"
           />
           <MetricCard
-            title="Active Giveaways"
-            value={stats?.activeGiveaways || 0}
-            icon={Gift}
-            iconColor="text-purple-600"
-            bgColor="bg-purple-50"
+            title="Pending Applications"
+            value={stats?.pendingApplications || 0}
+            icon={AlertCircle}
+            iconColor="text-yellow-600"
+            bgColor="bg-yellow-50"
+            link="/admin/partners?status=pending"
+            highlight={stats && stats.pendingApplications > 0}
           />
           <MetricCard
-            title="30-Day GMV"
-            value={`$${(stats?.totalGMV30Days || 0).toFixed(2)}`}
-            icon={TrendingUp}
-            iconColor="text-orange-600"
-            bgColor="bg-orange-50"
+            title="Suspended"
+            value={stats?.suspendedPartners || 0}
+            icon={UserX}
+            iconColor="text-red-600"
+            bgColor="bg-red-50"
+            link="/admin/partners?status=suspended"
           />
+        </div>
+
+        {/* Financial Statistics */}
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Financial Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <MetricCard
+              title="Total Mumbies Cash (All Partners)"
+              value={`$${(stats?.totalMumbiesCash || 0).toFixed(2)}`}
+              icon={Wallet}
+              iconColor="text-purple-600"
+              bgColor="bg-purple-50"
+            />
+            <MetricCard
+              title="Pending Payouts"
+              value={`$${(stats?.pendingPayouts || 0).toFixed(2)}`}
+              icon={DollarSign}
+              iconColor="text-green-600"
+              bgColor="bg-green-50"
+              action={
+                stats && stats.pendingPayouts > 0
+                  ? { label: 'Process Payouts', to: '/admin/payouts' }
+                  : undefined
+              }
+            />
+          </div>
+        </div>
+
+        {/* Activity Statistics */}
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity (30 Days)</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <MetricCard
+              title="New Leads Generated"
+              value={stats?.leadsLast30Days || 0}
+              icon={TrendingUp}
+              iconColor="text-blue-600"
+              bgColor="bg-blue-50"
+            />
+            <MetricCard
+              title="Active Giveaways"
+              value={stats?.activeGiveaways || 0}
+              icon={Gift}
+              iconColor="text-orange-600"
+              bgColor="bg-orange-50"
+            />
+          </div>
         </div>
 
         {/* Recent Activity Section */}
@@ -145,19 +202,8 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Admin Activity</h2>
             <RecentActivity />
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <QuickAction to="/admin/partners?status=pending" label="Review Applications" icon={Users} />
-            <QuickAction to="/admin/payouts" label="Process Payouts" icon={DollarSign} />
-            <QuickAction to="/admin/content/hero" label="Manage Content" icon="🎨" />
-            <QuickAction to="/admin/settings" label="System Settings" icon="⚙️" />
           </div>
         </div>
       </div>
@@ -172,11 +218,13 @@ interface MetricCardProps {
   iconColor: string;
   bgColor: string;
   action?: { label: string; to: string };
+  link?: string;
+  highlight?: boolean;
 }
 
-function MetricCard({ title, value, icon: Icon, iconColor, bgColor, action }: MetricCardProps) {
-  return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+function MetricCard({ title, value, icon: Icon, iconColor, bgColor, action, link, highlight }: MetricCardProps) {
+  const content = (
+    <>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm font-medium text-gray-600">{title}</p>
         <div className={`p-2 rounded-lg ${bgColor}`}>
@@ -192,8 +240,22 @@ function MetricCard({ title, value, icon: Icon, iconColor, bgColor, action }: Me
           {action.label} →
         </Link>
       )}
-    </div>
+    </>
   );
+
+  const cardClass = `bg-white rounded-lg border ${
+    highlight ? 'border-yellow-400 ring-2 ring-yellow-200' : 'border-gray-200'
+  } p-6 ${link ? 'hover:shadow-md transition-shadow cursor-pointer' : ''}`;
+
+  if (link) {
+    return (
+      <Link to={link} className={cardClass}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={cardClass}>{content}</div>;
 }
 
 function RecentApplications() {
@@ -223,8 +285,8 @@ function RecentApplications() {
       {applications.map((app) => (
         <Link
           key={app.id}
-          to={`/admin/partners/${app.id}`}
-          className="block p-3 rounded-lg hover:bg-gray-50 transition-colors"
+          to={`/admin/partners?status=pending`}
+          className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
         >
           <p className="text-sm font-medium text-gray-900">{app.organization_name}</p>
           <p className="text-xs text-gray-500 mt-1">{app.contact_email}</p>
@@ -256,41 +318,19 @@ function RecentActivity() {
     return <p className="text-sm text-gray-500">No recent activity</p>;
   }
 
+  const formatAction = (actionType: string) => {
+    return actionType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   return (
     <div className="space-y-3">
       {activity.map((item) => (
-        <div key={item.id} className="p-3 rounded-lg bg-gray-50">
-          <p className="text-sm font-medium text-gray-900">
-            {item.action_type.replace(/_/g, ' ')}
-          </p>
+        <div key={item.id} className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+          <p className="text-sm font-medium text-gray-900">{formatAction(item.action_type)}</p>
           <p className="text-xs text-gray-500 mt-1">{item.notes || `${item.entity_type} modified`}</p>
           <p className="text-xs text-gray-400 mt-1">{new Date(item.created_at).toLocaleString()}</p>
         </div>
       ))}
     </div>
-  );
-}
-
-interface QuickActionProps {
-  to: string;
-  label: string;
-  icon: any;
-}
-
-function QuickAction({ to, label, icon }: QuickActionProps) {
-  const Icon = typeof icon === 'string' ? null : icon;
-
-  return (
-    <Link
-      to={to}
-      className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-colors"
-    >
-      {Icon ? (
-        <Icon className="h-6 w-6 text-gray-600 mb-2" />
-      ) : (
-        <span className="text-2xl mb-2">{icon}</span>
-      )}
-      <span className="text-sm font-medium text-gray-700 text-center">{label}</span>
-    </Link>
   );
 }

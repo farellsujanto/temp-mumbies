@@ -14,7 +14,7 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -22,8 +22,21 @@ export default function LoginPage() {
     if (authError) {
       setError('Invalid email or password. Please try again.');
       setLoading(false);
-    } else {
-      window.location.href = '/account';
+    } else if (data.user) {
+      // Check user role and redirect accordingly
+      const { data: userProfile } = await supabase
+        .from('users')
+        .select('is_admin, is_partner')
+        .eq('id', data.user.id)
+        .single();
+
+      if (userProfile?.is_admin) {
+        window.location.href = '/admin';
+      } else if (userProfile?.is_partner) {
+        window.location.href = '/partner/dashboard';
+      } else {
+        window.location.href = '/account';
+      }
     }
   };
 
