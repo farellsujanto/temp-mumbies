@@ -32,9 +32,13 @@ export default function Button({
 
   const widthClass = fullWidth ? 'w-full' : '';
 
+  // Only apply variant styles if no custom background/text colors are provided in className
+  const hasCustomColors = className.includes('bg-') || className.includes('text-');
+  const variantStyles = hasCustomColors ? '' : variants[variant];
+
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${widthClass} ${className}`}
+      className={`${baseStyles} ${variantStyles} ${sizes[size]} ${widthClass} ${className}`}
       {...props}
     >
       {children}
