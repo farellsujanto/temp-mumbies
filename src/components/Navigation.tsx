@@ -79,13 +79,6 @@ export default function Navigation() {
           </div>
 
           <div className="flex items-center gap-4">
-            {isPartner && (
-              <div className="hidden md:flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-200">
-                <Wallet className="h-4 w-4" />
-                <span className="font-semibold text-sm">${mumbiesCashBalance.toFixed(2)}</span>
-                <span className="text-xs hidden lg:inline">Mumbies Cash</span>
-              </div>
-            )}
             {user ? (
               <div className="relative">
                 <button

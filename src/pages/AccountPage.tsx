@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Package, Heart, CreditCard, MapPin, RefreshCw, LogOut } from 'lucide-react';
+import { User, Package, Heart, CreditCard, MapPin, RefreshCw, LogOut, Receipt } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/Button';
 import AccountInfoTab from '../components/account/AccountInfoTab';
@@ -8,8 +8,9 @@ import SubscriptionsTab from '../components/account/SubscriptionsTab';
 import ImpactTab from '../components/account/ImpactTab';
 import AddressBookTab from '../components/account/AddressBookTab';
 import PaymentMethodsTab from '../components/account/PaymentMethodsTab';
+import TransactionsTab from '../components/account/TransactionsTab';
 
-type TabType = 'info' | 'orders' | 'subscriptions' | 'impact' | 'addresses' | 'payments';
+type TabType = 'info' | 'orders' | 'subscriptions' | 'impact' | 'addresses' | 'payments' | 'transactions';
 
 export default function AccountPage() {
   const { user, userProfile, loading, signOut } = useAuth();
@@ -34,6 +35,7 @@ export default function AccountPage() {
   const tabs = [
     { id: 'info' as TabType, label: 'Account Info', icon: User },
     { id: 'orders' as TabType, label: 'Orders', icon: Package },
+    { id: 'transactions' as TabType, label: 'Transactions', icon: Receipt },
     { id: 'subscriptions' as TabType, label: 'Subscriptions', icon: RefreshCw },
     { id: 'impact' as TabType, label: 'My Impact', icon: Heart },
     { id: 'addresses' as TabType, label: 'Address Book', icon: MapPin },
@@ -90,6 +92,7 @@ export default function AccountPage() {
         <div className="p-6">
           {activeTab === 'info' && <AccountInfoTab />}
           {activeTab === 'orders' && <OrdersTab />}
+          {activeTab === 'transactions' && <TransactionsTab />}
           {activeTab === 'subscriptions' && <SubscriptionsTab />}
           {activeTab === 'impact' && <ImpactTab />}
           {activeTab === 'addresses' && <AddressBookTab />}

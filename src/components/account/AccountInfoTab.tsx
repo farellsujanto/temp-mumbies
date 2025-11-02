@@ -1,7 +1,8 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { Package, Heart, DollarSign, TrendingUp, Gift, Building2, Send, Copy } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '../Button';
+import { supabase } from '../../lib/supabase';
 
 export default function AccountInfoTab() {
   const { user, userProfile } = useAuth();
@@ -18,6 +19,55 @@ export default function AccountInfoTab() {
 
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [copiedShort, setCopiedShort] = useState(false);
+  const [referralRequestStatus, setReferralRequestStatus] = useState<'none' | 'pending' | 'approved' | 'denied'>('none');
+  const [submittingRequest, setSubmittingRequest] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      checkReferralRequestStatus();
+    }
+  }, [user]);
+
+  const checkReferralRequestStatus = async () => {
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('nonprofit_referral_requests')
+      .select('status')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (data) {
+      setReferralRequestStatus(data.status as 'pending' | 'approved' | 'denied');
+    }
+  };
+
+  const handleRequestReferralAccess = async () => {
+    if (!user || submittingRequest) return;
+
+    setSubmittingRequest(true);
+
+    try {
+      const { error } = await supabase
+        .from('nonprofit_referral_requests')
+        .insert({
+          user_id: user.id,
+          status: 'pending'
+        });
+
+      if (error) {
+        console.error('Error submitting request:', error);
+        alert('Failed to submit request. Please try again.');
+      } else {
+        setReferralRequestStatus('pending');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setSubmittingRequest(false);
+    }
+  };
 
   const handleCopyReferralCode = () => {
     if (userProfile?.referral_code) {
@@ -219,13 +269,35 @@ export default function AccountInfoTab() {
               </div>
             ) : (
               <div className="space-y-3">
-                <Button variant="outline" fullWidth>
-                  Request Access
+                <Button
+                  variant="outline"
+                  fullWidth
+                  onClick={handleRequestReferralAccess}
+                  disabled={referralRequestStatus !== 'none' || submittingRequest}
+                >
+                  {referralRequestStatus === 'pending' && 'Request Submitted'}
+                  {referralRequestStatus === 'approved' && 'Access Granted'}
+                  {referralRequestStatus === 'denied' && 'Request Denied'}
+                  {referralRequestStatus === 'none' && (submittingRequest ? 'Submitting...' : 'Request Access')}
                 </Button>
                 <div className="bg-white rounded-lg p-4">
-                  <p className="text-sm text-gray-600">
-                    Request access to our nonprofit referral program and start earning $1,000 for every qualified rescue you refer.
-                  </p>
+                  {referralRequestStatus === 'pending' && (
+                    <p className="text-sm text-blue-600">
+                      <strong>Request Submitted!</strong><br />
+                      Your request is being reviewed by our team. We'll notify you once approved.
+                    </p>
+                  )}
+                  {referralRequestStatus === 'denied' && (
+                    <p className="text-sm text-red-600">
+                      <strong>Request Not Approved</strong><br />
+                      Your request was not approved at this time. Please contact support for more information.
+                    </p>
+                  )}
+                  {(referralRequestStatus === 'none' || referralRequestStatus === 'approved') && (
+                    <p className="text-sm text-gray-600">
+                      Request access to our nonprofit referral program and start earning $1,000 for every qualified rescue you refer.
+                    </p>
+                  )}
                 </div>
               </div>
             )}
