@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Menu, X, User, ChevronDown } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, User, ChevronDown, Wallet } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { supabase } from '../lib/supabase';
@@ -9,6 +9,8 @@ export default function Navigation() {
   const [searchQuery, setSearchQuery] = useState('');
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [isPartner, setIsPartner] = useState(false);
+  const [mumbiesCashBalance, setMumbiesCashBalance] = useState<number>(0);
+  const [partnerId, setPartnerId] = useState<string | null>(null);
   const { user } = useAuth();
   const { itemCount } = useCart();
 
@@ -22,12 +24,16 @@ export default function Navigation() {
     if (!user) return;
 
     const { data } = await supabase
-      .from('nonprofits')
-      .select('id')
-      .eq('auth_user_id', user.id)
+      .from('partners')
+      .select('id, mumbies_cash_balance')
+      .eq('user_id', user.id)
       .maybeSingle();
 
-    setIsPartner(!!data);
+    if (data) {
+      setIsPartner(true);
+      setPartnerId(data.id);
+      setMumbiesCashBalance(data.mumbies_cash_balance || 0);
+    }
   };
 
   return (
@@ -73,6 +79,13 @@ export default function Navigation() {
           </div>
 
           <div className="flex items-center gap-4">
+            {isPartner && (
+              <div className="hidden md:flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-200">
+                <Wallet className="h-4 w-4" />
+                <span className="font-semibold text-sm">${mumbiesCashBalance.toFixed(2)}</span>
+                <span className="text-xs hidden lg:inline">Mumbies Cash</span>
+              </div>
+            )}
             {user ? (
               <div className="relative">
                 <button

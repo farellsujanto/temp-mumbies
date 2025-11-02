@@ -65,6 +65,7 @@ interface NonprofitData {
   mailing_address_city: string | null;
   mailing_address_state: string | null;
   mailing_address_zip: string | null;
+  mumbies_cash_balance: number;
 }
 
 interface Referral {
@@ -827,8 +828,8 @@ export default function PartnerDashboardPage() {
             </div>
           )}
 
-          {/* Stats - Five Across */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {/* Stats - Six Across */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-700 text-sm font-semibold">Cash Balance</span>
@@ -845,6 +846,31 @@ export default function PartnerDashboardPage() {
               >
                 Withdraw
               </Button>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-300 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-700 text-sm font-semibold">Mumbies Cash</span>
+                <CreditCard className="h-5 w-5 text-blue-600" />
+              </div>
+              <p className="text-3xl font-bold text-blue-600 mb-1">
+                ${(nonprofit.mumbies_cash_balance || 0).toFixed(2)}
+              </p>
+              <p className="text-xs text-gray-600 mb-2">Shop, send gifts, or giveaways</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => window.location.href = '/shop'}
+                  className="flex-1 px-2 py-1.5 bg-white text-blue-600 hover:bg-blue-50 rounded text-xs font-medium border border-blue-300 transition-colors"
+                >
+                  Shop
+                </button>
+                <button
+                  onClick={() => setActiveTab('opportunities')}
+                  className="flex-1 px-2 py-1.5 bg-white text-blue-600 hover:bg-blue-50 rounded text-xs font-medium border border-blue-300 transition-colors"
+                >
+                  Send Gifts
+                </button>
+              </div>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">

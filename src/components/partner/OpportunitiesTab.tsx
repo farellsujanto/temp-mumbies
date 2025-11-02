@@ -3,6 +3,7 @@ import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail, CheckCircle,
 import { supabase } from '../../lib/supabase';
 import Button from '../Button';
 import Tooltip from '../Tooltip';
+import SendGiftModal from './SendGiftModal';
 
 interface Lead {
   id: string;
@@ -52,6 +53,9 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
   const [showEmailPreview, setShowEmailPreview] = useState(false);
   const [previewLead, setPreviewLead] = useState<Lead | null>(null);
   const [previewAmount, setPreviewAmount] = useState(0);
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [mumbiesCashBalance, setMumbiesCashBalance] = useState<number>(partnerBalance);
 
   useEffect(() => {
     fetchData();
@@ -60,12 +64,34 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
   const fetchData = async () => {
     setLoading(true);
     await Promise.all([
+      fetchMumbiesCashBalance(),
       fetchExpiringLeads(),
       fetchGiftedLeads(),
       fetchActivityItems(),
       fetchConversions()
     ]);
     setLoading(false);
+  };
+
+  const fetchMumbiesCashBalance = async () => {
+    const { data } = await supabase
+      .from('partners')
+      .select('mumbies_cash_balance')
+      .eq('id', partnerId)
+      .maybeSingle();
+
+    if (data) {
+      setMumbiesCashBalance(data.mumbies_cash_balance || 0);
+    }
+  };
+
+  const handleOpenGiftModal = (lead: Lead) => {
+    setSelectedLead(lead);
+    setShowGiftModal(true);
+  };
+
+  const handleGiftSuccess = () => {
+    fetchData();
   };
 
   const fetchExpiringLeads = async () => {
@@ -105,40 +131,29 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
   };
 
   const fetchGiftedLeads = async () => {
-    const { data: incentives, error } = await supabase
-      .from('partner_incentives')
-      .select(`
-        id,
-        amount,
-        created_at,
-        expires_at,
-        status,
-        partner_leads (
-          id,
-          email,
-          lead_balances (balance)
-        )
-      `)
+    const { data: gifts, error } = await supabase
+      .from('lead_gifts')
+      .select('*')
       .eq('partner_id', partnerId)
-      .in('status', ['pending', 'active'])
-      .order('created_at', { ascending: false })
+      .eq('status', 'sent')
+      .order('sent_at', { ascending: false })
       .limit(20);
 
-    if (!error && incentives) {
-      const processed = incentives.map((inc: any) => {
-        const expiresAt = new Date(inc.expires_at);
+    if (!error && gifts) {
+      const processed = gifts.map((gift: any) => {
+        const expiresAt = new Date(gift.expires_at);
         const now = new Date();
         const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
         return {
-          id: inc.id,
-          email: inc.partner_leads.email,
-          amount: inc.amount,
-          sent_at: inc.created_at,
-          expires_at: inc.expires_at,
-          status: inc.status,
-          balance: inc.partner_leads.lead_balances?.[0]?.balance || 0,
-          days_until_expiry: daysUntilExpiry,
+          id: gift.id,
+          email: gift.recipient_email,
+          amount: gift.amount,
+          sent_at: gift.sent_at,
+          expires_at: gift.expires_at,
+          status: gift.status,
+          balance: 0,
+          days_until_expiry: Math.max(0, daysUntilExpiry),
         };
       });
 
@@ -258,6 +273,17 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
 
   return (
     <div className="space-y-6">
+      {/* Send Gift Modal */}
+      {showGiftModal && selectedLead && (
+        <SendGiftModal
+          lead={selectedLead}
+          partnerId={partnerId}
+          mumbiesCashBalance={mumbiesCashBalance}
+          onClose={() => setShowGiftModal(false)}
+          onSuccess={handleGiftSuccess}
+        />
+      )}
+
       {showEmailPreview && previewLead && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -408,10 +434,10 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
 
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Balance</span>
+              <span className="text-gray-600 text-sm">Mumbies Cash</span>
               <DollarSign className="h-5 w-5 text-green-600" />
             </div>
-            <p className="text-3xl font-bold">${partnerBalance.toFixed(2)}</p>
+            <p className="text-3xl font-bold">${mumbiesCashBalance.toFixed(2)}</p>
             <p className="text-xs text-gray-600 mt-1">Available</p>
           </div>
 
@@ -465,44 +491,14 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-2 flex-1">
-                      <button
-                        onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 5 })}
-                        className="px-3 py-1.5 bg-white border-2 border-current rounded-lg font-semibold text-xs hover:bg-opacity-50 transition-colors"
-                      >
-                        $5
-                      </button>
-                      <button
-                        onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 10 })}
-                        className="px-3 py-1.5 bg-white border-2 border-current rounded-lg font-semibold text-xs hover:bg-opacity-50 transition-colors"
-                      >
-                        $10
-                      </button>
-                      <button
-                        onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 15 })}
-                        className="px-3 py-1.5 bg-white border-2 border-current rounded-lg font-semibold text-xs hover:bg-opacity-50 transition-colors"
-                      >
-                        $15
-                      </button>
-                      <input
-                        type="number"
-                        value={giftAmount[lead.id] || ''}
-                        onChange={(e) => setGiftAmount({ ...giftAmount, [lead.id]: parseFloat(e.target.value) || 0 })}
-                        placeholder="Custom"
-                        className="w-20 px-2 py-1.5 border-2 border-current rounded-lg text-xs"
-                        min="1"
-                        max={partnerBalance}
-                      />
-                    </div>
-                    <Button
-                      size="sm"
-                      onClick={() => handleShowPreview(lead, giftAmount[lead.id] || 5)}
-                      disabled={sendingGift === lead.id || (giftAmount[lead.id] || 5) > partnerBalance}
-                      loading={sendingGift === lead.id}
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => handleOpenGiftModal(lead)}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-current rounded-lg font-semibold text-sm hover:bg-opacity-50 transition-colors"
                     >
-                      {sendingGift === lead.id ? 'Sending...' : `Send $${(giftAmount[lead.id] || 5).toFixed(2)}`}
-                    </Button>
+                      <Gift className="h-4 w-4" />
+                      Send Gift
+                    </button>
                   </div>
                 </div>
               ))}
