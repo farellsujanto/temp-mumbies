@@ -1004,185 +1004,6 @@ export default function PartnerDashboardPage() {
             </div>
           </div>
 
-          {/* Withdrawal Modal */}
-          {showWithdrawalModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-lg max-w-2xl w-full p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Manage Your Cash Balance</h2>
-                  <button
-                    onClick={() => {
-                      setShowWithdrawalModal(false);
-                      setWithdrawalAmount('');
-                      setWithdrawalMethod('cash');
-                    }}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="h-6 w-6" />
-                  </button>
-                </div>
-
-                <div className="mb-6">
-                  <p className="text-lg text-gray-700 mb-4">
-                    Available Cash Balance: <span className="font-bold text-green-600">${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}</span>
-                  </p>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Amount to Convert (max ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)})
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-2.5 text-gray-500">$</span>
-                      <input
-                        type="number"
-                        value={withdrawalAmount}
-                        onChange={(e) => setWithdrawalAmount(e.target.value)}
-                        placeholder="0.00"
-                        min="0"
-                        max={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
-                        step="0.01"
-                        className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => setWithdrawalAmount('10')}
-                        className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-                      >
-                        $10
-                      </button>
-                      <button
-                        onClick={() => setWithdrawalAmount('25')}
-                        className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-                      >
-                        $25
-                      </button>
-                      <button
-                        onClick={() => setWithdrawalAmount('50')}
-                        className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-                      >
-                        $50
-                      </button>
-                      <button
-                        onClick={() => setWithdrawalAmount((nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2))}
-                        className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-                      >
-                        All
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {parseFloat(withdrawalAmount || '0') > 0 && (
-                  <div className="grid md:grid-cols-2 gap-4 mb-6">
-                    {/* Cash Withdrawal */}
-                    <button
-                      onClick={() => setWithdrawalMethod('cash')}
-                      className={`border-2 rounded-lg p-6 text-left transition-all ${
-                        withdrawalMethod === 'cash'
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 mb-3">
-                        <DollarSign className="h-6 w-6 text-green-600" />
-                        <h3 className="text-lg font-bold text-gray-900">Cash Withdrawal</h3>
-                      </div>
-                      <p className="text-2xl font-bold text-green-600 mb-2">
-                        ${parseFloat(withdrawalAmount || '0').toFixed(2)}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Withdraw to your configured payout method
-                      </p>
-                    </button>
-
-                    {/* Mumbies Cash Conversion */}
-                    <button
-                      onClick={() => setWithdrawalMethod('giftcard')}
-                      className={`border-2 rounded-lg p-6 text-left transition-all relative ${
-                        withdrawalMethod === 'giftcard'
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-                        +10% BONUS
-                      </span>
-                      <div className="flex items-center gap-3 mb-3">
-                        <CreditCard className="h-6 w-6 text-blue-600" />
-                        <h3 className="text-lg font-bold">Mumbies Cash</h3>
-                      </div>
-                      <p className="text-2xl font-bold text-blue-600 mb-2">
-                        ${(parseFloat(withdrawalAmount || '0') * 1.1).toFixed(2)}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Get 10% extra to shop, send gifts, or run giveaways
-                      </p>
-                    </button>
-                  </div>
-                )}
-
-                {parseFloat(withdrawalAmount || '0') > 0 && withdrawalMethod === 'cash' && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-gray-700 mb-2">
-                      <strong>Cash Withdrawal</strong> will be sent to your payout method
-                    </p>
-                    <ul className="text-sm text-gray-700 space-y-1 ml-4">
-                      <li>• ${parseFloat(withdrawalAmount || '0').toFixed(2)} will be withdrawn from your Cash Balance</li>
-                      <li>• Sent to your configured payout method (PayPal, Bank Transfer, or Check)</li>
-                      <li>• Processing time: 5-7 business days</li>
-                      <li>• You'll receive confirmation via email</li>
-                    </ul>
-                  </div>
-                )}
-
-                {parseFloat(withdrawalAmount || '0') > 0 && withdrawalMethod === 'giftcard' && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <p className="text-sm text-gray-700 mb-2">
-                      <strong>Convert to Mumbies Cash</strong> and get 10% extra!
-                    </p>
-                    <ul className="text-sm text-gray-700 space-y-1 ml-4">
-                      <li>• ${parseFloat(withdrawalAmount || '0').toFixed(2)} Cash Balance → ${(parseFloat(withdrawalAmount || '0') * 1.1).toFixed(2)} Mumbies Cash</li>
-                      <li>• Added instantly to your Mumbies Cash balance</li>
-                      <li>• Use to shop, send gifts to leads, or run giveaways</li>
-                      <li>• Never expires</li>
-                    </ul>
-                  </div>
-                )}
-
-                <div className="flex gap-4">
-                  <Button
-                    variant="outline"
-                    fullWidth
-                    onClick={() => {
-                      setShowWithdrawalModal(false);
-                      setWithdrawalAmount('');
-                      setWithdrawalMethod('cash');
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    fullWidth
-                    disabled={parseFloat(withdrawalAmount || '0') <= 0 || parseFloat(withdrawalAmount || '0') > (nonprofit.total_commissions_earned + nonprofit.total_referral_earnings)}
-                    onClick={() => {
-                      if (withdrawalMethod === 'cash') {
-                        alert(`Cash withdrawal of $${parseFloat(withdrawalAmount).toFixed(2)} initiated! This feature will be fully functional soon.`);
-                      } else {
-                        alert(`Converting $${parseFloat(withdrawalAmount).toFixed(2)} to $${(parseFloat(withdrawalAmount) * 1.1).toFixed(2)} Mumbies Cash! This feature will be fully functional soon.`);
-                      }
-                      setShowWithdrawalModal(false);
-                      setWithdrawalAmount('');
-                      setWithdrawalMethod('cash');
-                    }}
-                  >
-                    {withdrawalMethod === 'cash' ? 'Withdraw Cash' : 'Convert to Mumbies Cash'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Referral Links and Activity Side-by-Side */}
           <div className="grid lg:grid-cols-2 gap-6">
             {/* Referral Links */}
@@ -1716,6 +1537,185 @@ export default function PartnerDashboardPage() {
           organizationName={nonprofit.organization_name}
           logoUrl={nonprofit.logo_url}
         />
+      )}
+
+      {/* Withdrawal Modal - Available from all tabs */}
+      {showWithdrawalModal && nonprofit && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Manage Your Cash Balance</h2>
+              <button
+                onClick={() => {
+                  setShowWithdrawalModal(false);
+                  setWithdrawalAmount('');
+                  setWithdrawalMethod('cash');
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-lg text-gray-700 mb-4">
+                Available Cash Balance: <span className="font-bold text-green-600">${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}</span>
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Amount to Convert (max ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)})
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    value={withdrawalAmount}
+                    onChange={(e) => setWithdrawalAmount(e.target.value)}
+                    placeholder="0.00"
+                    min="0"
+                    max={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
+                    step="0.01"
+                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => setWithdrawalAmount('10')}
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  >
+                    $10
+                  </button>
+                  <button
+                    onClick={() => setWithdrawalAmount('25')}
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  >
+                    $25
+                  </button>
+                  <button
+                    onClick={() => setWithdrawalAmount('50')}
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  >
+                    $50
+                  </button>
+                  <button
+                    onClick={() => setWithdrawalAmount((nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2))}
+                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+                  >
+                    All
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {parseFloat(withdrawalAmount || '0') > 0 && (
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                {/* Cash Withdrawal */}
+                <button
+                  onClick={() => setWithdrawalMethod('cash')}
+                  className={`border-2 rounded-lg p-6 text-left transition-all ${
+                    withdrawalMethod === 'cash'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <DollarSign className="h-6 w-6 text-green-600" />
+                    <h3 className="text-lg font-bold text-gray-900">Cash Withdrawal</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-green-600 mb-2">
+                    ${parseFloat(withdrawalAmount || '0').toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Withdraw to your configured payout method
+                  </p>
+                </button>
+
+                {/* Mumbies Cash Conversion */}
+                <button
+                  onClick={() => setWithdrawalMethod('giftcard')}
+                  className={`border-2 rounded-lg p-6 text-left transition-all relative ${
+                    withdrawalMethod === 'giftcard'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    +10% BONUS
+                  </span>
+                  <div className="flex items-center gap-3 mb-3">
+                    <CreditCard className="h-6 w-6 text-blue-600" />
+                    <h3 className="text-lg font-bold">Mumbies Cash</h3>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-600 mb-2">
+                    ${(parseFloat(withdrawalAmount || '0') * 1.1).toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Get 10% extra to shop, send gifts, or run giveaways
+                  </p>
+                </button>
+              </div>
+            )}
+
+            {parseFloat(withdrawalAmount || '0') > 0 && withdrawalMethod === 'cash' && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Cash Withdrawal</strong> will be sent to your payout method
+                </p>
+                <ul className="text-sm text-gray-700 space-y-1 ml-4">
+                  <li>• ${parseFloat(withdrawalAmount || '0').toFixed(2)} will be withdrawn from your Cash Balance</li>
+                  <li>• Sent to your configured payout method (PayPal, Bank Transfer, or Check)</li>
+                  <li>• Processing time: 5-7 business days</li>
+                  <li>• You'll receive confirmation via email</li>
+                </ul>
+              </div>
+            )}
+
+            {parseFloat(withdrawalAmount || '0') > 0 && withdrawalMethod === 'giftcard' && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Convert to Mumbies Cash</strong> and get 10% extra!
+                </p>
+                <ul className="text-sm text-gray-700 space-y-1 ml-4">
+                  <li>• ${parseFloat(withdrawalAmount || '0').toFixed(2)} Cash Balance → ${(parseFloat(withdrawalAmount || '0') * 1.1).toFixed(2)} Mumbies Cash</li>
+                  <li>• Added instantly to your Mumbies Cash balance</li>
+                  <li>• Use to shop, send gifts to leads, or run giveaways</li>
+                  <li>• Never expires</li>
+                </ul>
+              </div>
+            )}
+
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                fullWidth
+                onClick={() => {
+                  setShowWithdrawalModal(false);
+                  setWithdrawalAmount('');
+                  setWithdrawalMethod('cash');
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                fullWidth
+                disabled={parseFloat(withdrawalAmount || '0') <= 0 || parseFloat(withdrawalAmount || '0') > (nonprofit.total_commissions_earned + nonprofit.total_referral_earnings)}
+                onClick={() => {
+                  if (withdrawalMethod === 'cash') {
+                    alert(`Cash withdrawal of $${parseFloat(withdrawalAmount).toFixed(2)} initiated! This feature will be fully functional soon.`);
+                  } else {
+                    alert(`Converting $${parseFloat(withdrawalAmount).toFixed(2)} to $${(parseFloat(withdrawalAmount) * 1.1).toFixed(2)} Mumbies Cash! This feature will be fully functional soon.`);
+                  }
+                  setShowWithdrawalModal(false);
+                  setWithdrawalAmount('');
+                  setWithdrawalMethod('cash');
+                }}
+              >
+                {withdrawalMethod === 'cash' ? 'Withdraw Cash' : 'Convert to Mumbies Cash'}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Rewards Tab */}
