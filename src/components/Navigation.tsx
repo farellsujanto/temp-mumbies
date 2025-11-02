@@ -1,40 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Search, ShoppingCart, Menu, X, User, ChevronDown, Wallet } from 'lucide-react';
+import { useState } from 'react';
+import { Search, ShoppingCart, Menu, X, User, ChevronDown, Award, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
-import { supabase } from '../lib/supabase';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
-  const [isPartner, setIsPartner] = useState(false);
-  const [mumbiesCashBalance, setMumbiesCashBalance] = useState<number>(0);
-  const [partnerId, setPartnerId] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, userProfile, isPartner, isAdmin, partnerProfile, signOut } = useAuth();
   const { itemCount } = useCart();
-
-  useEffect(() => {
-    if (user) {
-      checkPartnerStatus();
-    }
-  }, [user]);
-
-  const checkPartnerStatus = async () => {
-    if (!user) return;
-
-    const { data } = await supabase
-      .from('nonprofits')
-      .select('id, mumbies_cash_balance')
-      .eq('auth_user_id', user.id)
-      .maybeSingle();
-
-    if (data) {
-      setIsPartner(true);
-      setPartnerId(data.id);
-      setMumbiesCashBalance(data.mumbies_cash_balance || 0);
-    }
-  };
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -79,48 +53,121 @@ export default function Navigation() {
           </div>
 
           <div className="flex items-center gap-4">
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-green-600"
-                >
-                  <User className="h-5 w-5" />
-                  <span className="hidden lg:inline">Account</span>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-
-                {accountDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <a
-                      href="/account"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                      onClick={() => setAccountDropdownOpen(false)}
-                    >
-                      My Account
-                    </a>
-                    {isPartner && (
-                      <a
-                        href="/partner/dashboard"
-                        className="block px-4 py-2 text-gray-700 hover:bg-gray-50"
-                        onClick={() => setAccountDropdownOpen(false)}
-                      >
-                        Partner Dashboard
-                      </a>
+            {user && userProfile ? (
+              <>
+                {/* Partner Badge */}
+                {isPartner && (
+                  <a
+                    href="/partner/dashboard"
+                    className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                  >
+                    <Award className="h-4 w-4" />
+                    <span className="text-sm font-medium">Partner</span>
+                    {partnerProfile && (
+                      <span className="text-xs">${partnerProfile.mumbies_cash_balance.toFixed(2)}</span>
                     )}
-                    <hr className="my-2" />
-                    <button
-                      onClick={() => {
-                        setAccountDropdownOpen(false);
-                        window.location.href = '/logout';
-                      }}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
+                  </a>
                 )}
-              </div>
+
+                {/* Admin Badge */}
+                {isAdmin && (
+                  <a
+                    href="/admin"
+                    className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span className="text-sm font-medium">Admin</span>
+                  </a>
+                )}
+
+                {/* Account Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setAccountDropdownOpen(!accountDropdownOpen)}
+                    className="flex items-center gap-2 text-gray-700 hover:text-green-600"
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="hidden lg:inline">{userProfile.full_name || 'Account'}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+
+                  {accountDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-gray-200">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {userProfile.full_name || userProfile.email}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">{userProfile.email}</p>
+                      </div>
+
+                      <div className="py-1">
+                        <a
+                          href="/account"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setAccountDropdownOpen(false)}
+                        >
+                          My Account
+                        </a>
+                        <a
+                          href="/account/orders"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setAccountDropdownOpen(false)}
+                        >
+                          My Orders
+                        </a>
+                      </div>
+
+                      {isPartner && (
+                        <>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          <div className="py-1">
+                            <div className="px-4 py-1 text-xs font-semibold text-green-600">PARTNER ACCESS</div>
+                            <a
+                              href="/partner/dashboard"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                              onClick={() => setAccountDropdownOpen(false)}
+                            >
+                              Partner Dashboard
+                            </a>
+                            {partnerProfile && (
+                              <div className="px-4 py-2 text-xs text-gray-500">
+                                Balance: ${partnerProfile.mumbies_cash_balance.toFixed(2)}
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+
+                      {isAdmin && (
+                        <>
+                          <div className="border-t border-gray-200 my-1"></div>
+                          <div className="py-1">
+                            <div className="px-4 py-1 text-xs font-semibold text-red-600">ADMIN ACCESS</div>
+                            <a
+                              href="/admin"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                              onClick={() => setAccountDropdownOpen(false)}
+                            >
+                              Admin Dashboard
+                            </a>
+                          </div>
+                        </>
+                      )}
+
+                      <div className="border-t border-gray-200 my-1"></div>
+                      <button
+                        onClick={() => {
+                          setAccountDropdownOpen(false);
+                          signOut();
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
             ) : (
               <a
                 href="/login"

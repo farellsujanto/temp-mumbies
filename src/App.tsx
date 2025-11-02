@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import Layout from './components/Layout';
 import PasswordProtection from './components/PasswordProtection';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import LoginPage from './pages/LoginPage';
@@ -24,6 +25,8 @@ import GiveawayPage from './pages/GiveawayPage';
 import TestPage from './pages/TestPage';
 import DiagnosticPage from './pages/DiagnosticPage';
 import ShortUrlRedirectPage from './pages/ShortUrlRedirectPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminPartnersPage from './pages/admin/AdminPartnersPage';
 
 function App() {
   return (
@@ -51,9 +54,34 @@ function App() {
                 <Route path="/partners" element={<PartnerProgramPage />} />
                 <Route path="/partner/apply" element={<PartnerApplyPage />} />
                 <Route path="/partner/login" element={<PartnerLoginPage />} />
-                <Route path="/partner/dashboard" element={<PartnerDashboardPage />} />
+                <Route
+                  path="/partner/dashboard"
+                  element={
+                    <ProtectedRoute requireRole="partner">
+                      <PartnerDashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/giveaway/:slug" element={<GiveawayPage />} />
                 <Route path="/impact" element={<ImpactPage />} />
+
+                {/* Admin Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute requireRole="admin">
+                      <AdminDashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/partners"
+                  element={
+                    <ProtectedRoute requireRole="admin">
+                      <AdminPartnersPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Routes>
             </Layout>
           </CartProvider>
