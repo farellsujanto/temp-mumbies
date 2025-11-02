@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUserProfile = async (userId: string) => {
+    console.log('[AuthContext] Fetching user profile for:', userId);
+
     const { data, error } = await supabase
       .from('users')
       .select(`
@@ -71,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .maybeSingle();
 
     if (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('[AuthContext] Error fetching user profile:', error);
       return null;
     }
 
@@ -79,6 +81,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (data && Array.isArray(data.partner_profile)) {
       data.partner_profile = data.partner_profile[0] || null;
     }
+
+    console.log('[AuthContext] User profile loaded:', {
+      email: data?.email,
+      is_admin: data?.is_admin,
+      is_partner: data?.is_partner,
+      has_partner_profile: !!data?.partner_profile
+    });
 
     return data;
   };
@@ -91,27 +100,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      (async () => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          const profile = await fetchUserProfile(session.user.id);
-          setUserProfile(profile);
-        }
-        setLoading(false);
-      })();
-    });
+    const initAuth = async () => {
+      try {
+        console.log('[AuthContext] Initializing auth...');
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('[AuthContext] Session retrieved:', !!session, session?.user?.email);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
         setUser(session?.user ?? null);
+
         if (session?.user) {
           const profile = await fetchUserProfile(session.user.id);
           setUserProfile(profile);
-        } else {
-          setUserProfile(null);
         }
-      })();
+      } catch (error) {
+        console.error('[AuthContext] Error initializing auth:', error);
+      } finally {
+        setLoading(false);
+        console.log('[AuthContext] Auth initialization complete');
+      }
+    };
+
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[AuthContext] Auth state changed:', event, session?.user?.email);
+
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        const profile = await fetchUserProfile(session.user.id);
+        setUserProfile(profile);
+      } else {
+        setUserProfile(null);
+      }
     });
 
     return () => subscription.unsubscribe();
