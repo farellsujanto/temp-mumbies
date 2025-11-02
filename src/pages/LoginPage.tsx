@@ -81,10 +81,26 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm font-medium text-gray-700 mb-2">Demo Account:</p>
-            <p className="text-xs text-gray-600">Email: demo@mumbies.com</p>
-            <p className="text-xs text-gray-600">Password: demo123456</p>
+          <div className="mt-6 space-y-3">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm font-semibold text-blue-900 mb-2">👤 Customer Account</p>
+              <p className="text-xs text-blue-700">Email: customer@mumbies.com</p>
+              <p className="text-xs text-blue-700">Password: customer123</p>
+            </div>
+
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm font-semibold text-green-900 mb-2">🤝 Partner Account</p>
+              <p className="text-xs text-green-700">Email: partner@mumbies.com</p>
+              <p className="text-xs text-green-700">Password: partner123</p>
+              <p className="text-xs text-green-600 mt-1">Access to Partner Dashboard</p>
+            </div>
+
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm font-semibold text-red-900 mb-2">🛡️ Admin Account</p>
+              <p className="text-xs text-red-700">Email: admin@mumbies.com</p>
+              <p className="text-xs text-red-700">Password: admin123</p>
+              <p className="text-xs text-red-600 mt-1">Full admin portal access</p>
+            </div>
           </div>
         </div>
       </div>
