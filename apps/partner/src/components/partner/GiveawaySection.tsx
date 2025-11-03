@@ -269,7 +269,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
   const activeGiveaway = giveaways.find(g => g.status === 'active');
   const completedGiveaways = giveaways.filter(g => g.status !== 'active');
 
-  const lifetimeLeads = giveaways.reduce((sum, g) => sum + g.total_leads_generated, 0);
+  const lifetimeLeads = giveaways.reduce((sum, g) => sum + (Number(g.total_leads_generated) || 0), 0);
   const lifetimeSales = lifetimeLeads * 50;
   const lifetimeCommissions = lifetimeSales * 0.05;
 
@@ -319,7 +319,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
               <span className="text-gray-600 text-xs">Mumbies Cash</span>
               <DollarSign className="h-4 w-4 text-green-600" />
             </div>
-            <p className="text-xl font-bold">${partnerStats.mumbies_cash_balance.toFixed(0)}</p>
+            <p className="text-xl font-bold">${Number(partnerStats.mumbies_cash_balance || 0).toFixed(0)}</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-3">
@@ -327,7 +327,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
               <span className="text-gray-600 text-xs">Total Earnings</span>
               <TrendingUp className="h-4 w-4 text-blue-600" />
             </div>
-            <p className="text-xl font-bold">${partnerStats.total_earnings.toFixed(0)}</p>
+            <p className="text-xl font-bold">${Number(partnerStats.total_earnings || 0).toFixed(0)}</p>
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-3">
