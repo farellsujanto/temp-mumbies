@@ -20,6 +20,7 @@ import AdminBannersPage from './pages/admin/content/AdminBannersPage';
 import AdminFeaturedRescuePage from './pages/admin/content/AdminFeaturedRescuePage';
 import AdminPartnerApplicationsPage from './pages/admin/AdminPartnerApplicationsPage';
 import AdminTestModePage from './pages/admin/AdminTestModePage';
+import AdminShopifyPage from './pages/admin/AdminShopifyPage';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
                     <Route path="/activity" element={<AdminActivityPage />} />
                     <Route path="/team" element={<AdminAdminUsersPage />} />
                     <Route path="/test-mode" element={<AdminTestModePage />} />
+                    <Route path="/shopify" element={<AdminShopifyPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </ProtectedRoute>

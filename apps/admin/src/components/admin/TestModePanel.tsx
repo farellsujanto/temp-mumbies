@@ -173,10 +173,6 @@ export default function TestModePanel({}: TestModePanelProps) {
       const newEnabled = data.test_mode_enabled;
       setSettings(prev => ({ ...prev, test_mode_enabled: newEnabled }));
 
-      if (onTestModeChange) {
-        onTestModeChange(newEnabled);
-      }
-
       if (newEnabled) {
         loadTestStats();
       }

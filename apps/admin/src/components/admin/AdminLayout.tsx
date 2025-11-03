@@ -88,6 +88,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       ]
     },
     {
+      section: 'Integrations',
+      items: [
+        { to: '/shopify', icon: Package, label: 'Shopify' },
+      ]
+    },
+    {
       section: 'System',
       items: [
         { to: '/test-mode', icon: FlaskConical, label: 'Test Mode' },
