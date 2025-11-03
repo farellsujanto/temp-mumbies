@@ -102,7 +102,7 @@ export default function AdminDashboardPage() {
               </p>
             </div>
             <Link
-              to="/admin/partners?status=pending"
+              to="/partners?status=pending"
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
             >
               Review Now
@@ -118,7 +118,7 @@ export default function AdminDashboardPage() {
             icon={Users}
             iconColor="text-gray-600"
             bgColor="bg-gray-50"
-            link="/admin/partners?status=all"
+            link="/partners?status=all"
           />
           <MetricCard
             title="Active Partners"
@@ -126,7 +126,7 @@ export default function AdminDashboardPage() {
             icon={UserCheck}
             iconColor="text-green-600"
             bgColor="bg-green-50"
-            link="/admin/partners?status=active"
+            link="/partners?status=active"
           />
           <MetricCard
             title="Pending Applications"
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
             icon={AlertCircle}
             iconColor="text-yellow-600"
             bgColor="bg-yellow-50"
-            link="/admin/partners?status=pending"
+            link="/partners?status=pending"
             highlight={stats && stats.pendingApplications > 0}
           />
           <MetricCard
@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
             icon={UserX}
             iconColor="text-red-600"
             bgColor="bg-red-50"
-            link="/admin/partners?status=suspended"
+            link="/partners?status=suspended"
           />
         </div>
 
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
               bgColor="bg-green-50"
               action={
                 stats && stats.pendingPayouts > 0
-                  ? { label: 'Process Payouts', to: '/admin/payouts' }
+                  ? { label: 'Process Payouts', to: '/payouts' }
                   : undefined
               }
             />
@@ -285,7 +285,7 @@ function RecentApplications() {
       {applications.map((app) => (
         <Link
           key={app.id}
-          to={`/admin/partners?status=pending`}
+          to={`/partners?status=pending`}
           className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
         >
           <p className="text-sm font-medium text-gray-900">{app.organization_name}</p>

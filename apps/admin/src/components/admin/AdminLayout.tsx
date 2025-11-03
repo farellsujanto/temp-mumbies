@@ -41,8 +41,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const isActive = (path: string) => {
-    if (path === '/admin') {
-      return location.pathname === '/admin';
+    if (path === '/') {
+      return location.pathname === '/';
     }
     return location.pathname.startsWith(path);
   };
@@ -51,39 +51,39 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     {
       section: 'Overview',
       items: [
-        { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+        { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
       ]
     },
     {
       section: 'User Management',
       items: [
-        { to: '/admin/accounts', icon: UserIcon, label: 'All Accounts' },
-        { to: '/admin/partners', icon: Users, label: 'Partners' },
+        { to: '/accounts', icon: UserIcon, label: 'All Accounts' },
+        { to: '/partners', icon: Users, label: 'Partners' },
       ]
     },
     {
       section: 'Operations',
       items: [
-        { to: '/admin/payouts', icon: DollarSign, label: 'Payouts' },
-        { to: '/admin/leads', icon: UserPlus, label: 'Leads' },
-        { to: '/admin/giveaways', icon: Gift, label: 'Giveaways' },
-        { to: '/admin/rewards', icon: Award, label: 'Rewards' },
+        { to: '/payouts', icon: DollarSign, label: 'Payouts' },
+        { to: '/leads', icon: UserPlus, label: 'Leads' },
+        { to: '/giveaways', icon: Gift, label: 'Giveaways' },
+        { to: '/rewards', icon: Award, label: 'Rewards' },
       ]
     },
     {
       section: 'Content',
       items: [
-        { to: '/admin/content/hero', icon: Image, label: 'Hero Slides' },
-        { to: '/admin/content/banners', icon: Megaphone, label: 'Banners' },
-        { to: '/admin/content/featured', icon: Star, label: 'Featured Rescue' },
+        { to: '/content/hero', icon: Image, label: 'Hero Slides' },
+        { to: '/content/banners', icon: Megaphone, label: 'Banners' },
+        { to: '/content/featured', icon: Star, label: 'Featured Rescue' },
       ]
     },
     {
       section: 'System',
       items: [
-        { to: '/admin/settings', icon: Settings, label: 'Settings' },
-        { to: '/admin/activity', icon: FileText, label: 'Activity Log' },
-        { to: '/admin/team', icon: Shield, label: 'Admin Users' },
+        { to: '/settings', icon: Settings, label: 'Settings' },
+        { to: '/activity', icon: FileText, label: 'Activity Log' },
+        { to: '/team', icon: Shield, label: 'Admin Users' },
       ]
     }
   ];
@@ -99,7 +99,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
           {sidebarOpen ? (
-            <Link to="/admin" className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3">
               <img
                 src="https://vldnyagcdfirhmgwqhfy.supabase.co/storage/v1/object/public/Mumbies%20Assets/Mumbies_Logo_FINAL.png"
                 alt="Mumbies"
