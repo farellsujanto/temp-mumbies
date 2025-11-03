@@ -1528,19 +1528,19 @@ export default function PartnerDashboardPage() {
                         <tr key={proj.year} className="border-b border-gray-100 hover:bg-gray-50">
                           <td className="py-3 px-3 font-semibold">Year {proj.year}</td>
                           <td className="py-3 px-3 text-right text-gray-700">
-                            +{proj.newCustomers.toLocaleString()}
+                            +{(proj.newCustomers || 0).toLocaleString()}
                           </td>
                           <td className="py-3 px-3 text-right font-semibold text-blue-600">
-                            {proj.activeCustomers.toLocaleString()}
+                            {(proj.activeCustomers || 0).toLocaleString()}
                           </td>
                           <td className="py-3 px-3 text-right text-gray-700">
-                            ${proj.monthlySales.toLocaleString()}
+                            ${(proj.monthlySales || 0).toLocaleString()}
                           </td>
                           <td className="py-3 px-3 text-right font-bold text-green-600">
-                            ${proj.monthlyCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            ${(proj.monthlyCommission || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                           <td className="py-3 px-3 text-right font-bold text-green-700 text-lg">
-                            ${proj.annualCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            ${(proj.annualCommission || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </td>
                         </tr>
                       ));

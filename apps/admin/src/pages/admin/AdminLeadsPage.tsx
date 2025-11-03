@@ -18,6 +18,7 @@ interface Lead {
   created_at: string;
   converted_at: string | null;
   lead_value: number | null;
+  expires_at: string | null;
   partner?: {
     organization_name: string;
   };
@@ -77,6 +78,7 @@ export default function AdminLeadsPage() {
           created_at,
           converted_at,
           lead_value,
+          expires_at,
           partner:nonprofits!partner_leads_partner_id_fkey(
             organization_name
           )
@@ -289,6 +291,7 @@ export default function AdminLeadsPage() {
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Partner</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Source</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Status</th>
+                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Expires</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Gift</th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Created</th>
                 </tr>
@@ -296,7 +299,7 @@ export default function AdminLeadsPage() {
               <tbody className="divide-y divide-gray-200">
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                       No leads found
                     </td>
                   </tr>
@@ -338,6 +341,32 @@ export default function AdminLeadsPage() {
                         )}
                       </td>
                       <td className="px-6 py-4">{getStatusBadge(lead)}</td>
+                      <td className="px-6 py-4">
+                        {lead.expires_at ? (
+                          <div>
+                            <p className={`text-sm font-medium ${
+                              new Date(lead.expires_at) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                                ? 'text-red-700'
+                                : new Date(lead.expires_at) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                                ? 'text-amber-700'
+                                : 'text-gray-700'
+                            }`}>
+                              {new Date(lead.expires_at).toLocaleDateString()}
+                            </p>
+                            <p className={`text-xs ${
+                              new Date(lead.expires_at) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                                ? 'text-red-600'
+                                : new Date(lead.expires_at) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                                ? 'text-amber-600'
+                                : 'text-gray-500'
+                            }`}>
+                              {Math.ceil((new Date(lead.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
+                            </p>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-400">—</span>
+                        )}
+                      </td>
                       <td className="px-6 py-4">
                         {lead.gift_sent ? (
                           <div>
