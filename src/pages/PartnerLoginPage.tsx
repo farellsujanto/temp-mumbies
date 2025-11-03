@@ -47,10 +47,8 @@ export default function PartnerLoginPage() {
       return;
     }
 
-    // Wait a bit for the auth context to update
-    setTimeout(() => {
-      navigate('/partner/dashboard');
-    }, 500);
+    setLoading(false);
+    navigate('/partner/dashboard');
   };
 
   return (

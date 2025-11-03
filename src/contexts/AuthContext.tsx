@@ -55,52 +55,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchUserProfile = async (userId: string) => {
     console.log('[AuthContext] Fetching user profile for:', userId);
 
-    const { data, error } = await supabase
+    // First get user data
+    const { data: userData, error: userError } = await supabase
       .from('users')
-      .select(`
-        *,
-        partner_profile:nonprofits!users_nonprofit_id_fkey(
-          id,
-          organization_name,
-          partner_type,
-          status,
-          referral_code,
-          mumbies_cash_balance,
-          logo_url
-        )
-      `)
+      .select('*')
       .eq('id', userId)
       .maybeSingle();
 
-    if (error) {
-      console.error('[AuthContext] Error fetching user profile:', error);
+    if (userError || !userData) {
+      console.error('[AuthContext] Error fetching user:', userError);
       return null;
     }
 
-    console.log('[AuthContext] User profile data:', data);
+    console.log('[AuthContext] User data:', userData);
 
-    if (data && Array.isArray(data.partner_profile)) {
-      data.partner_profile = data.partner_profile[0] || null;
-    }
-
-    // Fallback: If partner_profile is null but user is_partner, try direct lookup
-    if (data && data.is_partner && !data.partner_profile) {
-      console.log('[AuthContext] Partner profile is null, trying direct lookup...');
-      const { data: nonprofitData } = await supabase
+    // If user is a partner, fetch their partner profile
+    let partnerProfile = null;
+    if (userData.is_partner && userData.nonprofit_id) {
+      const { data: nonprofitData, error: nonprofitError } = await supabase
         .from('nonprofits')
         .select('id, organization_name, partner_type, status, referral_code, mumbies_cash_balance, logo_url')
-        .eq('auth_user_id', userId)
+        .eq('id', userData.nonprofit_id)
         .maybeSingle();
 
-      console.log('[AuthContext] Direct lookup result:', nonprofitData);
-
-      if (nonprofitData) {
-        data.partner_profile = nonprofitData;
+      if (nonprofitError) {
+        console.error('[AuthContext] Error fetching nonprofit:', nonprofitError);
+      } else {
+        console.log('[AuthContext] Partner profile:', nonprofitData);
+        partnerProfile = nonprofitData;
       }
     }
 
-    console.log('[AuthContext] Final profile data:', data);
-    return data;
+    const profile = {
+      ...userData,
+      partner_profile: partnerProfile
+    };
+
+    console.log('[AuthContext] Final profile:', profile);
+    return profile;
   };
 
   const refreshProfile = async () => {
