@@ -21,6 +21,7 @@ interface Reward {
   current_participants: number;
   featured: boolean;
   badge_color: string | null;
+  featured_image_url: string | null;
 }
 
 interface RewardProgress {
@@ -332,7 +333,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 >
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={getChallengeImage(reward.title)}
+                      src={reward.featured_image_url || getChallengeImage(reward.title)}
                       alt={reward.title}
                       className="w-full h-full object-cover"
                     />
@@ -415,7 +416,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 >
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={getChallengeImage(reward.title)}
+                      src={reward.featured_image_url || getChallengeImage(reward.title)}
                       alt={reward.title}
                       className="w-full h-full object-cover"
                     />
@@ -474,7 +475,7 @@ export default function RewardsTab({ partnerId, organizationName, totalSales }: 
                 >
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={getChallengeImage(reward.title)}
+                      src={reward.featured_image_url || getChallengeImage(reward.title)}
                       alt={reward.title}
                       className="w-full h-full object-cover"
                     />

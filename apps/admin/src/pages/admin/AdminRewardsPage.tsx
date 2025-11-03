@@ -21,6 +21,7 @@ interface Reward {
   featured: boolean;
   badge_color: string | null;
   product_id: string | null;
+  featured_image_url: string | null;
   sort_order: number;
 }
 
@@ -38,6 +39,7 @@ interface RewardFormData {
   featured: boolean;
   badge_color: string;
   product_id: string;
+  featured_image_url: string;
 }
 
 export default function AdminRewardsPage() {
@@ -58,7 +60,8 @@ export default function AdminRewardsPage() {
     ends_at: '',
     featured: false,
     badge_color: 'green',
-    product_id: ''
+    product_id: '',
+    featured_image_url: ''
   });
 
   useEffect(() => {
@@ -91,7 +94,8 @@ export default function AdminRewardsPage() {
       ends_at: '',
       featured: false,
       badge_color: 'green',
-      product_id: ''
+      product_id: '',
+      featured_image_url: ''
     });
     setShowModal(true);
   };
@@ -111,7 +115,8 @@ export default function AdminRewardsPage() {
       ends_at: reward.ends_at ? reward.ends_at.split('T')[0] : '',
       featured: reward.featured,
       badge_color: reward.badge_color || 'green',
-      product_id: reward.product_id || ''
+      product_id: reward.product_id || '',
+      featured_image_url: reward.featured_image_url || ''
     });
     setShowModal(true);
   };
@@ -380,6 +385,18 @@ export default function AdminRewardsPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   placeholder="e.g., $50 Cash Bonus"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image URL</label>
+                <input
+                  type="url"
+                  value={formData.featured_image_url}
+                  onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="https://images.pexels.com/photos/..."
+                />
+                <p className="text-xs text-gray-500 mt-1">Use Pexels images for consistent quality (800px width recommended)</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
