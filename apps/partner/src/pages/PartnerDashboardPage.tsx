@@ -39,6 +39,7 @@ import RewardsTab from '../components/partner/RewardsTab';
 import GiveawayEntriesTab from '../components/partner/GiveawayEntriesTab';
 import GiveawaySection from '../components/partner/GiveawaySection';
 import ProductManagementTab from '../components/partner/ProductManagementTab';
+import LeadsTab from '../components/partner/LeadsTab';
 
 interface NonprofitData {
   id: string;
@@ -116,7 +117,7 @@ export default function PartnerDashboardPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'opportunities' | 'rewards' | 'profile' | 'giveaways' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'opportunities' | 'rewards' | 'profile' | 'giveaways' | 'leads' | 'settings'>('overview');
   const [settingsTab, setSettingsTab] = useState<'partner' | 'transactions'>('partner');
   const [copied, setCopied] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
@@ -882,6 +883,17 @@ export default function PartnerDashboardPage() {
             <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-bold">
               NEW
             </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('leads')}
+            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
+              activeTab === 'leads'
+                ? 'text-green-600 border-b-2 border-green-600'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <UserPlus className="h-5 w-5" />
+            Leads
           </button>
           <button
             onClick={() => setActiveTab('opportunities')}
@@ -1828,11 +1840,16 @@ export default function PartnerDashboardPage() {
         <div className="space-y-8">
           <GiveawaySection
             partnerId={nonprofit.id}
-            totalSales={Number(nonprofit.total_sales)}
+            totalSales={Number(nonprofit.total_sales || 0)}
             organizationName={nonprofit.organization_name}
           />
           <GiveawayEntriesTab partnerId={nonprofit.id} />
         </div>
+      )}
+
+      {/* Leads Tab */}
+      {activeTab === 'leads' && nonprofit && (
+        <LeadsTab partnerId={nonprofit.id} />
       )}
 
       {/* Products Tab */}

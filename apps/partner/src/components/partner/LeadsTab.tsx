@@ -1,1 +1,250 @@
-1
+import { useEffect, useState } from 'react';
+import { supabase } from '@mumbies/shared';
+import { Mail, Phone, Calendar, Gift, ExternalLink, AlertCircle, Clock, CheckCircle, Users } from 'lucide-react';
+
+interface Lead {
+  id: string;
+  email: string;
+  full_name: string | null;
+  phone: string | null;
+  lead_source: string;
+  status: string;
+  expires_at: string | null;
+  gift_sent: boolean;
+  gift_amount: number | null;
+  gift_sent_at: string | null;
+  created_at: string;
+  landing_page_url: string | null;
+}
+
+interface LeadsTabProps {
+  partnerId: string;
+}
+
+export default function LeadsTab({ partnerId }: LeadsTabProps) {
+  const [allLeads, setAllLeads] = useState<Lead[]>([]);
+  const [expiringLeads, setExpiringLeads] = useState<Lead[]>([]);
+  const [giftedLeads, setGiftedLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchLeads();
+  }, [partnerId]);
+
+  const fetchLeads = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('partner_leads')
+        .select('*')
+        .eq('partner_id', partnerId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const leads = data || [];
+      setAllLeads(leads);
+
+      // Filter expiring leads (expires within 30 days)
+      const now = new Date();
+      const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+      const expiring = leads.filter(lead => {
+        if (!lead.expires_at) return false;
+        const expiresAt = new Date(lead.expires_at);
+        return expiresAt > now && expiresAt <= thirtyDaysFromNow;
+      });
+      setExpiringLeads(expiring);
+
+      // Filter gifted leads
+      const gifted = leads.filter(lead => lead.gift_sent);
+      setGiftedLeads(gifted);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDaysRemaining = (expiresAt: string | null) => {
+    if (!expiresAt) return null;
+    const now = new Date();
+    const expires = new Date(expiresAt);
+    const days = Math.ceil((expires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return days;
+  };
+
+  const getExpirationColor = (days: number | null) => {
+    if (days === null) return 'text-gray-500';
+    if (days <= 7) return 'text-red-600';
+    if (days <= 14) return 'text-amber-600';
+    return 'text-green-600';
+  };
+
+  const renderLeadCard = (lead: Lead) => {
+    const daysRemaining = getDaysRemaining(lead.expires_at);
+
+    return (
+      <div key={lead.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <p className="font-semibold text-gray-900">{lead.full_name || 'No name'}</p>
+            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+              <Mail className="h-3 w-3" />
+              {lead.email}
+            </p>
+            {lead.phone && (
+              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                <Phone className="h-3 w-3" />
+                {lead.phone}
+              </p>
+            )}
+          </div>
+          {lead.gift_sent ? (
+            <div className="flex items-center gap-1 text-green-600 text-xs font-medium bg-green-50 px-2 py-1 rounded">
+              <CheckCircle className="h-3 w-3" />
+              Gift Sent
+            </div>
+          ) : daysRemaining !== null && daysRemaining <= 7 ? (
+            <div className="flex items-center gap-1 text-red-600 text-xs font-medium bg-red-50 px-2 py-1 rounded">
+              <AlertCircle className="h-3 w-3" />
+              Urgent
+            </div>
+          ) : null}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <p className="text-gray-500">Source</p>
+            <p className="font-medium text-gray-900 capitalize">{lead.lead_source}</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Status</p>
+            <p className="font-medium text-gray-900 capitalize">{lead.status}</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Created</p>
+            <p className="font-medium text-gray-900">
+              {new Date(lead.created_at).toLocaleDateString()}
+            </p>
+          </div>
+          {lead.expires_at && (
+            <div>
+              <p className="text-gray-500">Expires In</p>
+              <p className={`font-medium ${getExpirationColor(daysRemaining)}`}>
+                {daysRemaining !== null ? `${daysRemaining} days` : 'Unknown'}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {lead.gift_sent && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-500">Gift Amount</span>
+              <span className="font-semibold text-green-600">
+                ${(lead.gift_amount || 0).toFixed(2)}
+              </span>
+            </div>
+            {lead.gift_sent_at && (
+              <div className="flex items-center justify-between text-xs mt-1">
+                <span className="text-gray-500">Sent On</span>
+                <span className="text-gray-700">
+                  {new Date(lead.gift_sent_at).toLocaleDateString()}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {lead.landing_page_url && (
+          <a
+            href={lead.landing_page_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex items-center gap-1 text-xs text-blue-600 hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" />
+            View Landing Page
+          </a>
+        )}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* All Leads Column */}
+      <div>
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-gray-900">All Leads</h3>
+            <span className="text-2xl font-bold text-gray-900">{allLeads.length}</span>
+          </div>
+          <p className="text-sm text-gray-600 mt-1">Total leads generated</p>
+        </div>
+        <div className="space-y-3 max-h-[800px] overflow-y-auto">
+          {allLeads.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Users className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <p>No leads yet</p>
+            </div>
+          ) : (
+            allLeads.map(renderLeadCard)
+          )}
+        </div>
+      </div>
+
+      {/* Expiring Leads Column */}
+      <div>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-amber-900">Expiring Soon</h3>
+            <span className="text-2xl font-bold text-amber-900">{expiringLeads.length}</span>
+          </div>
+          <p className="text-sm text-amber-700 mt-1">Expires within 30 days</p>
+        </div>
+        <div className="space-y-3 max-h-[800px] overflow-y-auto">
+          {expiringLeads.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Clock className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <p>No expiring leads</p>
+            </div>
+          ) : (
+            expiringLeads.map(renderLeadCard)
+          )}
+        </div>
+      </div>
+
+      {/* Gifted Leads Column */}
+      <div>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-green-900">Gifts Sent</h3>
+            <span className="text-2xl font-bold text-green-900">{giftedLeads.length}</span>
+          </div>
+          <p className="text-sm text-green-700 mt-1">
+            ${giftedLeads.reduce((sum, l) => sum + (l.gift_amount || 0), 0).toFixed(2)} total
+          </p>
+        </div>
+        <div className="space-y-3 max-h-[800px] overflow-y-auto">
+          {giftedLeads.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Gift className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <p>No gifts sent yet</p>
+            </div>
+          ) : (
+            giftedLeads.map(renderLeadCard)
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
