@@ -20,7 +20,8 @@ import {
   Bell,
   ChevronDown,
   Menu,
-  X
+  X,
+  FlaskConical
 } from 'lucide-react';
 import DebugPanel from './DebugPanel';
 
@@ -89,6 +90,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     {
       section: 'System',
       items: [
+        { to: '/test-mode', icon: FlaskConical, label: 'Test Mode' },
         { to: '/settings', icon: Settings, label: 'Settings' },
         { to: '/activity', icon: FileText, label: 'Activity Log' },
         { to: '/team', icon: Shield, label: 'Admin Users' },

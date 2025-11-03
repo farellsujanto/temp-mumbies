@@ -28,7 +28,6 @@ import {
   Clock,
   Award,
   AlertCircle,
-  FlaskConical
 } from 'lucide-react';
 import { supabase } from '@mumbies/shared';
 import { useAuth } from '@mumbies/shared';
@@ -40,7 +39,6 @@ import RewardsTab from '../components/partner/RewardsTab';
 import GiveawayEntriesTab from '../components/partner/GiveawayEntriesTab';
 import GiveawaySection from '../components/partner/GiveawaySection';
 import ProductManagementTab from '../components/partner/ProductManagementTab';
-import TestModePanel from '../components/partner/TestModePanel';
 
 interface NonprofitData {
   id: string;
@@ -1868,17 +1866,6 @@ export default function PartnerDashboardPage() {
               >
                 Transaction History
               </button>
-              <button
-                onClick={() => setSettingsTab('test-mode')}
-                className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 ${
-                  settingsTab === 'test-mode'
-                    ? 'text-purple-600 border-b-2 border-purple-600'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <FlaskConical className="h-4 w-4" />
-                Test Mode
-              </button>
             </div>
           </div>
 
@@ -2338,15 +2325,6 @@ export default function PartnerDashboardPage() {
             </div>
           )}
 
-          {settingsTab === 'test-mode' && nonprofit && (
-            <TestModePanel
-              partnerId={nonprofit.id}
-              organizationName={nonprofit.organization_name}
-              onTestModeChange={(enabled) => {
-                console.log('Test mode:', enabled);
-              }}
-            />
-          )}
         </div>
       )}
     </div>

@@ -19,6 +19,7 @@ import AdminHeroSlidesPage from './pages/admin/content/AdminHeroSlidesPage';
 import AdminBannersPage from './pages/admin/content/AdminBannersPage';
 import AdminFeaturedRescuePage from './pages/admin/content/AdminFeaturedRescuePage';
 import AdminPartnerApplicationsPage from './pages/admin/AdminPartnerApplicationsPage';
+import AdminTestModePage from './pages/admin/AdminTestModePage';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                     <Route path="/settings" element={<AdminSettingsPage />} />
                     <Route path="/activity" element={<AdminActivityPage />} />
                     <Route path="/team" element={<AdminAdminUsersPage />} />
+                    <Route path="/test-mode" element={<AdminTestModePage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </ProtectedRoute>

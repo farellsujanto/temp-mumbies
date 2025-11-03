@@ -34,13 +34,17 @@ interface TestScenario {
   scenario_data: any;
 }
 
-interface TestModePanelProps {
-  partnerId: string;
-  organizationName: string;
-  onTestModeChange?: (enabled: boolean) => void;
+interface Partner {
+  id: string;
+  organization_name: string;
 }
 
-export default function TestModePanel({ partnerId, organizationName, onTestModeChange }: TestModePanelProps) {
+interface TestModePanelProps {}
+
+export default function TestModePanel({}: TestModePanelProps) {
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [selectedPartnerId, setSelectedPartnerId] = useState<string>('');
+  const [selectedPartnerName, setSelectedPartnerName] = useState<string>('');
   const [settings, setSettings] = useState<TestModeSettings>({
     test_mode_enabled: false,
     time_offset_days: 0,
@@ -64,19 +68,43 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
   });
 
   useEffect(() => {
-    loadSettings();
+    loadPartners();
     loadScenarios();
-    if (settings.test_mode_enabled) {
-      loadTestStats();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPartnerId) {
+      loadSettings();
+      if (settings.test_mode_enabled) {
+        loadTestStats();
+      }
     }
-  }, [partnerId]);
+  }, [selectedPartnerId]);
+
+  const loadPartners = async () => {
+    const { data } = await supabase
+      .from('nonprofits')
+      .select('id, organization_name')
+      .order('organization_name');
+
+    if (data) {
+      setPartners(data);
+      if (data.length > 0) {
+        setSelectedPartnerId(data[0].id);
+        setSelectedPartnerName(data[0].organization_name);
+      }
+    }
+    setLoading(false);
+  };
 
   const loadSettings = async () => {
+    if (!selectedPartnerId) return;
+
     try {
       const { data, error } = await supabase
         .from('partner_settings')
         .select('*')
-        .eq('nonprofit_id', partnerId)
+        .eq('nonprofit_id', selectedPartnerId)
         .maybeSingle();
 
       if (!error && data) {
@@ -105,22 +133,24 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
   };
 
   const loadTestStats = async () => {
+    if (!selectedPartnerId) return;
+
     const { data: leads } = await supabase
       .from('partner_leads')
       .select('id', { count: 'exact', head: true })
-      .eq('partner_id', partnerId)
+      .eq('partner_id', selectedPartnerId)
       .eq('is_test_data', true);
 
     const { data: transactions } = await supabase
       .from('partner_transactions')
       .select('id', { count: 'exact', head: true })
-      .eq('nonprofit_id', partnerId)
+      .eq('nonprofit_id', selectedPartnerId)
       .eq('is_test_data', true);
 
     const { data: rewards } = await supabase
       .from('partner_rewards')
       .select('id', { count: 'exact', head: true })
-      .eq('nonprofit_id', partnerId)
+      .eq('nonprofit_id', selectedPartnerId)
       .eq('is_test_data', true);
 
     setTestStats({
@@ -134,7 +164,7 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
     setProcessing(true);
     try {
       const { data, error } = await supabase.rpc('toggle_test_mode', {
-        p_nonprofit_id: partnerId,
+        p_nonprofit_id: selectedPartnerId,
         p_enabled: !settings.test_mode_enabled
       });
 
@@ -168,7 +198,7 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
     setProcessing(true);
     try {
       const { data, error } = await supabase.rpc('create_test_lead', {
-        p_nonprofit_id: partnerId,
+        p_nonprofit_id: selectedPartnerId,
         p_email: quickLeadEmail,
         p_full_name: quickLeadName,
         p_lead_source: 'test',
@@ -196,7 +226,7 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
     setProcessing(true);
     try {
       const { data, error } = await supabase.rpc('fast_forward_test_data', {
-        p_nonprofit_id: partnerId,
+        p_nonprofit_id: selectedPartnerId,
         p_days: days
       });
 
@@ -217,7 +247,7 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
     setProcessing(true);
     try {
       const { data, error } = await supabase.rpc('clear_test_data', {
-        p_nonprofit_id: partnerId
+        p_nonprofit_id: selectedPartnerId
       });
 
       if (error) throw error;
@@ -242,7 +272,7 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
       for (const step of steps) {
         if (step.action === 'create_lead') {
           await supabase.rpc('create_test_lead', {
-            p_nonprofit_id: partnerId,
+            p_nonprofit_id: selectedPartnerId,
             p_email: step.email,
             p_full_name: step.name,
             p_lead_source: 'scenario',
@@ -267,6 +297,26 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
 
   return (
     <div className="space-y-6 p-6">
+      {/* Partner Selector */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Select Partner to Test</h3>
+        <select
+          value={selectedPartnerId}
+          onChange={(e) => {
+            const partner = partners.find(p => p.id === e.target.value);
+            setSelectedPartnerId(e.target.value);
+            setSelectedPartnerName(partner?.organization_name || '');
+          }}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
+        >
+          {partners.map((partner) => (
+            <option key={partner.id} value={partner.id}>
+              {partner.organization_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Header with Toggle */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between">
@@ -276,7 +326,7 @@ export default function TestModePanel({ partnerId, organizationName, onTestModeC
             </div>
             <div>
               <h2 className="text-2xl font-bold">Test Mode</h2>
-              <p className="text-white/90 text-sm">Accelerated testing environment for {organizationName}</p>
+              <p className="text-white/90 text-sm">Accelerated testing environment for {selectedPartnerName}</p>
             </div>
           </div>
           <button
