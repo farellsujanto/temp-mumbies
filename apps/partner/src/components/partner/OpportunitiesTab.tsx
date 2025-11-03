@@ -1,38 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail, CheckCircle, History } from 'lucide-react';
+import { Clock, DollarSign, TrendingUp, Gift, AlertCircle, X, Mail, CheckCircle, History, Send, UserPlus, Phone, ExternalLink, Search } from 'lucide-react';
 import { supabase } from '@mumbies/shared';
 import { Button } from '@mumbies/shared';
 import { Tooltip } from '@mumbies/shared';
-import { sendGiftToLead } from '@mumbies/shared/lib/gifts';
 
 interface Lead {
   id: string;
   email: string;
-  registered_at: string;
-  expires_at: string;
-  total_spent: number;
+  full_name: string | null;
+  phone: string | null;
+  lead_source: string;
+  landing_page_url: string | null;
   status: string;
-  balance?: number;
-  days_until_expiry: number;
-}
-
-interface GiftedLead {
-  id: string;
-  email: string;
-  amount: number;
-  sent_at: string;
-  expires_at: string;
-  status: string;
-  balance: number;
-  days_until_expiry: number;
-}
-
-interface ActivityItem {
-  id: string;
-  type: string;
-  description: string;
-  amount: number;
+  gift_sent: boolean;
+  gift_amount: number | null;
+  gift_sent_at: string | null;
   created_at: string;
+  notes: string | null;
 }
 
 interface OpportunitiesTabProps {
@@ -43,579 +27,390 @@ interface OpportunitiesTabProps {
 }
 
 export default function OpportunitiesTab({ partnerId, partnerBalance, organizationName, logoUrl }: OpportunitiesTabProps) {
-  const [expiringLeads, setExpiringLeads] = useState<Lead[]>([]);
-  const [giftedLeads, setGiftedLeads] = useState<GiftedLead[]>([]);
-  const [activityItems, setActivityItems] = useState<ActivityItem[]>([]);
-  const [conversions, setConversions] = useState(0);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sendingGift, setSendingGift] = useState<string | null>(null);
-  const [giftAmount, setGiftAmount] = useState<{ [key: string]: number }>({});
-  const [showEmailPreview, setShowEmailPreview] = useState(false);
-  const [previewLead, setPreviewLead] = useState<Lead | null>(null);
-  const [previewAmount, setPreviewAmount] = useState(0);
-  const [mumbiesCashBalance, setMumbiesCashBalance] = useState<number>(partnerBalance);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [showGiftModal, setShowGiftModal] = useState(false);
+  const [sendingGift, setSendingGift] = useState(false);
+  const [giftAmount, setGiftAmount] = useState('25');
+  const [giftMessage, setGiftMessage] = useState('');
 
   useEffect(() => {
-    fetchData();
+    fetchLeads();
   }, [partnerId]);
 
-  const fetchData = async () => {
-    setLoading(true);
-    await Promise.all([
-      fetchMumbiesCashBalance(),
-      fetchExpiringLeads(),
-      fetchGiftedLeads(),
-      fetchActivityItems(),
-      fetchConversions()
-    ]);
-    setLoading(false);
-  };
+  useEffect(() => {
+    applyFilters();
+  }, [leads, searchQuery]);
 
-  const fetchMumbiesCashBalance = async () => {
-    const { data } = await supabase
-      .from('nonprofits')
-      .select('mumbies_cash_balance')
-      .eq('id', partnerId)
-      .maybeSingle();
+  const fetchLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('partner_leads')
+        .select('*')
+        .eq('partner_id', partnerId)
+        .order('created_at', { ascending: false });
 
-    if (data) {
-      setMumbiesCashBalance(data.mumbies_cash_balance || 0);
+      if (error) throw error;
+      setLeads(data || []);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const fetchExpiringLeads = async () => {
-    const { data: leads, error } = await supabase
-      .from('partner_leads')
-      .select(`
-        id,
-        email,
-        registered_at,
-        expires_at,
-        total_spent,
-        status,
-        lead_balances (balance)
-      `)
-      .eq('partner_id', partnerId)
-      .eq('status', 'active')
-      .is('first_purchase_at', null)
-      .gte('expires_at', new Date().toISOString())
-      .order('expires_at', { ascending: true })
-      .limit(20);
+  const applyFilters = () => {
+    let filtered = [...leads];
 
-    if (!error && leads) {
-      const processedLeads = leads.map((lead: any) => {
-        const expiresAt = new Date(lead.expires_at);
-        const now = new Date();
-        const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        lead =>
+          lead.email.toLowerCase().includes(query) ||
+          lead.full_name?.toLowerCase().includes(query)
+      );
+    }
 
-        return {
-          ...lead,
-          balance: lead.lead_balances?.[0]?.balance || 0,
-          days_until_expiry: daysUntilExpiry,
-        };
+    setFilteredLeads(filtered);
+  };
+
+  const handleSendGift = async () => {
+    if (!selectedLead) return;
+
+    setSendingGift(true);
+    const amount = parseFloat(giftAmount);
+
+    if (isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid amount');
+      setSendingGift(false);
+      return;
+    }
+
+    if (amount > partnerBalance) {
+      alert(`Insufficient balance. Your balance: $${partnerBalance.toFixed(2)}`);
+      setSendingGift(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('partner_send_gift_to_lead', {
+        p_lead_id: selectedLead.id,
+        p_gift_amount: amount,
+        p_message: giftMessage || null
       });
 
-      setExpiringLeads(processedLeads.filter(l => l.days_until_expiry <= 30));
+      if (error) throw error;
+
+      alert(`Gift of $${amount} sent successfully to ${selectedLead.email}!`);
+      setShowGiftModal(false);
+      setSelectedLead(null);
+      setGiftAmount('25');
+      setGiftMessage('');
+      fetchLeads();
+      window.location.reload(); // Reload to update balance
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setSendingGift(false);
     }
   };
 
-  const fetchGiftedLeads = async () => {
-    const { data: gifts, error } = await supabase
-      .from('lead_gifts')
-      .select('*')
-      .eq('partner_id', partnerId)
-      .eq('status', 'sent')
-      .order('sent_at', { ascending: false })
-      .limit(20);
-
-    if (!error && gifts) {
-      const processed = gifts.map((gift: any) => {
-        const expiresAt = new Date(gift.expires_at);
-        const now = new Date();
-        const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
-        return {
-          id: gift.id,
-          email: gift.recipient_email,
-          amount: gift.amount,
-          sent_at: gift.sent_at,
-          expires_at: gift.expires_at,
-          status: gift.status,
-          balance: 0,
-          days_until_expiry: Math.max(0, daysUntilExpiry),
-        };
-      });
-
-      setGiftedLeads(processed);
+  const getStatusBadge = (lead: Lead) => {
+    if (lead.gift_sent) {
+      return <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded">Gift Sent</span>;
+    }
+    switch (lead.status) {
+      case 'new':
+        return <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">New</span>;
+      case 'contacted':
+        return <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded">Contacted</span>;
+      default:
+        return <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded capitalize">{lead.status}</span>;
     }
   };
 
-  const fetchActivityItems = async () => {
-    const { data: incentives, error } = await supabase
-      .from('partner_incentives')
-      .select(`
-        id,
-        amount,
-        created_at,
-        status,
-        partner_leads (email)
-      `)
-      .eq('partner_id', partnerId)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if (!error && incentives) {
-      const items = incentives.map((inc: any) => ({
-        id: inc.id,
-        type: 'gift_sent',
-        description: `Sent $${inc.amount.toFixed(2)} gift to ${inc.partner_leads.email}`,
-        amount: inc.amount,
-        created_at: inc.created_at,
-      }));
-
-      setActivityItems(items);
-    }
-  };
-
-  const fetchConversions = async () => {
-    const { count, error } = await supabase
-      .from('partner_leads')
-      .select('*', { count: 'exact', head: true })
-      .eq('partner_id', partnerId)
-      .eq('status', 'converted');
-
-    if (!error && count !== null) {
-      setConversions(count);
-    }
-  };
-
-  const handleShowPreview = (lead: Lead, amount: number) => {
-    if (amount <= 0 || amount > 25) {
-      alert('Gift amount must be between $0.01 and $25.00');
-      return;
-    }
-    if (amount > mumbiesCashBalance) {
-      alert(`Insufficient Mumbies Cash balance. You need $${(amount - mumbiesCashBalance).toFixed(2)} more.`);
-      return;
-    }
-    setPreviewLead(lead);
-    setPreviewAmount(amount);
-    setShowEmailPreview(true);
-  };
-
-  const handleConfirmSend = async () => {
-    if (!previewLead || previewAmount <= 0) return;
-
-    setSendingGift(previewLead.id);
-    setShowEmailPreview(false);
-
-    const result = await sendGiftToLead({
-      partnerId,
-      leadEmail: previewLead.email,
-      amount: previewAmount
-    });
-
-    if (!result.success) {
-      console.error('Error sending gift:', result.error);
-      alert(result.error || 'Failed to send gift. Please try again.');
-      setSendingGift(null);
-      return;
-    }
-
-    await fetchData();
-    setSendingGift(null);
-    setGiftAmount({ ...giftAmount, [previewLead.id]: 0 });
-    setPreviewLead(null);
-    setPreviewAmount(0);
-
-    alert(`Successfully sent $${previewAmount.toFixed(2)} gift to ${previewLead.email}! Code: ${result.giftCode}`);
-  };
-
-  const getUrgencyColor = (days: number) => {
-    if (days <= 7) return 'text-red-600 bg-red-50 border-red-200';
-    if (days <= 14) return 'text-orange-600 bg-orange-50 border-orange-200';
-    if (days <= 30) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    return 'text-gray-600 bg-gray-50 border-gray-200';
-  };
-
-  const formatExpirationDate = () => {
-    if (!previewAmount) return '';
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 14);
-    return expiryDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const stats = {
+    total: leads.length,
+    new: leads.filter(l => l.status === 'new').length,
+    giftSent: leads.filter(l => l.gift_sent).length,
+    pending: leads.filter(l => !l.gift_sent && l.status === 'new').length,
+    totalGiftAmount: leads.reduce((sum, l) => sum + (l.gift_amount || 0), 0),
   };
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-        <p className="text-gray-600 mt-4">Loading opportunities...</p>
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <p className="ml-4 text-gray-600">Loading opportunities...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {showEmailPreview && previewLead && (
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">Lead Management</h2>
+        <p className="text-gray-600 mt-1">Manage and engage with your leads</p>
+      </div>
+
+      {/* Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Leads</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+            </div>
+            <UserPlus className="h-8 w-8 text-gray-400" />
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-blue-600">New Leads</p>
+              <p className="text-2xl font-bold text-blue-700 mt-1">{stats.new}</p>
+            </div>
+            <TrendingUp className="h-8 w-8 text-blue-400" />
+          </div>
+        </div>
+
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-purple-600">Gifts Sent</p>
+              <p className="text-2xl font-bold text-purple-700 mt-1">{stats.giftSent}</p>
+              <p className="text-xs text-purple-600 mt-1">${stats.totalGiftAmount.toFixed(2)}</p>
+            </div>
+            <Gift className="h-8 w-8 text-purple-400" />
+          </div>
+        </div>
+
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-green-600">Your Balance</p>
+              <p className="text-2xl font-bold text-green-700 mt-1">${partnerBalance.toFixed(2)}</p>
+            </div>
+            <DollarSign className="h-8 w-8 text-green-400" />
+          </div>
+        </div>
+      </div>
+
+      {/* Search and Leads Table */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div className="p-4 border-b border-gray-200">
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search leads by email or name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Lead</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Source</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Status</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Gift</th>
+                <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Created</th>
+                <th className="text-right px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredLeads.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center">
+                    <UserPlus className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 font-medium">No leads yet</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Share your referral link to start generating leads
+                    </p>
+                  </td>
+                </tr>
+              ) : (
+                filteredLeads.map((lead) => (
+                  <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <div>
+                        <p className="font-medium text-gray-900">{lead.full_name || 'No name'}</p>
+                        <p className="text-sm text-gray-500 flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          {lead.email}
+                        </p>
+                        {lead.phone && (
+                          <p className="text-sm text-gray-500 flex items-center gap-1">
+                            <Phone className="h-3 w-3" />
+                            {lead.phone}
+                          </p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-sm text-gray-900 capitalize">{lead.lead_source}</p>
+                      {lead.landing_page_url && (
+                        <a
+                          href={lead.landing_page_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          View page
+                        </a>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">{getStatusBadge(lead)}</td>
+                    <td className="px-6 py-4">
+                      {lead.gift_sent ? (
+                        <div>
+                          <p className="text-sm font-medium text-green-700">
+                            ${lead.gift_amount?.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {lead.gift_sent_at && new Date(lead.gift_sent_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {new Date(lead.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      {!lead.gift_sent && (
+                        <button
+                          onClick={() => {
+                            setSelectedLead(lead);
+                            setShowGiftModal(true);
+                          }}
+                          className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors flex items-center gap-1 ml-auto"
+                        >
+                          <Send className="h-3 w-3" />
+                          Send Gift
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {filteredLeads.length > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <p className="text-sm text-gray-600">
+              Showing {filteredLeads.length} of {leads.length} leads
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Gift Modal */}
+      {showGiftModal && selectedLead && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Email Preview</h2>
+          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-green-100 rounded-full">
+                <Gift className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Send Gift</h2>
+                <p className="text-sm text-gray-600">to {selectedLead.email}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Gift Amount *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    step="0.01"
+                    max={partnerBalance}
+                    value={giftAmount}
+                    onChange={(e) => setGiftAmount(e.target.value)}
+                    className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="25.00"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Your balance: ${partnerBalance.toFixed(2)}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Personal Message (optional)
+                </label>
+                <textarea
+                  value={giftMessage}
+                  onChange={(e) => setGiftMessage(e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Thanks for your interest! Enjoy this gift..."
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex gap-2">
+                  <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium">Gift Details:</p>
+                    <ul className="mt-1 space-y-1 text-xs">
+                      <li>• Recipient receives Mumbies gift code</li>
+                      <li>• Deducted from your balance</li>
+                      <li>• Action cannot be undone</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
                 <button
-                  onClick={() => setShowEmailPreview(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-
-              <p className="text-sm text-gray-600 mb-4">
-                This is what {previewLead.email} will receive:
-              </p>
-
-              {/* Mumbies Cash Balance Deduction */}
-              <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
-                <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Mumbies Cash Balance
-                </h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-700">Current balance:</span>
-                    <span className="font-semibold text-gray-900">${mumbiesCashBalance.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-700">Gift amount:</span>
-                    <span className="font-semibold text-red-600">-${previewAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="border-t border-blue-300 pt-2 flex justify-between">
-                    <span className="font-semibold text-gray-900">After sending:</span>
-                    <span className={`font-bold ${mumbiesCashBalance - previewAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      ${(mumbiesCashBalance - previewAmount).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-                {mumbiesCashBalance - previewAmount < 0 && (
-                  <div className="mt-3 text-xs text-red-700 bg-red-100 p-2 rounded">
-                    ⚠️ Insufficient balance - this gift cannot be sent
-                  </div>
-                )}
-              </div>
-
-              <div className="border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-50 p-8">
-                <div className="bg-white rounded-lg shadow-sm max-w-xl mx-auto">
-                  <div className="bg-gradient-to-r from-green-600 to-green-500 p-8 text-center">
-                    {logoUrl ? (
-                      <img
-                        src={logoUrl}
-                        alt={organizationName}
-                        className="h-16 mx-auto mb-4 bg-white rounded-lg p-2"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-white rounded-lg mx-auto mb-4 flex items-center justify-center">
-                        <Mail className="h-8 w-8 text-green-600" />
-                      </div>
-                    )}
-                    <h1 className="text-2xl font-bold text-white">You've Got Cash!</h1>
-                  </div>
-
-                  <div className="p-8 text-center">
-                    <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 mb-6">
-                      <p className="text-gray-700 text-lg mb-2">
-                        <strong>{organizationName}</strong> is sending you
-                      </p>
-                      <div className="text-5xl font-bold text-green-600 mb-2">
-                        ${previewAmount.toFixed(2)}
-                      </div>
-                      <p className="text-gray-600">
-                        cash to spend on Mumbies
-                      </p>
-                    </div>
-
-                    <p className="text-gray-700 mb-6">
-                      Use your gift to shop for premium dog products and support animal welfare!
-                    </p>
-
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm">
-                      <p className="text-amber-900">
-                        <strong>Use by {formatExpirationDate()}</strong>
-                      </p>
-                      <p className="text-amber-700 text-xs mt-1">
-                        Gift expires in 14 days if not claimed
-                      </p>
-                    </div>
-
-                    <button className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors">
-                      Claim Gift
-                    </button>
-
-                    <p className="text-xs text-gray-500 mt-6">
-                      Your gift will be automatically added to your account balance when you claim it.
-                    </p>
-                  </div>
-
-                  <div className="bg-gray-100 p-6 text-center border-t">
-                    <p className="text-xs text-gray-600">
-                      Sent with support from {organizationName}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      Mumbies - Premium Dog Products Supporting Animal Welfare
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-4 mt-6">
-                <Button
-                  variant="outline"
-                  fullWidth
-                  onClick={() => setShowEmailPreview(false)}
+                  type="button"
+                  onClick={() => {
+                    setShowGiftModal(false);
+                    setSelectedLead(null);
+                    setGiftAmount('25');
+                    setGiftMessage('');
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
                 >
                   Cancel
-                </Button>
-                <Button
-                  fullWidth
-                  onClick={() => {
-                    if (mumbiesCashBalance < previewAmount) {
-                      alert(`Insufficient Mumbies Cash balance!\n\nYou need $${previewAmount.toFixed(2)} but only have $${mumbiesCashBalance.toFixed(2)}.\n\nConvert some of your Cash Balance to Mumbies Cash to send gifts.`);
-                      return;
-                    }
-                    handleConfirmSend();
-                  }}
-                  disabled={sendingGift !== null}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSendGift}
+                  disabled={sendingGift}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
                 >
-                  Confirm & Send Gift
-                </Button>
+                  <Send className="h-4 w-4" />
+                  {sendingGift ? 'Sending...' : `Send $${parseFloat(giftAmount || '0').toFixed(2)}`}
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Header with Tooltip */}
-      <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 rounded-lg p-6 text-white">
-        <div className="flex items-center gap-3">
-          <div className="bg-white bg-opacity-20 rounded-full p-3">
-            <Gift className="h-6 w-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold">Lead Incentives</h2>
-              <Tooltip
-                iconClassName="text-white hover:text-indigo-100"
-                content={
-                  <div>
-                    <h3 className="font-bold text-base mb-2 flex items-center gap-2">
-                      <Gift className="h-5 w-5 text-blue-600" />
-                      How Lead Incentives Work
-                    </h3>
-                    <ul className="space-y-2 text-sm">
-                      <li>• <strong>Send gifts from your balance</strong> to leads who haven't made their first purchase</li>
-                      <li>• <strong>Gifts expire in 14 days</strong> - unused amounts return to your balance automatically</li>
-                      <li>• <strong>Leads have 90 days</strong> from registration to make their first purchase</li>
-                      <li>• <strong>When they purchase,</strong> you earn your commission and they keep any remaining gift balance</li>
-                      <li>• <strong>If they don't purchase,</strong> the lead expires and unused gifts are refunded to you</li>
-                    </ul>
-                  </div>
-                }
-              />
-            </div>
-            <p className="text-sm text-indigo-100">
-              Send gift incentives to leads using your balance to boost conversions before they expire!
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Grid - Full Width */}
-      <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Expiring Leads</span>
-              <Clock className="h-5 w-5 text-orange-600" />
-            </div>
-            <p className="text-3xl font-bold">{expiringLeads.length}</p>
-            <p className="text-xs text-gray-600 mt-1">Within 30 days</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-600 text-sm">Active Gifts</span>
-              <Gift className="h-5 w-5 text-blue-600" />
-            </div>
-            <p className="text-3xl font-bold">{giftedLeads.length}</p>
-            <p className="text-xs text-gray-600 mt-1">Sent</p>
-          </div>
-
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm">Conversions</span>
-            <CheckCircle className="h-5 w-5 text-green-600" />
-          </div>
-          <p className="text-3xl font-bold">{conversions}</p>
-          <p className="text-xs text-gray-600 mt-1">All-time</p>
-        </div>
-      </div>
-
-      {/* Two Column Layout */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left Column: Expiring Leads */}
-        <div>
-          <h3 className="text-xl font-bold mb-4">Expiring Leads</h3>
-
-          {expiringLeads.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-              <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No expiring leads at the moment</p>
-              <p className="text-sm text-gray-500 mt-2">Leads will appear here when they're within 30 days of expiration</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {expiringLeads.map((lead) => (
-                <div
-                  key={lead.id}
-                  className={`border rounded-lg p-4 ${getUrgencyColor(lead.days_until_expiry)}`}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm">{lead.email}</h4>
-                      <p className="text-xs opacity-70 mt-1">
-                        {new Date(lead.registered_at).toLocaleDateString()} • {lead.balance > 0 ? `Balance: $${lead.balance.toFixed(2)}` : ''}
-                      </p>
-                    </div>
-                    <span className="px-2 py-1 bg-white rounded text-xs font-semibold whitespace-nowrap ml-2">
-                      {lead.days_until_expiry}d left
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-2 flex-1">
-                      <button
-                        onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 5 })}
-                        className="px-3 py-1.5 bg-white border-2 border-current rounded-lg font-semibold text-xs hover:bg-opacity-50 transition-colors"
-                      >
-                        $5
-                      </button>
-                      <button
-                        onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 10 })}
-                        className="px-3 py-1.5 bg-white border-2 border-current rounded-lg font-semibold text-xs hover:bg-opacity-50 transition-colors"
-                      >
-                        $10
-                      </button>
-                      <button
-                        onClick={() => setGiftAmount({ ...giftAmount, [lead.id]: 15 })}
-                        className="px-3 py-1.5 bg-white border-2 border-current rounded-lg font-semibold text-xs hover:bg-opacity-50 transition-colors"
-                      >
-                        $15
-                      </button>
-                      <input
-                        type="number"
-                        value={giftAmount[lead.id] || ''}
-                        onChange={(e) => setGiftAmount({ ...giftAmount, [lead.id]: parseFloat(e.target.value) || 0 })}
-                        placeholder="Custom"
-                        className="w-20 px-2 py-1.5 border-2 border-current rounded-lg text-xs"
-                        min="1"
-                        max="25"
-                      />
-                    </div>
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        const amount = giftAmount[lead.id] || 5;
-                        if (amount > mumbiesCashBalance) {
-                          alert(`Insufficient Mumbies Cash balance!\n\nYou need $${amount.toFixed(2)} but only have $${mumbiesCashBalance.toFixed(2)}.\n\nConvert some of your Cash Balance to Mumbies Cash to send gifts.`);
-                          return;
-                        }
-                        if (amount > 25) {
-                          alert('Maximum gift amount is $25.00');
-                          return;
-                        }
-                        handleShowPreview(lead, amount);
-                      }}
-                      disabled={sendingGift === lead.id}
-                    >
-                      {sendingGift === lead.id ? 'Sending...' : `Send $${(giftAmount[lead.id] || 5).toFixed(2)}`}
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Right Column: Gifted Leads & Activity */}
-        <div className="space-y-6">
-          {/* Gifted Leads */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Gifted Leads</h3>
-
-            {giftedLeads.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-                <Gift className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No gifts sent yet</p>
-                <p className="text-sm text-gray-500 mt-2">Send a gift to an expiring lead to get started</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {giftedLeads.map((gift) => (
-                  <div
-                    key={gift.id}
-                    className="bg-purple-50 border border-purple-200 rounded-lg p-3"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-semibold text-sm text-gray-900">{gift.email}</h4>
-                      <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                        gift.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
-                      }`}>
-                        {gift.status === 'pending' ? 'Pending' : 'Claimed'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-gray-600">
-                      <span>Gift: ${gift.amount.toFixed(2)} • Balance: ${gift.balance.toFixed(2)}</span>
-                      <span>{gift.days_until_expiry}d left</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Activity Stream */}
-          <div>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <History className="h-5 w-5" />
-              Recent Activity
-            </h3>
-
-            {activityItems.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
-                <History className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">No activity yet</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {activityItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between"
-                  >
-                    <div className="flex-1">
-                      <p className="text-sm text-gray-900">{item.description}</p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(item.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <span className="text-sm font-bold text-red-600">
-                      -${item.amount.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
