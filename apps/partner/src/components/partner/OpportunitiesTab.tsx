@@ -15,6 +15,8 @@ interface Lead {
   gift_sent: boolean;
   gift_amount: number | null;
   gift_sent_at: string | null;
+  gift_code: string | null;
+  gift_expires_at: string | null;
   created_at: string;
   notes: string | null;
 }
@@ -104,7 +106,10 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
 
       if (error) throw error;
 
-      alert(`Gift of $${amount} sent successfully to ${selectedLead.email}!`);
+      const giftCode = data?.gift_code || 'N/A';
+      const expiresAt = data?.expires_at ? new Date(data.expires_at).toLocaleDateString() : 'N/A';
+
+      alert(`✅ Gift Sent Successfully!\n\nAmount: $${amount}\nTo: ${selectedLead.email}\nGift Code: ${giftCode}\nExpires: ${expiresAt}\n\nThe recipient can use this code at checkout.`);
       setShowGiftModal(false);
       setSelectedLead(null);
       setGiftAmount('25');
@@ -278,9 +283,19 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
                           <p className="text-sm font-medium text-green-700">
                             ${lead.gift_amount?.toFixed(2)}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          {lead.gift_code && (
+                            <p className="text-xs font-mono text-gray-900 bg-gray-100 px-1 rounded mt-1">
+                              {lead.gift_code}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
                             {lead.gift_sent_at && new Date(lead.gift_sent_at).toLocaleDateString()}
                           </p>
+                          {lead.gift_expires_at && (
+                            <p className="text-xs text-orange-600 mt-1">
+                              Expires: {new Date(lead.gift_expires_at).toLocaleDateString()}
+                            </p>
+                          )}
                         </div>
                       ) : (
                         <span className="text-sm text-gray-400">—</span>
