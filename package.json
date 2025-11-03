@@ -8,7 +8,12 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "admin:dev": "cd apps/admin && npm run dev",
+    "admin:build": "cd apps/admin && npm run build",
+    "partner:dev": "cd apps/partner && npm run dev",
+    "partner:build": "cd apps/partner && npm run build",
+    "build:all": "npm run admin:build && npm run partner:build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

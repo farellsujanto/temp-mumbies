@@ -1,0 +1,35 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from '@mumbies/shared';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminPartnersPage from './pages/admin/AdminPartnersPage';
+import AdminAccountsPage from './pages/admin/AdminAccountsPage';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<AdminLoginPage />} />
+
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute requireRole="admin">
+                <Routes>
+                  <Route path="/" element={<AdminDashboardPage />} />
+                  <Route path="/partners" element={<AdminPartnersPage />} />
+                  <Route path="/accounts" element={<AdminAccountsPage />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
