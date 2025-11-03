@@ -114,28 +114,38 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
 
     setCreatingGiveaway(true);
 
-    const slug = `${organizationName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
-    const endsAt = new Date();
-    endsAt.setDate(endsAt.getDate() + giveawayDuration);
+    try {
+      const slug = `${organizationName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
+      const endsAt = new Date();
+      endsAt.setDate(endsAt.getDate() + giveawayDuration);
 
-    const { error } = await supabase
-      .from('partner_giveaways')
-      .insert({
-        partner_id: partnerId,
-        bundle_id: selectedBundle.id,
-        title: giveawayTitle,
-        description: giveawayDescription,
-        landing_page_slug: slug,
-        ends_at: endsAt.toISOString(),
-        status: 'active'
-      });
+      const { data, error } = await supabase
+        .from('partner_giveaways')
+        .insert({
+          partner_id: partnerId,
+          bundle_id: selectedBundle.id,
+          title: giveawayTitle,
+          description: giveawayDescription,
+          landing_page_slug: slug,
+          ends_at: endsAt.toISOString(),
+          status: 'active'
+        })
+        .select()
+        .single();
 
-    if (!error) {
-      alert('Giveaway created! Share your landing page to start collecting entries.');
-      setSelectedBundle(null);
-      setGiveawayTitle('');
-      setGiveawayDescription('');
-      fetchGiveawayData();
+      if (error) {
+        console.error('Error creating giveaway:', error);
+        alert(`Failed to create giveaway: ${error.message}`);
+      } else {
+        alert('Giveaway created! Share your landing page to start collecting entries.');
+        setSelectedBundle(null);
+        setGiveawayTitle('');
+        setGiveawayDescription('');
+        await fetchGiveawayData();
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred. Please try again.');
     }
 
     setCreatingGiveaway(false);
