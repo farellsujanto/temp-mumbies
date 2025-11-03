@@ -25,17 +25,25 @@ export default function DebugPanel() {
     const originalLog = console.log;
 
     console.error = (...args) => {
-      addLog('error', 'console', args.join(' '), args);
+      const message = args.map(arg =>
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      addLog('error', 'console', message, args);
       originalError.apply(console, args);
     };
 
     console.warn = (...args) => {
-      addLog('warning', 'console', args.join(' '), args);
+      const message = args.map(arg =>
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      addLog('warning', 'console', message, args);
       originalWarn.apply(console, args);
     };
 
     console.log = (...args) => {
-      const message = args.join(' ');
+      const message = args.map(arg =>
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
       if (message.includes('Error') || message.includes('error')) {
         addLog('error', 'console', message, args);
       } else {
