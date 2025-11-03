@@ -112,6 +112,7 @@ export default function PartnerDashboardPage() {
   const { user } = useAuth();
   const [nonprofit, setNonprofit] = useState<NonprofitData | null>(null);
   const [leadCount, setLeadCount] = useState(0);
+  const [leads, setLeads] = useState<any[]>([]);
   const [curatedProducts, setCuratedProducts] = useState<Product[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
@@ -258,16 +259,11 @@ export default function PartnerDashboardPage() {
 
     setNonprofit(nonprofitData);
 
-    const { count } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .eq('attributed_rescue_id', nonprofitData.id)
-      .eq('total_orders', 0);
-
-    setLeadCount(count || 0);
+    // Lead count will be set by loadLeads function
 
     loadCuratedProducts(nonprofitData.id);
     loadReferrals(nonprofitData.id);
+    loadLeads(nonprofitData.id);
     loadRecentActivity(nonprofitData.id);
     loadProductSubmissions(nonprofitData.id);
 
@@ -374,6 +370,23 @@ export default function PartnerDashboardPage() {
     }
   };
 
+  const loadLeads = async (nonprofitId: string) => {
+    const { data, error } = await supabase
+      .from('partner_leads')
+      .select('*')
+      .eq('partner_id', nonprofitId)
+      .order('created_at', { ascending: false });
+
+    if (data && !error) {
+      setLeads(data);
+      setLeadCount(data.length);
+    } else {
+      console.error('Error loading leads:', error);
+      setLeads([]);
+      setLeadCount(0);
+    }
+  };
+
   const loadRecentActivity = async (nonprofitId: string) => {
     const activities: Activity[] = [];
 
@@ -408,23 +421,20 @@ export default function PartnerDashboardPage() {
       });
     }
 
-    const { data: leads, error: leadsError } = await supabase
-      .from('users')
-      .select('id, email, created_at, total_orders')
-      .eq('attributed_rescue_id', nonprofitId)
-      .eq('total_orders', 0)
+    const { data: partnerLeads, error: leadsError } = await supabase
+      .from('partner_leads')
+      .select('id, email, full_name, lead_source, created_at')
+      .eq('partner_id', nonprofitId)
       .order('created_at', { ascending: false })
       .limit(20);
 
-    console.log('Leads query:', { leads, leadsError, nonprofitId });
-
-    if (leads) {
-      leads.forEach((lead) => {
+    if (partnerLeads && !leadsError) {
+      partnerLeads.forEach((lead) => {
         activities.push({
           id: lead.id,
           type: 'lead',
           amount: 0,
-          description: `New lead registered: ${lead.email}`,
+          description: `New ${lead.lead_source} lead: ${lead.full_name || lead.email}`,
           date: lead.created_at,
         });
       });
@@ -999,17 +1009,17 @@ export default function PartnerDashboardPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700 text-sm font-semibold">Cash Balance</span>
+                <span className="text-gray-700 text-sm font-semibold">Mumbies Cash</span>
                 <DollarSign className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold text-green-600 mb-3">
-                ${(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings).toFixed(2)}
+                ${(nonprofit.mumbies_cash_balance || 0).toFixed(2)}
               </p>
               <Button
                 onClick={() => setShowWithdrawalModal(true)}
                 size="sm"
                 fullWidth
-                disabled={(nonprofit.total_commissions_earned + nonprofit.total_referral_earnings) <= 0}
+                disabled={(nonprofit.mumbies_cash_balance || 0) <= 0}
               >
                 Withdraw
               </Button>
