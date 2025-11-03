@@ -21,7 +21,8 @@ import {
   ChevronDown,
   Menu,
   X,
-  FlaskConical
+  FlaskConical,
+  Package
 } from 'lucide-react';
 import DebugPanel from './DebugPanel';
 
