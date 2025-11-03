@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@mumbies/shared';
 import AdminLayout from '../../components/admin/AdminLayout';
 import {
@@ -10,7 +11,8 @@ import {
   AlertCircle,
   Package,
   ExternalLink,
-  Clock
+  Clock,
+  Plus
 } from 'lucide-react';
 
 interface Giveaway {
@@ -39,6 +41,7 @@ interface GiveawayWinner {
 }
 
 export default function AdminGiveawaysPage() {
+  const navigate = useNavigate();
   const [giveaways, setGiveaways] = useState<Giveaway[]>([]);
   const [selectedGiveaway, setSelectedGiveaway] = useState<string | null>(null);
   const [winner, setWinner] = useState<GiveawayWinner | null>(null);
@@ -172,6 +175,13 @@ export default function AdminGiveawaysPage() {
               Manage partner giveaways and select winners
             </p>
           </div>
+          <button
+            onClick={() => navigate('/giveaways/create-bundle')}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium inline-flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Create Giveaway Bundle
+          </button>
         </div>
 
         {/* Message */}

@@ -21,6 +21,7 @@ import AdminFeaturedRescuePage from './pages/admin/content/AdminFeaturedRescuePa
 import AdminPartnerApplicationsPage from './pages/admin/AdminPartnerApplicationsPage';
 import AdminTestModePage from './pages/admin/AdminTestModePage';
 import AdminShopifyPage from './pages/admin/AdminShopifyPage';
+import AdminCreateGiveawayBundlePage from './pages/admin/AdminCreateGiveawayBundlePage';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
                     <Route path="/payouts" element={<AdminPayoutsPage />} />
                     <Route path="/leads" element={<AdminLeadsPage />} />
                     <Route path="/giveaways" element={<AdminGiveawaysPage />} />
+                    <Route path="/giveaways/create-bundle" element={<AdminCreateGiveawayBundlePage />} />
                     <Route path="/rewards" element={<AdminRewardsPage />} />
                     <Route path="/content/hero" element={<AdminHeroSlidesPage />} />
                     <Route path="/content/banners" element={<AdminBannersPage />} />
