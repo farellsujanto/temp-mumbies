@@ -125,18 +125,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
 
       console.log('[AuthContext] Auth state changed:', _event, !!session?.user);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        const profile = await fetchUserProfile(session.user.id);
-        if (mounted) {
-          setUserProfile(profile);
-          console.log('[AuthContext] Profile updated after auth change:', profile?.is_partner);
-        }
+        fetchUserProfile(session.user.id).then(profile => {
+          if (mounted) {
+            setUserProfile(profile);
+            console.log('[AuthContext] Profile updated after auth change:', profile?.is_partner);
+          }
+        });
       } else {
         setUserProfile(null);
       }
