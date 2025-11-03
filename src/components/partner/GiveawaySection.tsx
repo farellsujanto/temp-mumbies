@@ -197,7 +197,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                 <span className="text-gray-600 text-sm">Sales</span>
                 <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
-              <p className="text-3xl font-bold">${lifetimeSales.toLocaleString()}</p>
+              <p className="text-3xl font-bold">${(lifetimeSales || 0).toLocaleString()}</p>
               <p className="text-xs text-gray-600 mt-1">Revenue</p>
             </div>
 
@@ -206,7 +206,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
               <span className="text-gray-600 text-sm">Commissions</span>
               <Trophy className="h-5 w-5 text-amber-600" />
             </div>
-            <p className="text-3xl font-bold">${lifetimeCommissions.toLocaleString()}</p>
+            <p className="text-3xl font-bold">${(lifetimeCommissions || 0).toLocaleString()}</p>
             <p className="text-xs text-gray-600 mt-1">Earned</p>
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                       <div className="flex items-center justify-between text-xs text-gray-600">
                         <span>Requires</span>
                         <span className="font-semibold">
-                          ${bundle.sales_threshold.toLocaleString()} sales
+                          ${(bundle.sales_threshold || 0).toLocaleString()} sales
                         </span>
                       </div>
                     </div>
