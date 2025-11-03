@@ -105,29 +105,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!mounted) return;
 
+      console.log('[AuthContext] Initial session check:', !!session?.user);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        fetchUserProfile(session.user.id).then(profile => {
-          if (mounted) setUserProfile(profile);
-        });
+        const profile = await fetchUserProfile(session.user.id);
+        if (mounted) {
+          setUserProfile(profile);
+          console.log('[AuthContext] Initial profile set:', profile?.is_partner);
+        }
       }
 
-      setLoading(false);
+      if (mounted) {
+        setLoading(false);
+        console.log('[AuthContext] Loading complete');
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
 
+      console.log('[AuthContext] Auth state changed:', _event, !!session?.user);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        fetchUserProfile(session.user.id).then(profile => {
-          if (mounted) setUserProfile(profile);
-        });
+        const profile = await fetchUserProfile(session.user.id);
+        if (mounted) {
+          setUserProfile(profile);
+          console.log('[AuthContext] Profile updated after auth change:', profile?.is_partner);
+        }
       } else {
         setUserProfile(null);
       }
