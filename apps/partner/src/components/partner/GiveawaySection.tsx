@@ -73,14 +73,14 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     // Fetch partner stats
     const { data: partnerData } = await supabase
       .from('nonprofits')
-      .select('mumbies_cash_balance, total_earnings')
+      .select('mumbies_cash_balance, total_commissions_earned, total_sales')
       .eq('id', partnerId)
       .maybeSingle();
 
     if (partnerData) {
       setPartnerStats({
-        mumbies_cash_balance: partnerData.mumbies_cash_balance || 0,
-        total_earnings: partnerData.total_earnings || totalSales,
+        mumbies_cash_balance: Number(partnerData.mumbies_cash_balance || 0),
+        total_earnings: Number(partnerData.total_commissions_earned || 0),
         total_leads: 0,
         total_referrals: 0
       });
