@@ -79,6 +79,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       data.partner_profile = data.partner_profile[0] || null;
     }
 
+    // Fallback: If partner_profile is null but user is_partner, try direct lookup
+    if (data && data.is_partner && !data.partner_profile) {
+      const { data: nonprofitData } = await supabase
+        .from('nonprofits')
+        .select('id, organization_name, partner_type, status, referral_code, mumbies_cash_balance, logo_url')
+        .eq('auth_user_id', userId)
+        .maybeSingle();
+
+      if (nonprofitData) {
+        data.partner_profile = nonprofitData;
+      }
+    }
+
     return data;
   };
 
