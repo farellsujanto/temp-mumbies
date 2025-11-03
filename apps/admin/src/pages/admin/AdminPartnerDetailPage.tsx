@@ -702,9 +702,285 @@ function TransactionsTab({ partnerId }: { partnerId: string }) {
 }
 
 function GiveawaysTab({ partnerId }: { partnerId: string }) {
-  return <p className="text-sm text-gray-500">Giveaways view coming soon</p>;
+  const [giveaways, setGiveaways] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchGiveaways();
+  }, [partnerId]);
+
+  const fetchGiveaways = async () => {
+    const { data } = await supabase
+      .from('partner_giveaways')
+      .select(`
+        *,
+        bundle:bundle_id (
+          name,
+          retail_value,
+          tier
+        )
+      `)
+      .eq('partner_id', partnerId)
+      .order('created_at', { ascending: false });
+
+    if (data) setGiveaways(data);
+    setLoading(false);
+  };
+
+  const handleStatusChange = async (giveawayId: string, newStatus: string) => {
+    if (!confirm(`Change giveaway status to "${newStatus}"?`)) return;
+
+    const { error } = await supabase
+      .from('partner_giveaways')
+      .update({ status: newStatus })
+      .eq('id', giveawayId);
+
+    if (!error) {
+      alert('Status updated!');
+      fetchGiveaways();
+    } else {
+      alert('Failed to update status');
+    }
+  };
+
+  if (loading) return <p className="text-sm text-gray-500">Loading...</p>;
+
+  if (giveaways.length === 0) {
+    return <p className="text-sm text-gray-500">No giveaways created yet</p>;
+  }
+
+  return (
+    <div className="space-y-4">
+      {giveaways.map((giveaway) => (
+        <div key={giveaway.id} className="border border-gray-200 rounded-lg p-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h4 className="font-semibold text-gray-900">{giveaway.title}</h4>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  giveaway.status === 'active'
+                    ? 'bg-green-100 text-green-800'
+                    : giveaway.status === 'ended'
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {giveaway.status}
+                </span>
+                {giveaway.bundle && (
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    giveaway.bundle.tier === 'platinum' ? 'bg-purple-100 text-purple-800' :
+                    giveaway.bundle.tier === 'gold' ? 'bg-yellow-100 text-yellow-800' :
+                    giveaway.bundle.tier === 'silver' ? 'bg-gray-100 text-gray-800' :
+                    'bg-orange-100 text-orange-800'
+                  }`}>
+                    {giveaway.bundle.tier} - ${giveaway.bundle.retail_value}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-gray-600 mb-3">{giveaway.description}</p>
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">Total Entries:</span>
+                  <span className="ml-2 font-semibold text-gray-900">{giveaway.total_entries || 0}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Leads Generated:</span>
+                  <span className="ml-2 font-semibold text-gray-900">{giveaway.total_leads_generated || 0}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Ends:</span>
+                  <span className="ml-2 font-semibold text-gray-900">
+                    {new Date(giveaway.ends_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <p className="text-xs text-gray-500">
+                  Landing Page:{' '}
+                  <a
+                    href={`https://mumbies.com/giveaway/${giveaway.landing_page_slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-600 hover:text-green-700"
+                  >
+                    mumbies.com/giveaway/{giveaway.landing_page_slug}
+                  </a>
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              {giveaway.status === 'active' && (
+                <>
+                  <button
+                    onClick={() => handleStatusChange(giveaway.id, 'paused')}
+                    className="px-3 py-1 text-xs bg-yellow-600 text-white rounded hover:bg-yellow-700"
+                  >
+                    Pause
+                  </button>
+                  <button
+                    onClick={() => handleStatusChange(giveaway.id, 'ended')}
+                    className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    End
+                  </button>
+                </>
+              )}
+              {giveaway.status === 'paused' && (
+                <button
+                  onClick={() => handleStatusChange(giveaway.id, 'active')}
+                  className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Resume
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function RewardsTab({ partnerId }: { partnerId: string }) {
-  return <p className="text-sm text-gray-500">Rewards view coming soon</p>;
+  const [progress, setProgress] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRewardProgress();
+  }, [partnerId]);
+
+  const fetchRewardProgress = async () => {
+    const { data } = await supabase
+      .from('partner_reward_progress')
+      .select(`
+        *,
+        reward:reward_id (
+          title,
+          description,
+          reward_type,
+          reward_value,
+          reward_description,
+          requirement_description
+        )
+      `)
+      .eq('partner_id', partnerId)
+      .order('created_at', { ascending: false });
+
+    if (data) setProgress(data);
+    setLoading(false);
+  };
+
+  const handleClaimReward = async (progressId: string, rewardId: string) => {
+    if (!confirm('Mark this reward as claimed?')) return;
+
+    const { error: progressError } = await supabase
+      .from('partner_reward_progress')
+      .update({
+        status: 'claimed',
+        claimed_at: new Date().toISOString()
+      })
+      .eq('id', progressId);
+
+    if (!progressError) {
+      await supabase
+        .from('partner_reward_redemptions')
+        .insert({
+          partner_id: partnerId,
+          reward_id: rewardId,
+          progress_id: progressId,
+          reward_type: 'manual_claim',
+          redemption_method: 'admin_portal',
+          fulfillment_status: 'pending'
+        });
+
+      alert('Reward claimed successfully!');
+      fetchRewardProgress();
+    } else {
+      alert('Failed to claim reward');
+    }
+  };
+
+  if (loading) return <p className="text-sm text-gray-500">Loading...</p>;
+
+  if (progress.length === 0) {
+    return <p className="text-sm text-gray-500">No rewards in progress</p>;
+  }
+
+  return (
+    <div className="space-y-4">
+      {progress.map((item) => (
+        <div key={item.id} className="border border-gray-200 rounded-lg p-4">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <h4 className="font-semibold text-gray-900">{item.reward.title}</h4>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  item.status === 'completed'
+                    ? 'bg-green-100 text-green-800'
+                    : item.status === 'claimed'
+                    ? 'bg-blue-100 text-blue-800'
+                    : item.status === 'in_progress'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {item.status}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-2">{item.reward.description}</p>
+              <p className="text-sm text-gray-700 font-medium">
+                Reward: {item.reward.reward_description || `$${item.reward.reward_value}`}
+              </p>
+            </div>
+            {item.status === 'completed' && (
+              <button
+                onClick={() => handleClaimReward(item.id, item.reward_id)}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+              >
+                Mark as Claimed
+              </button>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-sm mb-2">
+              <span className="text-gray-600">Progress</span>
+              <span className="font-semibold text-gray-900">
+                {item.current_value} / {item.target_value} ({item.progress_percentage}%)
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-green-600 h-2 rounded-full transition-all"
+                style={{ width: `${Math.min(item.progress_percentage, 100)}%` }}
+              />
+            </div>
+          </div>
+
+          {item.reward.requirement_description && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <p className="text-xs text-gray-600">
+                <strong>Requirement:</strong> {item.reward.requirement_description}
+              </p>
+            </div>
+          )}
+
+          {item.completed_at && (
+            <div className="mt-2">
+              <p className="text-xs text-gray-500">
+                Completed: {new Date(item.completed_at).toLocaleString()}
+              </p>
+            </div>
+          )}
+
+          {item.claimed_at && (
+            <div className="mt-2">
+              <p className="text-xs text-gray-500">
+                Claimed: {new Date(item.claimed_at).toLocaleString()}
+              </p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 }
