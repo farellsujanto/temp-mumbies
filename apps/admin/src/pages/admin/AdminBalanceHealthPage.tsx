@@ -41,6 +41,8 @@ export default function AdminBalanceHealthPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [runningReconciliation, setRunningReconciliation] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   useEffect(() => {
     fetchHealthData();
@@ -48,48 +50,53 @@ export default function AdminBalanceHealthPage() {
 
   const fetchHealthData = async () => {
     setLoading(true);
+    setError(null);
+    setErrorCode(null);
     try {
       console.log('[Balance Health] Fetching health data...');
 
-      // Use direct SQL query instead of RPC to bypass PostgREST cache
       const { data, error } = await supabase.rpc('admin_get_balance_health', {});
 
       console.log('[Balance Health] Response:', { data, error });
 
       if (error) {
         console.error('[Balance Health] Error:', error);
+        setErrorCode(error.code || null);
 
-        // If function not found in cache, try alternative method
+        // Schema cache error
         if (error.message?.includes('schema cache') || error.code === 'PGRST202') {
-          console.log('[Balance Health] Trying alternative method...');
-          const { data: altData, error: altError } = await supabase
-            .from('users')
-            .select('role')
-            .eq('role', 'admin')
-            .limit(1);
-
-          if (altError) {
-            throw new Error(`Database connection issue: ${altError.message}`);
-          }
-
-          throw new Error(
-            'Function not found in schema cache. Please run migration: 20251103120000_add_admin_balance_controls.sql in Supabase SQL Editor, then restart PostgREST or wait 5 minutes for cache to refresh.'
-          );
+          setError('schema_cache');
+          return;
         }
 
-        throw error;
+        // Function doesn't exist
+        if (error.code === '42883') {
+          setError('function_missing');
+          return;
+        }
+
+        // Permission denied
+        if (error.message?.includes('Only admins')) {
+          setError('permission_denied');
+          return;
+        }
+
+        // Generic error
+        setError(error.message || 'Unknown error');
+        return;
       }
 
       if (!data) {
         console.warn('[Balance Health] No data returned');
-        throw new Error('No data returned from balance health check');
+        setError('No data returned from balance health check');
+        return;
       }
 
       console.log('[Balance Health] Success! Data:', data);
       setHealth(data);
     } catch (error: any) {
       console.error('[Balance Health] Failed to fetch:', error);
-      alert(`Failed to load balance health data: ${error.message || 'Unknown error'}`);
+      setError(error.message || 'Unknown error');
     } finally {
       setLoading(false);
     }
@@ -144,11 +151,102 @@ export default function AdminBalanceHealthPage() {
     );
   }
 
+  if (error) {
+    return (
+      <AdminLayout>
+        <div className="max-w-4xl mx-auto py-12 px-4">
+          <div className="bg-red-50 border-2 border-red-300 rounded-lg p-6">
+            <div className="flex items-start gap-4">
+              <XCircle className="w-8 h-8 text-red-600 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-red-900 mb-2">Failed to Load Balance Health</h2>
+
+                {error === 'schema_cache' && (
+                  <div className="space-y-4">
+                    <p className="text-red-800">
+                      The function exists in the database but PostgREST hasn't detected it yet (schema cache issue).
+                    </p>
+                    <div className="bg-white rounded border border-red-200 p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">Quick Fix:</h3>
+                      <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                        <li>Go to <strong>Supabase Dashboard</strong> → <strong>SQL Editor</strong></li>
+                        <li>Run this command: <code className="bg-gray-100 px-2 py-1 rounded">NOTIFY pgrst, 'reload schema';</code></li>
+                        <li>Refresh this page</li>
+                      </ol>
+                      <p className="text-xs text-gray-500 mt-3">Or wait 5 minutes for automatic cache refresh</p>
+                    </div>
+                  </div>
+                )}
+
+                {error === 'function_missing' && (
+                  <div className="space-y-4">
+                    <p className="text-red-800">
+                      The function does not exist in the database.
+                    </p>
+                    <div className="bg-white rounded border border-red-200 p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">Fix:</h3>
+                      <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                        <li>Go to <strong>Supabase Dashboard</strong> → <strong>SQL Editor</strong></li>
+                        <li>Copy and run the entire file: <code className="bg-gray-100 px-2 py-1 rounded text-xs">supabase/migrations/20251103120000_add_admin_balance_controls.sql</code></li>
+                        <li>Refresh this page</li>
+                      </ol>
+                    </div>
+                  </div>
+                )}
+
+                {error === 'permission_denied' && (
+                  <div className="space-y-4">
+                    <p className="text-red-800">
+                      You don't have admin permissions.
+                    </p>
+                    <div className="bg-white rounded border border-red-200 p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">Fix:</h3>
+                      <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700">
+                        <li>Go to <strong>Supabase Dashboard</strong> → <strong>SQL Editor</strong></li>
+                        <li>Run: <code className="bg-gray-100 px-2 py-1 rounded text-xs">UPDATE users SET role='admin', is_admin=true WHERE email='admin@mumbies.com';</code></li>
+                        <li>Refresh this page</li>
+                      </ol>
+                    </div>
+                  </div>
+                )}
+
+                {error !== 'schema_cache' && error !== 'function_missing' && error !== 'permission_denied' && (
+                  <div className="space-y-4">
+                    <p className="text-red-800 font-mono text-sm">{error}</p>
+                    {errorCode && (
+                      <p className="text-xs text-red-600">Error Code: {errorCode}</p>
+                    )}
+                  </div>
+                )}
+
+                <div className="mt-6 flex gap-3">
+                  <button
+                    onClick={fetchHealthData}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Try Again
+                  </button>
+                  <Link
+                    to="/dashboard"
+                    className="px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50"
+                  >
+                    Back to Dashboard
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   if (!health) {
     return (
       <AdminLayout>
         <div className="text-center py-12">
-          <p className="text-gray-500">Failed to load balance health data</p>
+          <p className="text-gray-500">No data available</p>
         </div>
       </AdminLayout>
     );
