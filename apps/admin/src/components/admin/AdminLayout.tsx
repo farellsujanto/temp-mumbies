@@ -62,9 +62,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       ]
     },
     {
+      section: 'Financial',
+      items: [
+        { to: '/balance-health', icon: Shield, label: 'Balance Health' },
+        { to: '/payouts', icon: DollarSign, label: 'Payouts' },
+      ]
+    },
+    {
       section: 'Operations',
       items: [
-        { to: '/payouts', icon: DollarSign, label: 'Payouts' },
         { to: '/leads', icon: UserPlus, label: 'Leads' },
         { to: '/giveaways', icon: Gift, label: 'Giveaways' },
         { to: '/rewards', icon: Award, label: 'Rewards' },

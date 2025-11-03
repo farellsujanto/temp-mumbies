@@ -5,6 +5,8 @@ import PasswordProtection from './components/PasswordProtection';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminPartnersPage from './pages/admin/AdminPartnersPage';
+import AdminPartnerDetailPage from './pages/admin/AdminPartnerDetailPage';
+import AdminBalanceHealthPage from './pages/admin/AdminBalanceHealthPage';
 import AdminAccountsPage from './pages/admin/AdminAccountsPage';
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
                   <Routes>
                     <Route path="/" element={<AdminDashboardPage />} />
                     <Route path="/partners" element={<AdminPartnersPage />} />
+                    <Route path="/partners/:id" element={<AdminPartnerDetailPage />} />
+                    <Route path="/balance-health" element={<AdminBalanceHealthPage />} />
                     <Route path="/accounts" element={<AdminAccountsPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
