@@ -280,21 +280,25 @@ export default function AdminCreateGiveawayBundlePage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 <option value="mumbies_cash">Mumbies Cash Balance</option>
+                <option value="total_earnings">Total Sales/Earnings</option>
                 <option value="leads">Number of Leads</option>
                 <option value="referrals">Number of Referrals</option>
+                <option value="none">Always Unlocked (Manual)</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Required Amount
+                {formData.unlock_requirement_type === 'none' ? 'No Requirement' : 'Required Amount'}
               </label>
               <input
                 type="number"
                 min="0"
                 value={formData.unlock_requirement_value}
                 onChange={(e) => setFormData({ ...formData, unlock_requirement_value: parseInt(e.target.value) || 0 })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                disabled={formData.unlock_requirement_type === 'none'}
+                placeholder={formData.unlock_requirement_type === 'total_earnings' ? 'e.g., 1000 (dollars)' : formData.unlock_requirement_type === 'mumbies_cash' ? 'e.g., 100' : 'e.g., 10'}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
           </div>
