@@ -121,10 +121,19 @@ export default function DebugPanel() {
     addLog('info', 'test', 'Testing admin_get_balance_health function...', null);
 
     try {
-      const { data, error } = await supabase.rpc('admin_get_balance_health');
+      const { data, error } = await supabase.rpc('admin_get_balance_health', {});
 
       if (error) {
-        addLog('error', 'function', `admin_get_balance_health failed: ${error.message}`, error);
+        // Check for schema cache error
+        if (error.message?.includes('schema cache') || error.code === 'PGRST202') {
+          addLog('error', 'function', 'Schema cache error! Function exists but PostgREST needs reload. Run: NOTIFY pgrst, \'reload schema\'; in SQL Editor', error);
+        } else if (error.code === '42883') {
+          addLog('error', 'function', 'Function does not exist! Run migration: 20251103120000_add_admin_balance_controls.sql', error);
+        } else if (error.message?.includes('Only admins')) {
+          addLog('error', 'function', 'Permission denied! Run: UPDATE users SET role=\'admin\' WHERE email=\'admin@mumbies.com\'', error);
+        } else {
+          addLog('error', 'function', `admin_get_balance_health failed: ${error.message}`, error);
+        }
       } else {
         addLog('success', 'function', 'admin_get_balance_health successful', data);
       }

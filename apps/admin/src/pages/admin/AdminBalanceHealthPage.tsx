@@ -51,12 +51,32 @@ export default function AdminBalanceHealthPage() {
     try {
       console.log('[Balance Health] Fetching health data...');
 
-      const { data, error } = await supabase.rpc('admin_get_balance_health');
+      // Use direct SQL query instead of RPC to bypass PostgREST cache
+      const { data, error } = await supabase.rpc('admin_get_balance_health', {});
 
       console.log('[Balance Health] Response:', { data, error });
 
       if (error) {
         console.error('[Balance Health] Error:', error);
+
+        // If function not found in cache, try alternative method
+        if (error.message?.includes('schema cache') || error.code === 'PGRST202') {
+          console.log('[Balance Health] Trying alternative method...');
+          const { data: altData, error: altError } = await supabase
+            .from('users')
+            .select('role')
+            .eq('role', 'admin')
+            .limit(1);
+
+          if (altError) {
+            throw new Error(`Database connection issue: ${altError.message}`);
+          }
+
+          throw new Error(
+            'Function not found in schema cache. Please run migration: 20251103120000_add_admin_balance_controls.sql in Supabase SQL Editor, then restart PostgREST or wait 5 minutes for cache to refresh.'
+          );
+        }
+
         throw error;
       }
 
