@@ -119,7 +119,7 @@ export default function DiagnosticPage() {
     try {
       const { data, error } = await supabase
         .from('nonprofits')
-        .select('id, organization_name, type')
+        .select('id, organization_name, partner_type')
         .limit(5);
 
       addResult({
@@ -131,6 +131,45 @@ export default function DiagnosticPage() {
     } catch (err: any) {
       addResult({
         name: 'Nonprofits Table',
+        status: 'error',
+        message: err.message || 'Query failed',
+        details: err
+      });
+    }
+
+    // 7. Check current user profile with partner data
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data, error } = await supabase
+          .from('users')
+          .select(`
+            id,
+            email,
+            is_partner,
+            is_admin,
+            nonprofit_id,
+            partner_profile:nonprofits!users_nonprofit_id_fkey(
+              id,
+              organization_name,
+              partner_type,
+              status,
+              mumbies_cash_balance
+            )
+          `)
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        addResult({
+          name: 'User Profile with Partner Data',
+          status: error ? 'error' : 'success',
+          message: error ? error.message : `Loaded profile for ${data?.email}`,
+          details: error || data
+        });
+      }
+    } catch (err: any) {
+      addResult({
+        name: 'User Profile with Partner Data',
         status: 'error',
         message: err.message || 'Query failed',
         details: err
