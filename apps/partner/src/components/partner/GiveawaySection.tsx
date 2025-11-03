@@ -174,7 +174,9 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
 
   const getUnlockProgress = (bundle: GiveawayBundle) => {
     const reqType = bundle.unlock_requirement_type || 'mumbies_cash';
-    const reqValue = bundle.unlock_requirement_value || bundle.sales_threshold || 0;
+    const reqValue = Number(bundle.unlock_requirement_value || bundle.sales_threshold || 0);
+
+    if (reqValue === 0) return 0;
 
     switch (reqType) {
       case 'none':
@@ -188,13 +190,14 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
       case 'referrals':
         return Math.min((partnerStats.total_referrals / reqValue) * 100, 100);
       default:
-        return bundle.sales_threshold ? Math.min((totalSales / bundle.sales_threshold) * 100, 100) : 0;
+        const threshold = Number(bundle.sales_threshold || 0);
+        return threshold > 0 ? Math.min((totalSales / threshold) * 100, 100) : 0;
     }
   };
 
   const getRemainingToUnlock = (bundle: GiveawayBundle) => {
     const reqType = bundle.unlock_requirement_type || 'mumbies_cash';
-    const reqValue = bundle.unlock_requirement_value || bundle.sales_threshold || 0;
+    const reqValue = Number(bundle.unlock_requirement_value || bundle.sales_threshold || 0);
 
     switch (reqType) {
       case 'none':
@@ -208,13 +211,14 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
       case 'referrals':
         return `${Math.max(0, reqValue - partnerStats.total_referrals)} more referrals`;
       default:
-        return bundle.sales_threshold ? `$${Math.max(0, bundle.sales_threshold - totalSales)} more sales` : 'Unlocked';
+        const threshold = Number(bundle.sales_threshold || 0);
+        return threshold > 0 ? `$${Math.max(0, threshold - totalSales)} more sales` : 'Unlocked';
     }
   };
 
   const getRequirementLabel = (bundle: GiveawayBundle) => {
     const reqType = bundle.unlock_requirement_type || 'mumbies_cash';
-    const reqValue = bundle.unlock_requirement_value || bundle.sales_threshold || 0;
+    const reqValue = Number(bundle.unlock_requirement_value || bundle.sales_threshold || 0);
 
     switch (reqType) {
       case 'none':
@@ -228,7 +232,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
       case 'referrals':
         return `${reqValue} referrals`;
       default:
-        return bundle.sales_threshold ? `$${bundle.sales_threshold.toLocaleString()} sales` : 'Available';
+        const threshold = Number(bundle.sales_threshold || 0);
+        return threshold > 0 ? `$${threshold.toLocaleString()} sales` : 'Available';
     }
   };
 
