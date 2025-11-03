@@ -224,16 +224,16 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
       case 'none':
         return 'Always Available';
       case 'mumbies_cash':
-        return `${reqValue} Mumbies Cash`;
+        return `${reqValue || 0} Mumbies Cash`;
       case 'total_earnings':
-        return `$${reqValue.toLocaleString()} sales`;
+        return `$${(reqValue || 0).toLocaleString()} sales`;
       case 'leads':
-        return `${reqValue} leads`;
+        return `${reqValue || 0} leads`;
       case 'referrals':
-        return `${reqValue} referrals`;
+        return `${reqValue || 0} referrals`;
       default:
         const threshold = Number(bundle.sales_threshold || 0);
-        return threshold > 0 ? `$${threshold.toLocaleString()} sales` : 'Available';
+        return threshold > 0 ? `$${(threshold || 0).toLocaleString()} sales` : 'Available';
     }
   };
 

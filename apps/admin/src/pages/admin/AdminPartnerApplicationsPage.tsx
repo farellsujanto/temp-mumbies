@@ -8,7 +8,19 @@ interface Application {
   email: string;
   organization_name: string;
   organization_type: string;
+  ein: string | null;
+  website: string | null;
+  phone: string | null;
   contact_name: string;
+  contact_title: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  city: string | null;
+  state: string | null;
+  zip_code: string | null;
+  mission_statement: string | null;
+  how_funds_used: string | null;
+  social_media_links: { facebook?: string; instagram?: string; twitter?: string } | null;
   status: string;
   application_date: string;
   reviewed_at: string | null;
@@ -301,13 +313,67 @@ function ApplicationDetailModal({ application, onClose, onApprove, onDeny }: App
                 <dd className="text-sm text-gray-900 mt-1 capitalize">{application.organization_type}</dd>
               </div>
               <div>
+                <dt className="text-sm font-medium text-gray-600">EIN (Tax ID)</dt>
+                <dd className="text-sm text-gray-900 mt-1">{application.ein || 'Not provided'}</dd>
+              </div>
+              <div>
+                <dt className="text-sm font-medium text-gray-600">Website</dt>
+                <dd className="text-sm text-gray-900 mt-1">
+                  {application.website ? (
+                    <a href={application.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      {application.website}
+                    </a>
+                  ) : 'Not provided'}
+                </dd>
+              </div>
+              <div>
                 <dt className="text-sm font-medium text-gray-600">Contact Name</dt>
                 <dd className="text-sm text-gray-900 mt-1">{application.contact_name}</dd>
+              </div>
+              <div>
+                <dt className="text-sm font-medium text-gray-600">Contact Title</dt>
+                <dd className="text-sm text-gray-900 mt-1">{application.contact_title || 'Not provided'}</dd>
               </div>
               <div>
                 <dt className="text-sm font-medium text-gray-600">Email</dt>
                 <dd className="text-sm text-gray-900 mt-1">{application.email}</dd>
               </div>
+              <div>
+                <dt className="text-sm font-medium text-gray-600">Phone</dt>
+                <dd className="text-sm text-gray-900 mt-1">{application.phone || 'Not provided'}</dd>
+              </div>
+              {application.address_line1 && (
+                <div className="col-span-2">
+                  <dt className="text-sm font-medium text-gray-600">Address</dt>
+                  <dd className="text-sm text-gray-900 mt-1">
+                    {application.address_line1}
+                    {application.address_line2 && <>, {application.address_line2}</>}
+                    {application.city && <><br/>{application.city}, {application.state} {application.zip_code}</>}
+                  </dd>
+                </div>
+              )}
+              {application.social_media_links && (
+                <div className="col-span-2">
+                  <dt className="text-sm font-medium text-gray-600">Social Media</dt>
+                  <dd className="text-sm text-gray-900 mt-1 flex gap-3">
+                    {application.social_media_links.facebook && (
+                      <a href={application.social_media_links.facebook} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        Facebook
+                      </a>
+                    )}
+                    {application.social_media_links.instagram && (
+                      <a href={application.social_media_links.instagram} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        Instagram
+                      </a>
+                    )}
+                    {application.social_media_links.twitter && (
+                      <a href={application.social_media_links.twitter} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        Twitter
+                      </a>
+                    )}
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
 

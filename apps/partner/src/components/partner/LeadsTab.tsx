@@ -34,15 +34,23 @@ export default function LeadsTab({ partnerId }: LeadsTabProps) {
   const fetchLeads = async () => {
     setLoading(true);
     try {
+      console.log('[LeadsTab] Fetching leads for partner:', partnerId);
+
       const { data, error } = await supabase
         .from('partner_leads')
         .select('*')
         .eq('partner_id', partnerId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('[LeadsTab] Query result:', { data, error, count: data?.length });
+
+      if (error) {
+        console.error('[LeadsTab] Error fetching leads:', error);
+        throw error;
+      }
 
       const leads = data || [];
+      console.log('[LeadsTab] Setting leads:', leads.length);
       setAllLeads(leads);
 
       // Filter expiring leads (expires within 30 days)
@@ -58,8 +66,15 @@ export default function LeadsTab({ partnerId }: LeadsTabProps) {
       // Filter gifted leads
       const gifted = leads.filter(lead => lead.gift_sent);
       setGiftedLeads(gifted);
+
+      console.log('[LeadsTab] Final state:', {
+        all: leads.length,
+        expiring: expiring.length,
+        gifted: gifted.length
+      });
     } catch (error) {
-      console.error('Error fetching leads:', error);
+      console.error('[LeadsTab] Error fetching leads:', error);
+      alert(`Error loading leads: ${error}`);
     } finally {
       setLoading(false);
     }
