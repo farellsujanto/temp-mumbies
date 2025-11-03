@@ -49,12 +49,27 @@ export default function AdminBalanceHealthPage() {
   const fetchHealthData = async () => {
     setLoading(true);
     try {
+      console.log('[Balance Health] Fetching health data...');
+
       const { data, error } = await supabase.rpc('admin_get_balance_health');
-      if (error) throw error;
+
+      console.log('[Balance Health] Response:', { data, error });
+
+      if (error) {
+        console.error('[Balance Health] Error:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.warn('[Balance Health] No data returned');
+        throw new Error('No data returned from balance health check');
+      }
+
+      console.log('[Balance Health] Success! Data:', data);
       setHealth(data);
-    } catch (error) {
-      console.error('Error fetching balance health:', error);
-      alert('Failed to load balance health data');
+    } catch (error: any) {
+      console.error('[Balance Health] Failed to fetch:', error);
+      alert(`Failed to load balance health data: ${error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }

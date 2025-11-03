@@ -22,6 +22,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
+import DebugPanel from './DebugPanel';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -243,6 +244,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           {children}
         </main>
       </div>
+
+      {/* Debug Panel */}
+      <DebugPanel />
     </div>
   );
 }
