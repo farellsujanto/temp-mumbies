@@ -27,30 +27,32 @@ export default function PartnerApplyPage() {
     e.preventDefault();
     setLoading(true);
 
-    const slug = formData.organizationName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-
-    const { error } = await supabase.from('nonprofits').insert({
+    const { error } = await supabase.from('partner_applications').insert({
+      email: formData.contactEmail,
       organization_name: formData.organizationName,
+      organization_type: 'rescue',
       ein: formData.ein,
-      contact_name: formData.contactName,
-      contact_email: formData.contactEmail,
-      contact_phone: formData.phone,
       website: formData.website,
+      phone: formData.phone,
+      contact_name: formData.contactName,
+      contact_title: '',
+      address_line1: '',
+      address_line2: '',
+      city: formData.city,
+      state: formData.state,
+      zip_code: '',
       mission_statement: formData.missionStatement,
-      location_city: formData.city,
-      location_state: formData.state,
-      average_adoptions_per_year: formData.averageAdoptions ? parseInt(formData.averageAdoptions) : null,
-      slug,
-      social_links: {
+      how_funds_used: 'Funds will support our animal rescue and adoption programs',
+      social_media_links: {
         facebook: formData.facebook,
         instagram: formData.instagram,
         twitter: formData.twitter,
       },
       status: 'pending',
-      partner_type: 'rescue',
+      application_date: new Date().toISOString(),
+      metadata: {
+        average_adoptions_per_year: formData.averageAdoptions ? parseInt(formData.averageAdoptions) : null,
+      },
     });
 
     if (error) {
