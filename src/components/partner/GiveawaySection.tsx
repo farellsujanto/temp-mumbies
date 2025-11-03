@@ -235,9 +235,12 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                 >
                   <div className="relative h-32">
                     <img
-                      src={bundle.image_url}
+                      src={bundle.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800'}
                       alt={bundle.name}
                       className={`w-full h-full object-cover ${!unlocked && 'opacity-50 grayscale'}`}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800';
+                      }}
                     />
                     <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${getTierBadge(bundle.tier)}`}>
                       {bundle.tier.toUpperCase()}

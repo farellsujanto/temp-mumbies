@@ -1814,6 +1814,168 @@ export default function PartnerDashboardPage() {
         </div>
       )}
 
+      {/* Leads Tab */}
+      {activeTab === 'leads' && nonprofit && (
+        <div className="space-y-8">
+          {/* Lead Incentives Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg p-6 text-white">
+            <div className="flex items-start gap-4">
+              <div className="bg-white bg-opacity-20 p-3 rounded-lg">
+                <Gift className="h-8 w-8" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Lead Incentives</h2>
+                <p className="text-blue-100">
+                  Send gift incentives to leads using your balance to boost conversions before they expire!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Lead Stats */}
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Expiring Leads</span>
+                <Clock className="h-5 w-5 text-amber-600" />
+              </div>
+              <p className="text-3xl font-bold text-gray-900">
+                {leads.filter(l => {
+                  if (!l.expires_at) return false;
+                  const expiresAt = new Date(l.expires_at);
+                  const now = new Date();
+                  const daysUntil = (expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+                  return daysUntil > 0 && daysUntil <= 30;
+                }).length}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Within 30 days</p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Active Gifts</span>
+                <Gift className="h-5 w-5 text-blue-600" />
+              </div>
+              <p className="text-3xl font-bold text-gray-900">
+                {leads.filter(l => l.gift_sent).length}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Sent</p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Conversions</span>
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              </div>
+              <p className="text-3xl font-bold text-gray-900">0</p>
+              <p className="text-xs text-gray-500 mt-1">All-time</p>
+            </div>
+          </div>
+
+          {/* Leads Table */}
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">All Leads ({leads.length})</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage your leads and send gift incentives to boost conversions
+              </p>
+            </div>
+
+            {leads.length === 0 ? (
+              <div className="p-12 text-center">
+                <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No leads yet</h3>
+                <p className="text-gray-600 mb-6">
+                  Leads will appear here when people enter your giveaways or sign up through your referral link
+                </p>
+                <Button onClick={() => setActiveTab('giveaways')}>
+                  View Giveaways
+                </Button>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Contact</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Source</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Expires</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Gift</th>
+                      <th className="text-right px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {leads.map((lead) => {
+                      const daysRemaining = lead.expires_at
+                        ? Math.ceil((new Date(lead.expires_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+                        : null;
+
+                      return (
+                        <tr key={lead.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4">
+                            <p className="font-medium text-gray-900">{lead.full_name || 'Anonymous'}</p>
+                            <p className="text-sm text-gray-500">{lead.email}</p>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
+                              {lead.lead_source}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              lead.status === 'converted' ? 'bg-green-100 text-green-800' :
+                              lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-gray-100 text-gray-800'
+                            } capitalize`}>
+                              {lead.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {daysRemaining !== null && (
+                              <span className={`text-sm ${
+                                daysRemaining <= 7 ? 'text-red-600 font-semibold' :
+                                daysRemaining <= 14 ? 'text-amber-600' :
+                                'text-gray-600'
+                              }`}>
+                                {daysRemaining > 0 ? `${daysRemaining} days` : 'Expired'}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            {lead.gift_sent ? (
+                              <div className="flex items-center gap-2 text-green-600">
+                                <CheckCircle className="h-4 w-4" />
+                                <span className="text-sm">${lead.gift_amount}</span>
+                              </div>
+                            ) : (
+                              <span className="text-sm text-gray-400">None</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            {!lead.gift_sent && daysRemaining && daysRemaining > 0 && (
+                              <button
+                                onClick={() => {
+                                  alert('Gift sending feature coming soon!');
+                                }}
+                                className="inline-flex items-center gap-1 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                              >
+                                <Gift className="h-3 w-3" />
+                                Send Gift
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Rewards Tab */}
       {activeTab === 'rewards' && nonprofit && (
         <RewardsTab
