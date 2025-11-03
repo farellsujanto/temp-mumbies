@@ -37,6 +37,7 @@ export default function PartnerApplyPage() {
       ein: formData.ein,
       contact_name: formData.contactName,
       contact_email: formData.contactEmail,
+      contact_phone: formData.phone,
       website: formData.website,
       mission_statement: formData.missionStatement,
       location_city: formData.city,
@@ -49,6 +50,7 @@ export default function PartnerApplyPage() {
         twitter: formData.twitter,
       },
       status: 'pending',
+      partner_type: 'rescue',
     });
 
     if (error) {
