@@ -145,7 +145,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     userProfile,
     loading,
-    isPartner: !!(userProfile?.is_partner && userProfile?.partner_profile?.status === 'active'),
+    isPartner: !!(userProfile?.is_partner && (userProfile?.partner_profile?.status === 'active' || userProfile?.partner_profile?.status === 'approved')),
     isAdmin: !!userProfile?.is_admin,
     partnerProfile: userProfile?.partner_profile || null,
     signInWithEmail,
