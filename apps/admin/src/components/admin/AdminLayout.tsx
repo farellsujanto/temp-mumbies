@@ -60,6 +60,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       items: [
         { to: '/accounts', icon: UserIcon, label: 'All Accounts' },
         { to: '/partners', icon: Users, label: 'Partners' },
+        { to: '/partner-applications', icon: FileText, label: 'Applications' },
       ]
     },
     {

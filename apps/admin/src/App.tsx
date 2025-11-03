@@ -18,6 +18,7 @@ import AdminAdminUsersPage from './pages/admin/AdminAdminUsersPage';
 import AdminHeroSlidesPage from './pages/admin/content/AdminHeroSlidesPage';
 import AdminBannersPage from './pages/admin/content/AdminBannersPage';
 import AdminFeaturedRescuePage from './pages/admin/content/AdminFeaturedRescuePage';
+import AdminPartnerApplicationsPage from './pages/admin/AdminPartnerApplicationsPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/dashboard" element={<AdminDashboardPage />} />
                     <Route path="/partners" element={<AdminPartnersPage />} />
                     <Route path="/partners/:id" element={<AdminPartnerDetailPage />} />
+                    <Route path="/partner-applications" element={<AdminPartnerApplicationsPage />} />
                     <Route path="/balance-health" element={<AdminBalanceHealthPage />} />
                     <Route path="/accounts" element={<AdminAccountsPage />} />
                     <Route path="/payouts" element={<AdminPayoutsPage />} />
