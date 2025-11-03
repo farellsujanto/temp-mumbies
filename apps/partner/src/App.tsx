@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import PartnerApplyPage from './pages/PartnerApplyPage';
+import PartnerDiagnosticPage from './pages/PartnerDiagnosticPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
               <ProtectedRoute requireRole="partner">
                 <Routes>
                   <Route path="/" element={<PartnerDashboardPage />} />
+                  <Route path="/diagnostic" element={<PartnerDiagnosticPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </ProtectedRoute>
