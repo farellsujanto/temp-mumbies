@@ -24,6 +24,7 @@ import AdminPartnerApplicationsPage from './pages/admin/AdminPartnerApplications
 import AdminTestModePage from './pages/admin/AdminTestModePage';
 import AdminShopifyPage from './pages/admin/AdminShopifyPage';
 import AdminCreateGiveawayBundlePage from './pages/admin/AdminCreateGiveawayBundlePage';
+import AdminLandingPagesPage from './pages/admin/AdminLandingPagesPage';
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
                     <Route path="/giveaways/active" element={<AdminGiveawaysPage />} />
                     <Route path="/giveaways/create" element={<AdminCreateGiveawayBundlePage />} />
                     <Route path="/rewards" element={<AdminRewardsPage />} />
+                    <Route path="/landing-pages" element={<AdminLandingPagesPage />} />
                     <Route path="/content/hero" element={<AdminHeroSlidesPage />} />
                     <Route path="/content/banners" element={<AdminBannersPage />} />
                     <Route path="/content/featured" element={<AdminFeaturedRescuePage />} />

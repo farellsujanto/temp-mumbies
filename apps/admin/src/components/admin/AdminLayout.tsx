@@ -23,7 +23,8 @@ import {
   X,
   FlaskConical,
   Package,
-  ChevronRight
+  ChevronRight,
+  Globe
 } from 'lucide-react';
 import DebugPanel from './DebugPanel';
 
@@ -69,6 +70,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       'active': 'Active',
       'create': 'Create Bundle',
       'rewards': 'Rewards',
+      'landing-pages': 'Landing Pages',
       'content': 'Content',
       'hero': 'Hero Slides',
       'banners': 'Banners',
@@ -122,6 +124,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         { to: '/leads', icon: UserPlus, label: 'Leads' },
         { to: '/giveaways', icon: Gift, label: 'Giveaways' },
         { to: '/rewards', icon: Award, label: 'Rewards' },
+        { to: '/landing-pages', icon: Globe, label: 'Landing Pages' },
       ]
     },
     {
