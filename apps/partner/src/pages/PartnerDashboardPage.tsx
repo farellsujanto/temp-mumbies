@@ -40,6 +40,7 @@ import GiveawayEntriesTab from '../components/partner/GiveawayEntriesTab';
 import GiveawaySection from '../components/partner/GiveawaySection';
 import ProductManagementTab from '../components/partner/ProductManagementTab';
 import LeadsTab from '../components/partner/LeadsTab';
+import DebugPanel from '../components/DebugPanel';
 
 interface NonprofitData {
   id: string;
@@ -2362,6 +2363,9 @@ export default function PartnerDashboardPage() {
 
         </div>
       )}
+
+      {/* Debug Panel */}
+      <DebugPanel />
     </div>
   );
 }
