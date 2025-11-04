@@ -129,14 +129,30 @@ export default function LeadRegistrationPage() {
         return;
       }
 
-      await supabase
-        .from('referral_leads')
+      // Calculate 90-day expiration
+      const now = new Date();
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 90);
+
+      const { error: leadError } = await supabase
+        .from('partner_leads')
         .insert({
-          nonprofit_id: nonprofit.id,
+          partner_id: nonprofit.id,
           email: email.toLowerCase(),
-          source: 'lead_registration_page',
-          notes: `Selected offer: ${selectedOffer}`
+          registered_at: now.toISOString(),
+          expires_at: expiresAt.toISOString(),
+          status: 'active',
+          lead_source: 'landing_page',
+          landing_page_url: window.location.href,
+          full_name: null,
+          phone: null,
+          gift_sent: false,
+          notes: `Selected offer: ${selectedOffer || 'unknown'}`
         });
+
+      if (leadError) {
+        console.error('Error creating lead:', leadError);
+      }
 
       setRegistered(true);
     } catch (err) {
