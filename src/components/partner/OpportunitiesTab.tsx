@@ -54,9 +54,12 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
   const [previewLead, setPreviewLead] = useState<Lead | null>(null);
   const [previewAmount, setPreviewAmount] = useState(0);
   const [mumbiesCashBalance, setMumbiesCashBalance] = useState<number>(partnerBalance);
+  const [allLeads, setAllLeads] = useState<any[]>([]);
+  const [loadingAllLeads, setLoadingAllLeads] = useState(false);
 
   useEffect(() => {
     fetchData();
+    fetchAllLeads();
   }, [partnerId]);
 
   const fetchData = async () => {
@@ -69,6 +72,20 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
       fetchConversions()
     ]);
     setLoading(false);
+  };
+
+  const fetchAllLeads = async () => {
+    setLoadingAllLeads(true);
+    const { data, error } = await supabase
+      .from('partner_leads')
+      .select('id, email, registered_at, expires_at, status, total_spent, first_purchase_at')
+      .eq('partner_id', partnerId)
+      .order('registered_at', { ascending: false });
+
+    if (!error && data) {
+      setAllLeads(data);
+    }
+    setLoadingAllLeads(false);
   };
 
   const fetchMumbiesCashBalance = async () => {
@@ -615,6 +632,118 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
             )}
           </div>
         </div>
+      </div>
+
+      {/* All Leads Section */}
+      <div className="mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold">All Leads</h3>
+          <span className="text-sm text-gray-600">
+            Total: {allLeads.length} leads
+          </span>
+        </div>
+
+        {loadingAllLeads ? (
+          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>
+            <p className="text-gray-600 text-sm">Loading all leads...</p>
+          </div>
+        ) : allLeads.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-200">
+            <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600">No leads yet</p>
+            <p className="text-sm text-gray-500 mt-2">Your leads will appear here once people register</p>
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Registered
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Expires
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      First Purchase
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Total Spent
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {allLeads.map((lead) => {
+                    const isExpired = new Date(lead.expires_at) < new Date();
+                    const isConverted = lead.first_purchase_at !== null;
+                    const daysUntilExpiry = Math.ceil((new Date(lead.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
+                    return (
+                      <tr key={lead.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm text-gray-900">
+                          {lead.email}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            isConverted
+                              ? 'bg-green-100 text-green-800'
+                              : isExpired
+                              ? 'bg-gray-100 text-gray-800'
+                              : lead.status === 'active'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {isConverted ? 'Converted' : isExpired ? 'Expired' : lead.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {new Date(lead.registered_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {isConverted ? (
+                            <span className="text-gray-400">N/A</span>
+                          ) : (
+                            <span className={
+                              isExpired
+                                ? 'text-gray-500'
+                                : daysUntilExpiry <= 7
+                                ? 'text-red-600 font-semibold'
+                                : daysUntilExpiry <= 14
+                                ? 'text-orange-600'
+                                : 'text-gray-600'
+                            }>
+                              {isExpired
+                                ? new Date(lead.expires_at).toLocaleDateString()
+                                : `${daysUntilExpiry}d left`
+                              }
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {lead.first_purchase_at
+                            ? new Date(lead.first_purchase_at).toLocaleDateString()
+                            : <span className="text-gray-400">Not yet</span>
+                          }
+                        </td>
+                        <td className="px-4 py-3 text-sm font-semibold text-gray-900">
+                          ${lead.total_spent?.toFixed(2) || '0.00'}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
