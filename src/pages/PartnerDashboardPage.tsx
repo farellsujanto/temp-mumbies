@@ -1862,10 +1862,21 @@ export default function PartnerDashboardPage() {
           </div>
 
           {/* Lead Stats */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Expiring Leads</span>
+                <span className="text-gray-600 text-sm">Total Leads</span>
+                <Users className="h-5 w-5 text-blue-600" />
+              </div>
+              <p className="text-3xl font-bold text-gray-900">
+                {leads.length}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">All time</p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-600 text-sm">Expiring Soon</span>
                 <Clock className="h-5 w-5 text-amber-600" />
               </div>
               <p className="text-3xl font-bold text-gray-900">
@@ -1882,22 +1893,24 @@ export default function PartnerDashboardPage() {
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600 text-sm">Active Gifts</span>
-                <Gift className="h-5 w-5 text-blue-600" />
+                <span className="text-gray-600 text-sm">Gifts Sent</span>
+                <Gift className="h-5 w-5 text-green-600" />
               </div>
               <p className="text-3xl font-bold text-gray-900">
                 {leads.filter(l => l.gift_sent).length}
               </p>
-              <p className="text-xs text-gray-500 mt-1">Sent</p>
+              <p className="text-xs text-gray-500 mt-1">Active incentives</p>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-600 text-sm">Conversions</span>
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
               </div>
-              <p className="text-3xl font-bold text-gray-900">0</p>
-              <p className="text-xs text-gray-500 mt-1">All-time</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {leads.filter(l => l.status === 'converted').length}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Converted leads</p>
             </div>
           </div>
 
