@@ -34,16 +34,27 @@ export default function PartnerLeadsPage() {
 
       const { data, error: fetchError } = await supabase
         .from('nonprofits')
-        .select('id, organization_name')
+        .select('id, organization_name, status')
         .eq('auth_user_id', user.id)
         .maybeSingle();
 
+      console.log('[PartnerLeadsPage] Nonprofit data:', { data, userId: user.id });
+
       if (fetchError) throw fetchError;
 
-      if (!data || (data.status !== 'active' && data.status !== 'approved')) {
+      if (!data) {
+        console.error('[PartnerLeadsPage] No nonprofit found for user:', user.id);
         navigate('/login');
         return;
       }
+
+      if (data.status !== 'active' && data.status !== 'approved') {
+        console.error('[PartnerLeadsPage] Invalid nonprofit status:', data.status);
+        navigate('/login');
+        return;
+      }
+
+      console.log('[PartnerLeadsPage] Nonprofit loaded successfully:', data.id);
 
       setNonprofit(data);
     } catch (err: any) {
