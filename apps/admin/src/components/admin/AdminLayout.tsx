@@ -64,9 +64,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       'balance-health': 'Balance Health',
       'payouts': 'Payouts',
       'leads': 'Leads',
-      'giveaway-bundles': 'Giveaway Bundles',
-      'giveaways': 'Active Giveaways',
-      'create-bundle': 'Create Bundle',
+      'giveaways': 'Giveaways',
+      'bundles': 'Bundles',
+      'active': 'Active',
+      'create': 'Create Bundle',
       'rewards': 'Rewards',
       'content': 'Content',
       'hero': 'Hero Slides',
@@ -119,8 +120,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       section: 'Operations',
       items: [
         { to: '/leads', icon: UserPlus, label: 'Leads' },
-        { to: '/giveaway-bundles', icon: Package, label: 'Giveaway Bundles' },
-        { to: '/giveaways', icon: Gift, label: 'Active Giveaways' },
+        { to: '/giveaways', icon: Gift, label: 'Giveaways' },
         { to: '/rewards', icon: Award, label: 'Rewards' },
       ]
     },

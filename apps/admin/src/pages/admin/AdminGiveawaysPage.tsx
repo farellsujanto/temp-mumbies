@@ -176,7 +176,7 @@ export default function AdminGiveawaysPage() {
                 Active Giveaways
               </h1>
               <button
-                onClick={() => navigate('/giveaway-bundles')}
+                onClick={() => navigate('/giveaways/bundles')}
                 className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-lg hover:bg-green-200 inline-flex items-center gap-1"
               >
                 <Package className="h-3 w-3" />

@@ -209,20 +209,17 @@ export default function AdminGiveawayBundlesPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold text-gray-900">Giveaway Bundles</h1>
               <button
-                onClick={() => navigate('/giveaways')}
+                onClick={() => navigate('/giveaways/active')}
                 className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-lg hover:bg-blue-200 inline-flex items-center gap-1"
               >
                 <ExternalLink className="h-3 w-3" />
-                View Active Giveaways
+                View Active
               </button>
             </div>
             <p className="text-gray-600 mt-1">Manage giveaway bundle templates</p>
           </div>
           <button
-            onClick={() => {
-              setEditingBundle(null);
-              setShowModal(true);
-            }}
+            onClick={() => navigate('/giveaways/create')}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
           >
             <Plus className="h-5 w-5" />

@@ -10,6 +10,7 @@ import AdminBalanceHealthPage from './pages/admin/AdminBalanceHealthPage';
 import AdminAccountsPage from './pages/admin/AdminAccountsPage';
 import AdminPayoutsPage from './pages/admin/AdminPayoutsPage';
 import AdminLeadsPage from './pages/admin/AdminLeadsPage';
+import AdminGiveawaysMainPage from './pages/admin/AdminGiveawaysMainPage';
 import AdminGiveawaysPage from './pages/admin/AdminGiveawaysPage';
 import AdminGiveawayBundlesPage from './pages/admin/AdminGiveawayBundlesPage';
 import AdminRewardsPage from './pages/admin/AdminRewardsPage';
@@ -46,9 +47,10 @@ function App() {
                     <Route path="/accounts" element={<AdminAccountsPage />} />
                     <Route path="/payouts" element={<AdminPayoutsPage />} />
                     <Route path="/leads" element={<AdminLeadsPage />} />
-                    <Route path="/giveaway-bundles" element={<AdminGiveawayBundlesPage />} />
-                    <Route path="/giveaways" element={<AdminGiveawaysPage />} />
-                    <Route path="/giveaways/create-bundle" element={<AdminCreateGiveawayBundlePage />} />
+                    <Route path="/giveaways" element={<AdminGiveawaysMainPage />} />
+                    <Route path="/giveaways/bundles" element={<AdminGiveawayBundlesPage />} />
+                    <Route path="/giveaways/active" element={<AdminGiveawaysPage />} />
+                    <Route path="/giveaways/create" element={<AdminCreateGiveawayBundlePage />} />
                     <Route path="/rewards" element={<AdminRewardsPage />} />
                     <Route path="/content/hero" element={<AdminHeroSlidesPage />} />
                     <Route path="/content/banners" element={<AdminBannersPage />} />
