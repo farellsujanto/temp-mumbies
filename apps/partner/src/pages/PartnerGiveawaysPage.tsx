@@ -37,13 +37,13 @@ export default function PartnerGiveawaysPage() {
 
       const { data, error: fetchError } = await supabase
         .from('nonprofits')
-        .select('id, organization_name, total_sales')
+        .select('id, organization_name, total_sales, status')
         .eq('auth_user_id', user.id)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
 
-      if (!data || (data.status !== 'active' && data.status !== 'approved')) {
+      if (!data) {
         navigate('/login');
         return;
       }

@@ -214,11 +214,13 @@ export default function AdminRewardsPage() {
                             </div>
 
                             {reward.featured_image_url && (
-                              <img
-                                src={reward.featured_image_url}
-                                alt={reward.title}
-                                className="w-16 h-16 object-cover rounded-lg"
-                              />
+                              <div className="w-32 h-18 flex-shrink-0">
+                                <img
+                                  src={reward.featured_image_url}
+                                  alt={reward.title}
+                                  className="w-full h-full object-cover rounded-lg"
+                                />
+                              </div>
                             )}
 
                             <div className="flex-1">
@@ -293,11 +295,13 @@ export default function AdminRewardsPage() {
                 >
                   <div className="flex items-start gap-4">
                     {reward.featured_image_url && (
-                      <img
-                        src={reward.featured_image_url}
-                        alt={reward.title}
-                        className="w-24 h-24 object-cover rounded-lg"
-                      />
+                      <div className="w-48 flex-shrink-0" style={{ aspectRatio: '16/9' }}>
+                        <img
+                          src={reward.featured_image_url}
+                          alt={reward.title}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
                     )}
 
                     <div className="flex-1">
