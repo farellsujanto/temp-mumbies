@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Trophy, Plus, Edit2, Trash2, DollarSign, Gift, Users, TrendingUp, CheckCircle } from 'lucide-react';
+import { Trophy, Plus, Edit2, Trash2, DollarSign, Gift, Users, TrendingUp, CheckCircle, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { supabase } from '@mumbies/shared';
 import AdminLayout from '../../components/admin/AdminLayout';
 
@@ -47,6 +47,8 @@ export default function AdminRewardsPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingReward, setEditingReward] = useState<Reward | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [formData, setFormData] = useState<RewardFormData>({
     title: '',
     description: '',
@@ -152,6 +154,48 @@ export default function AdminRewardsPage() {
       .eq('id', id);
 
     fetchRewards();
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadError(null);
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please upload an image file');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setUploadError('Image must be less than 2MB');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `reward-${Date.now()}.${fileExt}`;
+      const filePath = `rewards/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('public-assets')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('public-assets')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, featured_image_url: data.publicUrl });
+    } catch (error: any) {
+      setUploadError(error.message || 'Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const getRewardTypeIcon = (type: string) => {
@@ -388,15 +432,70 @@ export default function AdminRewardsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image URL</label>
-                <input
-                  type="url"
-                  value={formData.featured_image_url}
-                  onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  placeholder="https://images.pexels.com/photos/..."
-                />
-                <p className="text-xs text-gray-500 mt-1">Use Pexels images for consistent quality (800px width recommended)</p>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+
+                {formData.featured_image_url ? (
+                  <div className="space-y-3">
+                    <div className="relative border-2 border-gray-300 rounded-lg overflow-hidden">
+                      <img
+                        src={formData.featured_image_url}
+                        alt="Featured"
+                        className="w-full h-48 object-cover"
+                      />
+                      <button
+                        onClick={() => setFormData({ ...formData, featured_image_url: '' })}
+                        className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
+                        type="button"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-600">{formData.featured_image_url}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                      <div className="text-center">
+                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="mt-4">
+                          <label className="cursor-pointer">
+                            <span className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium inline-flex items-center gap-2">
+                              <ImageIcon className="h-4 w-4" />
+                              {uploading ? 'Uploading...' : 'Upload Image'}
+                            </span>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              disabled={uploading}
+                            />
+                          </label>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                          Recommended: 800x600px • Max: 2MB • JPG, PNG, or WebP
+                        </p>
+                      </div>
+                    </div>
+                    {uploadError && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <p className="text-sm text-red-700">{uploadError}</p>
+                      </div>
+                    )}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-sm text-blue-800">
+                        <strong>Or</strong> paste a Pexels image URL below:
+                      </p>
+                      <input
+                        type="url"
+                        value={formData.featured_image_url}
+                        onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
+                        className="w-full mt-2 px-3 py-2 border border-blue-300 rounded-lg text-sm"
+                        placeholder="https://images.pexels.com/photos/..."
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
