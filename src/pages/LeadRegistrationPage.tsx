@@ -99,6 +99,7 @@ export default function LeadRegistrationPage() {
     setError('');
 
     try {
+      // Check if user already exists
       const { data: existingUser } = await supabase
         .from('users')
         .select('id, email')
@@ -106,7 +107,21 @@ export default function LeadRegistrationPage() {
         .maybeSingle();
 
       if (existingUser) {
-        setError('This email is already registered. Please sign in instead.');
+        setError('This email is already registered. Please try a different email address or sign in to your existing account.');
+        setSubmitting(false);
+        return;
+      }
+
+      // Check if lead already exists for this partner
+      const { data: existingLead } = await supabase
+        .from('partner_leads')
+        .select('id, email, status')
+        .eq('email', email.toLowerCase())
+        .eq('partner_id', nonprofit.id)
+        .maybeSingle();
+
+      if (existingLead) {
+        setError('This email has already claimed an offer from this organization. Please try a different email address.');
         setSubmitting(false);
         return;
       }
@@ -124,7 +139,12 @@ export default function LeadRegistrationPage() {
       });
 
       if (signUpError) {
-        setError('Unable to register. Please try again.');
+        console.error('Sign up error:', signUpError);
+        if (signUpError.message.includes('already registered') || signUpError.message.includes('already exists')) {
+          setError('This email is already registered. Please try a different email address or sign in to your existing account.');
+        } else {
+          setError('Unable to register. Please try again or use a different email address.');
+        }
         setSubmitting(false);
         return;
       }
