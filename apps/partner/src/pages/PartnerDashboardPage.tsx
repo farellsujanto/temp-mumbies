@@ -713,6 +713,24 @@ export default function PartnerDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* DEPLOYMENT PROOF - Shows when code was last deployed */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg p-4 mb-4 shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 rounded-full p-2">
+              <Clock className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-bold text-lg">LIVE DEPLOYMENT ACTIVE</p>
+              <p className="text-sm text-white/90">Last deployed: Nov 4, 2025 at 9:25 PM EST</p>
+            </div>
+          </div>
+          <div className="bg-green-500 text-white px-4 py-2 rounded-full font-bold text-sm animate-pulse">
+            BUILD #0042
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
         <div className="flex items-center justify-between">
