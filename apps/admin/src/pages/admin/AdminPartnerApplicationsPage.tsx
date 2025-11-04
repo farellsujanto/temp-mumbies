@@ -241,24 +241,6 @@ export default function AdminPartnerApplicationsPage() {
                             <Eye className="h-3 w-3" />
                             View
                           </button>
-                          {app.status === 'pending' && (
-                            <>
-                              <button
-                                onClick={() => handleApprove(app.id)}
-                                className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 flex items-center gap-1"
-                              >
-                                <CheckCircle className="h-3 w-3" />
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => handleDeny(app.id)}
-                                className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 flex items-center gap-1"
-                              >
-                                <XCircle className="h-3 w-3" />
-                                Deny
-                              </button>
-                            </>
-                          )}
                         </div>
                       </td>
                     </tr>

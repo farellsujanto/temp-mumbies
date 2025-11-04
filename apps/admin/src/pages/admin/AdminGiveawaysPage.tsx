@@ -12,7 +12,9 @@ import {
   Package,
   ExternalLink,
   Clock,
-  Plus
+  Plus,
+  X,
+  Eye
 } from 'lucide-react';
 
 interface Giveaway {
@@ -43,7 +45,8 @@ interface GiveawayWinner {
 export default function AdminGiveawaysPage() {
   const navigate = useNavigate();
   const [giveaways, setGiveaways] = useState<Giveaway[]>([]);
-  const [selectedGiveaway, setSelectedGiveaway] = useState<string | null>(null);
+  const [selectedGiveaway, setSelectedGiveaway] = useState<Giveaway | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [winner, setWinner] = useState<GiveawayWinner | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -290,7 +293,17 @@ export default function AdminGiveawaysPage() {
                   const canSelectWinner = hasEnded && !giveaway.winner_selected_at && giveaway.total_entries > 0;
 
                   return (
-                    <tr key={giveaway.id} className="hover:bg-gray-50">
+                    <tr
+                      key={giveaway.id}
+                      className="hover:bg-gray-50 cursor-pointer"
+                      onClick={() => {
+                        setSelectedGiveaway(giveaway);
+                        setShowDetailModal(true);
+                        if (giveaway.winner_selected_at) {
+                          loadWinner(giveaway.id);
+                        }
+                      }}
+                    >
                       <td className="px-6 py-4">
                         <div>
                           <p className="font-medium text-gray-900">{giveaway.title}</p>
@@ -332,27 +345,20 @@ export default function AdminGiveawaysPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {canSelectWinner && (
-                            <button
-                              onClick={() => selectWinner(giveaway.id)}
-                              disabled={processing}
-                              className="px-3 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700 disabled:opacity-50 inline-flex items-center gap-1"
-                            >
-                              <Trophy className="h-3 w-3" />
-                              Select Winner
-                            </button>
-                          )}
-                          {giveaway.winner_selected_at && (
-                            <button
-                              onClick={() => {
-                                setSelectedGiveaway(giveaway.id);
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedGiveaway(giveaway);
+                              setShowDetailModal(true);
+                              if (giveaway.winner_selected_at) {
                                 loadWinner(giveaway.id);
-                              }}
-                              className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded hover:bg-blue-200"
-                            >
-                              View Winner
-                            </button>
-                          )}
+                              }
+                            }}
+                            className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 inline-flex items-center gap-1"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -363,78 +369,166 @@ export default function AdminGiveawaysPage() {
           </div>
         </div>
 
-        {/* Winner Modal */}
-        {selectedGiveaway && winner && (
+        {/* Giveaway Detail Modal */}
+        {showDetailModal && selectedGiveaway && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-lg w-full p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-yellow-500" />
-                  Giveaway Winner
+                  <Gift className="h-6 w-6 text-purple-600" />
+                  Giveaway Details
                 </h3>
                 <button
                   onClick={() => {
+                    setShowDetailModal(false);
                     setSelectedGiveaway(null);
                     setWinner(null);
                   }}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  ✕
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="p-6 space-y-6">
+                {/* Basic Info */}
                 <div>
-                  <label className="text-sm text-gray-600">Winner Name</label>
-                  <p className="text-lg font-medium text-gray-900">{winner.user_name}</p>
+                  <label className="text-sm font-medium text-gray-600">Title</label>
+                  <p className="text-lg font-semibold text-gray-900 mt-1">{selectedGiveaway.title}</p>
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-600">Email</label>
-                  <p className="text-lg font-medium text-gray-900">{winner.user_email}</p>
+                  <label className="text-sm font-medium text-gray-600">Description</label>
+                  <p className="text-gray-900 mt-1">{selectedGiveaway.description}</p>
                 </div>
 
-                <div>
-                  <label className="text-sm text-gray-600">Selected</label>
-                  <p className="text-sm text-gray-900">
-                    {new Date(winner.selected_at).toLocaleString()}
-                  </p>
-                </div>
-
-                {winner.shopify_order_id ? (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Package className="h-5 w-5 text-green-600" />
-                      <p className="font-medium text-green-900">Shopify Order Created</p>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Users className="h-4 w-4 text-gray-600" />
+                      <span className="text-sm text-gray-600">Total Entries</span>
                     </div>
-                    <p className="text-sm text-green-800 mb-2">
-                      Order #{winner.shopify_order_number}
-                    </p>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Status: <span className="font-medium">{winner.fulfillment_status}</span>
-                    </p>
-                    <a
-                      href={`https://${import.meta.env.VITE_SHOPIFY_STORE}/admin/orders/${winner.shopify_order_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-green-600 hover:text-green-700 text-sm font-medium"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      View in Shopify
-                    </a>
+                    <p className="text-2xl font-bold text-gray-900">{selectedGiveaway.total_entries || 0}</p>
+                  </div>
+
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Calendar className="h-4 w-4 text-gray-600" />
+                      <span className="text-sm text-gray-600">Status</span>
+                    </div>
+                    <span className={`inline-flex px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedGiveaway.status)}`}>
+                      {selectedGiveaway.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Partner Info */}
+                <div>
+                  <label className="text-sm font-medium text-gray-600">Partner Organization</label>
+                  <p className="text-lg font-medium text-gray-900 mt-1">{selectedGiveaway.partner.organization_name}</p>
+                </div>
+
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">Starts</label>
+                    <p className="text-gray-900 mt-1">{new Date(selectedGiveaway.starts_at).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">Ends</label>
+                    <p className="text-gray-900 mt-1">{new Date(selectedGiveaway.ends_at).toLocaleDateString()}</p>
+                  </div>
+                </div>
+
+                {/* Winner Section */}
+                {selectedGiveaway.winner_selected_at && winner ? (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Trophy className="h-5 w-5 text-yellow-600" />
+                      <p className="font-semibold text-yellow-900">Winner Selected</p>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-sm text-yellow-700">Winner Name</label>
+                        <p className="font-medium text-yellow-900">{winner.user_name}</p>
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-yellow-700">Email</label>
+                        <p className="font-medium text-yellow-900">{winner.user_email}</p>
+                      </div>
+
+                      <div>
+                        <label className="text-sm text-yellow-700">Selected</label>
+                        <p className="text-sm text-yellow-900">
+                          {new Date(winner.selected_at).toLocaleString()}
+                        </p>
+                      </div>
+
+                      {winner.shopify_order_id && (
+                        <div className="pt-3 border-t border-yellow-300">
+                          <p className="text-sm text-yellow-700 mb-2">
+                            Shopify Order: <span className="font-medium">#{winner.shopify_order_number}</span>
+                          </p>
+                          <a
+                            href={`https://${import.meta.env.VITE_SHOPIFY_STORE}/admin/orders/${winner.shopify_order_id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-yellow-700 hover:text-yellow-800 text-sm font-medium"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            View in Shopify
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  <div className="pt-4 border-t">
-                    <button
-                      onClick={() => createShopifyOrder(winner.id)}
-                      disabled={processing}
-                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 inline-flex items-center justify-center gap-2"
-                    >
-                      <Package className="h-4 w-4" />
-                      {processing ? 'Creating Order...' : 'Create Shopify Order'}
-                    </button>
+                  <div>
+                    {new Date(selectedGiveaway.ends_at) < new Date() && selectedGiveaway.total_entries > 0 && (
+                      <button
+                        onClick={() => {
+                          selectWinner(selectedGiveaway.id);
+                        }}
+                        disabled={processing}
+                        className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                      >
+                        <Trophy className="h-5 w-5" />
+                        {processing ? 'Selecting Winner...' : 'Select Random Winner'}
+                      </button>
+                    )}
                   </div>
                 )}
+
+                {/* Change Status */}
+                <div className="pt-4 border-t border-gray-200">
+                  <label className="text-sm font-medium text-gray-600 block mb-2">Change Status</label>
+                  <select
+                    value={selectedGiveaway.status}
+                    onChange={async (e) => {
+                      const newStatus = e.target.value;
+                      const { error } = await supabase
+                        .from('partner_giveaways')
+                        .update({ status: newStatus })
+                        .eq('id', selectedGiveaway.id);
+
+                      if (!error) {
+                        setMessage({ type: 'success', text: `Status updated to ${newStatus}` });
+                        loadGiveaways();
+                        setSelectedGiveaway({ ...selectedGiveaway, status: newStatus });
+                      } else {
+                        setMessage({ type: 'error', text: `Failed to update status: ${error.message}` });
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="draft">Draft</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
