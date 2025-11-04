@@ -126,6 +126,10 @@ export default function LeadRegistrationPage() {
         return;
       }
 
+      // Store current session BEFORE creating new user
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      console.log('Stored current session before signup:', currentSession?.user?.email);
+
       const { error: signUpError } = await supabase.auth.signUp({
         email: email.toLowerCase(),
         password: Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12),
@@ -147,6 +151,16 @@ export default function LeadRegistrationPage() {
         }
         setSubmitting(false);
         return;
+      }
+
+      // CRITICAL: Restore original session immediately after signup
+      // signUp() automatically logs in the new user, but we want to keep the partner logged in
+      if (currentSession) {
+        console.log('Restoring original session:', currentSession.user.email);
+        await supabase.auth.setSession({
+          access_token: currentSession.access_token,
+          refresh_token: currentSession.refresh_token
+        });
       }
 
       // Calculate 90-day expiration
