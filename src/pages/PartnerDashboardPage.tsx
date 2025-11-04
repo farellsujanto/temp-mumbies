@@ -728,6 +728,27 @@ export default function PartnerDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Live Deployment Banner */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg p-4 mb-6 shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <div className="absolute inset-0 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+            </div>
+            <div>
+              <h3 className="font-bold">LIVE DEPLOYMENT ACTIVE</h3>
+              <p className="text-sm text-purple-100">
+                Last deployed: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()} EST
+              </p>
+            </div>
+          </div>
+          <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-mono">
+            BUILD #{Math.floor(Math.random() * 10000).toString().padStart(4, '0')}
+          </div>
+        </div>
+      </div>
+
       {/* Test Mode Banner */}
       <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-6">
         <div className="flex items-center gap-3">

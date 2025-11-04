@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { DebugProvider } from './contexts/DebugContext';
 import Layout from './components/Layout';
 import PasswordProtection from './components/PasswordProtection';
 import ProtectedRoute from './components/ProtectedRoute';
+import DebugPanel from './components/DebugPanel';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import LoginPage from './pages/LoginPage';
@@ -34,8 +36,9 @@ function App() {
     <BrowserRouter>
       <PasswordProtection>
         <AuthProvider>
-          <CartProvider>
-            <Routes>
+          <DebugProvider>
+            <CartProvider>
+              <Routes>
               {/* Admin Routes - No shopping layout */}
               <Route
                 path="/admin/*"
@@ -88,8 +91,10 @@ function App() {
                   </Layout>
                 }
               />
-            </Routes>
-          </CartProvider>
+              </Routes>
+              <DebugPanel />
+            </CartProvider>
+          </DebugProvider>
         </AuthProvider>
       </PasswordProtection>
     </BrowserRouter>
