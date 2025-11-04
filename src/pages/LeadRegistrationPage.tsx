@@ -172,8 +172,12 @@ export default function LeadRegistrationPage() {
 
       if (leadError) {
         console.error('Error creating lead:', leadError);
+        setError('Your account was created but we had trouble recording your offer selection. Please contact support.');
+        setSubmitting(false);
+        return;
       }
 
+      console.log('Lead created successfully for email:', email.toLowerCase());
       setRegistered(true);
     } catch (err) {
       setError('An error occurred. Please try again.');
