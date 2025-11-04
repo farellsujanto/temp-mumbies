@@ -206,9 +206,27 @@ export default function OpportunitiesTab({ partnerId, partnerBalance, organizati
         </div>
       </div>
 
-      {/* Search and Leads Table */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-        <div className="p-4 border-b border-gray-200">
+      {/* ALL LEADS - Complete Stream Section */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-green-700 to-green-600 px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+                <UserPlus className="h-6 w-6" />
+                All Leads
+              </h3>
+              <p className="text-sm text-green-100 mt-1">Complete stream of all leads from all sources</p>
+            </div>
+            <div className="text-right">
+              <p className="text-4xl font-bold text-white">{leads.length}</p>
+              <p className="text-xs text-green-100 uppercase tracking-wide">Total Leads</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="p-4 bg-gray-50 border-b border-gray-200">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             <input
