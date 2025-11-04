@@ -12,6 +12,7 @@ interface GiveawayBundle {
   tier: string;
   sales_threshold: number;
   image_url: string;
+  featured_image_url?: string;
 }
 
 interface PartnerGiveaway {
@@ -324,9 +325,12 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             <div className="border-4 border-amber-400 rounded-lg overflow-hidden bg-amber-50">
               <div className="h-40">
                 <img
-                  src={activeGiveaway.bundle.image_url}
+                  src={activeGiveaway.bundle.featured_image_url || activeGiveaway.bundle.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800'}
                   alt={activeGiveaway.title}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=800';
+                  }}
                 />
               </div>
               <div className="p-4">
