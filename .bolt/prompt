@@ -1,5 +1,206 @@
-For all designs I ask you to make, have them be beautiful, not cookie cutter. Make webpages that are fully featured and worthy for production.
+# Mumbies Platform - Development Standards
 
-By default, this template supports JSX syntax with Tailwind CSS classes, React hooks, and Lucide React for icons. Do not install other packages for UI themes, icons, etc unless absolutely necessary or I request them.
+## Project Overview
+Mumbies is building the Amazon of natural pet products with a unique partner ecosystem. We're a consumer brand evolving into a retail platform. Quality and professionalism matter - this isn't a prototype, it's production code.
 
-Use icons from lucide-react for logos.
+## Design Philosophy
+- **Beautiful, not generic**: Every design should look premium and purposeful, not like a template
+- **Production-ready**: All code must be deployment-ready, well-tested, and documented
+- **Brand-aligned**: Natural, trustworthy aesthetic (think Thrive Market + Chewy)
+- **User-first**: Prioritize usability and clarity over complexity
+
+## Technical Stack (DO NOT DEVIATE)
+- **Framework**: React 18 + TypeScript + Vite
+- **Styling**: Tailwind CSS (utility-first, no custom CSS unless necessary)
+- **Icons**: Lucide React ONLY (no other icon libraries)
+- **UI Components**: Shadcn/ui (copy-paste components, not npm packages)
+- **Database**: Supabase (PostgreSQL + Auth + RLS)
+- **State**: React Context API (no Redux unless explicitly requested)
+- **Routing**: React Router v6
+- **Deployment**: Vercel (auto-deploy from GitHub)
+
+## Code Quality Standards
+
+### DO:
+- ✅ Write TypeScript with proper types (no `any` types)
+- ✅ Use descriptive variable/function names (`fetchPartnerLeads` not `getData`)
+- ✅ Add console.logs for debugging during development
+- ✅ Include error handling for all async operations
+- ✅ Write comments explaining WHY, not WHAT
+- ✅ Use semantic HTML (proper heading hierarchy, ARIA labels)
+- ✅ Make responsive designs (mobile-first approach)
+- ✅ Test queries and show me the results before claiming success
+- ✅ Verify changes in the browser/deployed site before saying "done"
+
+### DON'T:
+- ❌ Install unnecessary packages without asking first
+- ❌ Use inline styles (use Tailwind classes)
+- ❌ Create files in wrong directories
+- ❌ Make database changes without migration files
+- ❌ Claim something is "fixed" without visual proof
+- ❌ Use generic placeholder content (make it realistic)
+- ❌ Ignore accessibility (proper labels, keyboard navigation, screen readers)
+
+## Design Standards
+
+### Visual Design:
+- **Colors**: Green primary (#16a34a), natural earth tones, high contrast
+- **Typography**: Clear hierarchy, readable sizes (min 16px body text)
+- **Spacing**: Generous whitespace, consistent padding/margins
+- **Components**: Rounded corners (rounded-lg), subtle shadows
+- **Forms**: Clear labels, helpful error messages, loading states
+- **Empty States**: Encouraging, not just "No data" - guide users on what to do next
+
+### UX Principles:
+- Show loading states for all async operations
+- Provide feedback for user actions (toasts, success messages)
+- Use progressive disclosure (don't overwhelm with all features at once)
+- Include helpful tooltips and contextual help
+- Make CTAs obvious and actionable
+- Handle errors gracefully with recovery options
+
+## File Structure Rules
+```
+apps/
+  admin/               ← Admin portal code
+  partner/             ← Partner portal code
+supabase/
+  migrations/          ← ALL database changes go here
+src/
+  components/          ← Reusable UI components
+    partner/           ← Partner-specific components
+  contexts/            ← React Context providers
+  pages/               ← Route pages
+  lib/                 ← Utilities, config, helpers
+```
+
+**CRITICAL**: 
+- Partner portal changes go in `apps/partner/`
+- Admin portal changes go in `apps/admin/`
+- Never create duplicate files in wrong locations
+- Use existing components before creating new ones
+
+## Database & API Rules
+
+### Supabase Queries:
+```typescript
+// GOOD: Includes error handling, logging, proper typing
+const { data, error } = await supabase
+  .from('partner_leads')
+  .select('id, email, status, expires_at')
+  .eq('partner_id', partnerId)
+  .order('expires_at', { ascending: true });
+
+if (error) {
+  console.error('Failed to fetch leads:', error);
+  // Handle error appropriately
+  return;
+}
+
+console.log('Fetched leads:', data);
+```
+
+// BAD: No error handling, missing fields, no logging
+```typescript
+const { data } = await supabase
+  .from('partner_leads')
+  .select('*')
+  .eq('partner_id', partnerId);
+```
+
+### Always Include:
+- ✅ Proper SELECT fields (never use `*` without reason)
+- ✅ Error handling with user-friendly messages
+- ✅ Loading states
+- ✅ Console logs for debugging (remove before production)
+- ✅ Type definitions matching database schema
+
+## Testing & Verification
+
+### Before Saying "Done":
+1. **Show me the console logs** - What data was returned?
+2. **Show me the browser** - What does the user see?
+3. **Show me the git diff** - What actually changed?
+4. **Verify the deployment** - Is it live on the URL?
+
+### For Database Changes:
+1. **Run the query** in Supabase SQL Editor first
+2. **Show me the results** - Does data exist?
+3. **Check RLS policies** - Can the user access it?
+4. **Test the frontend** - Does it display correctly?
+
+## Common Mistakes to Avoid
+
+1. **Working in isolated sandbox**: If changes don't appear on live site, you're not connected to the actual repo
+2. **Forgetting `status` field**: Always include `status` in nonprofit queries due to RLS policies
+3. **Not checking deployed site**: Local/sandbox fixes don't automatically deploy
+4. **Using wrong column names**: Check database schema before writing queries
+5. **Claiming success prematurely**: Verify in browser before confirming fix
+
+## Communication Standards
+
+### When Reporting Progress:
+- ✅ "I changed line 105 in PartnerDashboardPage.tsx: added 'status' to SELECT query. Here's the diff: [show actual code]"
+- ❌ "I fixed the issue" (without proof)
+
+### When Encountering Issues:
+- ✅ "The query returned 0 results. Here's what I tried: [query]. Here's the error: [actual error message]"
+- ❌ "It's not working" (without details)
+
+### When Making Suggestions:
+- ✅ "Option A: Quick fix (add one field). Option B: Refactor (better long-term but takes 2 hours)"
+- ❌ "You should rebuild everything" (without context)
+
+## Current Project Status
+
+**What's Built:**
+- ✅ Partner Portal (7 tabs: Overview, Rewards, Giveaways, Leads, Referrals, Products, Settings)
+- ✅ Admin Portal (Partner applications, leads management)
+- ✅ Database (26 tables, full schema)
+- ✅ Authentication (Supabase Auth)
+- 🚧 Shopify integration (webhooks connected, product sync in progress)
+
+**Known Issues:**
+- Partner portal deployed at: partners.staging.mumbies.com
+- Admin portal deployed at: admin.mumbies.com
+- Database: Supabase production (zsrkexpnfvivrtgzmgdw.supabase.co)
+
+**Active Demo Requirements:**
+- Partner login working ✅
+- Leads tab showing 26 leads (CRITICAL FOR DEMO)
+- Gift incentive sending functionality
+- Commission tracking visible
+
+## Emergency Protocols
+
+**If Something Breaks Before Demo:**
+1. Don't refactor - do minimum viable fix
+2. Show proof it works on live URL
+3. Test with actual partner login credentials
+4. Verify data appears in UI, not just database
+
+**If Stuck:**
+1. Show me the exact error message
+2. Show me the query you ran
+3. Show me what the database returned
+4. Show me what the user sees
+5. Then we debug together
+
+## Context Preservation
+
+**Important URLs:**
+- Production site: mumbies.com (Shopify)
+- Partner portal: partners.staging.mumbies.com
+- Admin portal: admin.mumbies.com
+- Supabase: https://zsrkexpnfvivrtgzmgdw.supabase.co
+
+**Key People:**
+- Wisconsin Humane Society: Main demo partner
+- Database has: 26 leads, 65 total partner leads
+- Demo timing: Time-sensitive, need working features
+
+**Business Model:**
+- Partners earn 5% commission on attributed sales
+- 90-day attribution window
+- Gift incentives: Partners send $5-$15 to convert leads
+- Commissions stored as "Mumbies Cash" balance
