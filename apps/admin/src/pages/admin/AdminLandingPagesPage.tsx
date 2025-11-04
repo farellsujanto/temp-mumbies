@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileText, Plus, Edit2, Trash2, Copy, Eye } from 'lucide-react';
+import { FileText, Plus, Edit2, Trash2, Copy, Eye, Package, Search } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { supabase } from '@mumbies/shared';
 
@@ -7,6 +7,7 @@ interface Offer {
   id: string;
   title: string;
   description: string;
+  product_id?: string | null;
   image_url: string;
   badge: string | null;
   badge_color: 'red' | 'amber' | 'green' | 'blue';
@@ -15,6 +16,14 @@ interface Offer {
   discount_type: 'free' | 'percentage' | 'fixed';
   discount_value: string;
   button_color: 'red' | 'amber' | 'green' | 'blue';
+}
+
+interface Product {
+  id: string;
+  name: string;
+  image_url: string | null;
+  price: number;
+  brand_id: string | null;
 }
 
 interface LandingPageTemplate {
@@ -276,6 +285,8 @@ function TemplateEditor({ template, onClose, onSave }: TemplateEditorProps) {
   const [formData, setFormData] = useState(template);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'basic' | 'header' | 'offers' | 'form' | 'success'>('basic');
+  const [showProductSelector, setShowProductSelector] = useState(false);
+  const [selectingForOfferIndex, setSelectingForOfferIndex] = useState<number | null>(null);
 
   const handleSave = async () => {
     setSaving(true);
@@ -339,6 +350,18 @@ function TemplateEditor({ template, onClose, onSave }: TemplateEditorProps) {
       ...formData,
       offers: formData.offers.filter((_, i) => i !== index)
     });
+  };
+
+  const handleSelectProduct = (product: Product) => {
+    if (selectingForOfferIndex !== null) {
+      updateOffer(selectingForOfferIndex, {
+        product_id: product.id,
+        image_url: product.image_url || 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg',
+        title: product.name
+      });
+      setShowProductSelector(false);
+      setSelectingForOfferIndex(null);
+    }
   };
 
   return (
@@ -571,6 +594,23 @@ function TemplateEditor({ template, onClose, onSave }: TemplateEditorProps) {
                     </div>
 
                     <div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectingForOfferIndex(index);
+                          setShowProductSelector(true);
+                        }}
+                        className="w-full bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Package className="h-4 w-4" />
+                        Select from Products
+                      </button>
+                      {offer.product_id && (
+                        <p className="text-xs text-gray-500 mt-1">Product ID: {offer.product_id.substring(0, 8)}...</p>
+                      )}
+                    </div>
+
+                    <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Title</label>
                       <input
                         type="text"
@@ -737,6 +777,129 @@ function TemplateEditor({ template, onClose, onSave }: TemplateEditorProps) {
             className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Template'}
+          </button>
+        </div>
+      </div>
+
+      {showProductSelector && (
+        <ProductSelectorModal
+          onSelect={handleSelectProduct}
+          onClose={() => {
+            setShowProductSelector(false);
+            setSelectingForOfferIndex(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+interface ProductSelectorModalProps {
+  onSelect: (product: Product) => void;
+  onClose: () => void;
+}
+
+function ProductSelectorModal({ onSelect, onClose }: ProductSelectorModalProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, image_url, price, brand_id')
+      .order('name', { ascending: true })
+      .limit(100);
+
+    if (!error && data) {
+      setProducts(data);
+    }
+    setLoading(false);
+  };
+
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+          <h3 className="text-xl font-bold text-gray-900">Select Product</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-4 border-b border-gray-200">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+              <p className="text-gray-600 mt-4">Loading products...</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <p>No products found</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredProducts.map((product) => (
+                <button
+                  key={product.id}
+                  onClick={() => onSelect(product)}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-500 hover:shadow-md transition-all text-left"
+                >
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3">
+                    {product.image_url ? (
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Package className="h-8 w-8 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <h4 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">
+                    {product.name}
+                  </h4>
+                  <p className="text-sm text-gray-600">${product.price.toFixed(2)}</p>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-gray-50 border-t border-gray-200 p-4">
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            Cancel
           </button>
         </div>
       </div>

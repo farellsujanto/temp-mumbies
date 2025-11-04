@@ -27,6 +27,7 @@ interface TemplateOffer {
   id: string;
   title: string;
   description: string;
+  product_id?: string | null;
   image_url: string;
   badge: string | null;
   badge_color: 'red' | 'amber' | 'green' | 'blue';
