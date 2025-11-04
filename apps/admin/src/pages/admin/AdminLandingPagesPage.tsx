@@ -1,26 +1,52 @@
 import { useState, useEffect } from 'react';
-import { FileText, Plus, Edit2, Eye, Trash2, Copy } from 'lucide-react';
+import { FileText, Plus, Edit2, Trash2, Copy, Eye } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { supabase } from '@mumbies/shared';
+
+interface Offer {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  badge: string | null;
+  badge_color: 'red' | 'amber' | 'green' | 'blue';
+  price_display: string;
+  price_subtext: string;
+  discount_type: 'free' | 'percentage' | 'fixed';
+  discount_value: string;
+  button_color: 'red' | 'amber' | 'green' | 'blue';
+}
 
 interface LandingPageTemplate {
   id: string;
   name: string;
   slug: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  hero_image_url: string;
-  cta_text: string;
-  offers: Array<{
-    id: string;
-    title: string;
-    description: string;
-    image_url: string;
-  }>;
+
+  // Header Section
+  header_gradient_from: string;
+  header_gradient_to: string;
+  show_partner_logo: boolean;
+  main_headline: string;
+  sub_headline: string;
+
+  // Offer Section
+  offer_section_title: string;
+  offer_section_description: string;
+  offers: Offer[];
+
+  // Email Form
+  email_placeholder: string;
+  submit_button_text: string;
+
+  // Success Page
+  success_title: string;
+  success_message: string;
+
+  // Colors
   background_color: string;
   text_color: string;
   button_color: string;
+
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -54,31 +80,32 @@ export default function AdminLandingPagesPage() {
       id: '',
       name: 'New Template',
       slug: '',
-      title: 'Join the Pack and Save!',
-      subtitle: 'Special offer for dog lovers',
-      description: 'Get an exclusive welcome offer when you join our community',
-      hero_image_url: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg',
-      cta_text: 'Claim My Offer',
+      header_gradient_from: '#16a34a',
+      header_gradient_to: '#15803d',
+      show_partner_logo: true,
+      main_headline: 'Shop for Your Pet Essentials at Mumbies',
+      sub_headline: '& Automatically Donate for Life to',
+      offer_section_title: 'Pick an Offer Below',
+      offer_section_description: 'Choose your deal and start shopping premium natural pet products',
       offers: [
         {
-          id: 'free-chew',
-          title: 'Free Chew Sample',
-          description: 'Try our best-selling chew',
-          image_url: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg'
-        },
-        {
-          id: 'starter-pack',
-          title: 'Starter Pack - 50% Off',
-          description: 'Perfect for first-time customers',
-          image_url: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg'
-        },
-        {
-          id: 'bundle',
-          title: 'Ultimate Bundle',
-          description: 'Best value for multi-dog homes',
-          image_url: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg'
+          id: 'offer-1',
+          title: 'Special Offer',
+          description: 'Limited time deal',
+          image_url: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg',
+          badge: null,
+          badge_color: 'green',
+          price_display: '$0.00',
+          price_subtext: '+ shipping',
+          discount_type: 'free',
+          discount_value: '100',
+          button_color: 'green'
         }
       ],
+      email_placeholder: 'Enter your email address',
+      submit_button_text: 'Claim My Offer',
+      success_title: 'Success! 🎉',
+      success_message: 'Your offer has been claimed! Check your email to complete your registration.',
       background_color: '#ffffff',
       text_color: '#1f2937',
       button_color: '#16a34a',
@@ -172,19 +199,24 @@ export default function AdminLandingPagesPage() {
                 className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div
-                  className="h-40 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${template.hero_image_url})` }}
+                  className="h-40 flex items-center justify-center text-white font-bold text-xl"
+                  style={{
+                    background: `linear-gradient(to right, ${template.header_gradient_from}, ${template.header_gradient_to})`
+                  }}
                 >
-                  {template.is_active && (
-                    <div className="bg-green-600 text-white px-3 py-1 text-sm font-medium inline-block m-3 rounded">
-                      Active
-                    </div>
-                  )}
+                  {template.main_headline}
                 </div>
                 <div className="p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{template.name}</h3>
-                  <p className="text-sm text-gray-600 mb-1">{template.title}</p>
-                  <p className="text-xs text-gray-500 mb-4">{template.subtitle}</p>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-bold text-gray-900">{template.name}</h3>
+                    {template.is_active && (
+                      <span className="bg-green-600 text-white px-3 py-1 text-sm font-medium rounded">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600 mb-1">Slug: /{template.slug}</p>
+                  <p className="text-xs text-gray-500 mb-4">{template.offers.length} offers configured</p>
 
                   <div className="flex items-center gap-2">
                     <button
@@ -243,6 +275,7 @@ interface TemplateEditorProps {
 function TemplateEditor({ template, onClose, onSave }: TemplateEditorProps) {
   const [formData, setFormData] = useState(template);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'basic' | 'header' | 'offers' | 'form' | 'success'>('basic');
 
   const handleSave = async () => {
     setSaving(true);
@@ -268,163 +301,429 @@ function TemplateEditor({ template, onClose, onSave }: TemplateEditorProps) {
 
     if (!error) {
       onSave();
+    } else {
+      alert('Error saving template: ' + error.message);
     }
+  };
+
+  const updateOffer = (index: number, updates: Partial<Offer>) => {
+    const newOffers = [...formData.offers];
+    newOffers[index] = { ...newOffers[index], ...updates };
+    setFormData({ ...formData, offers: newOffers });
+  };
+
+  const addOffer = () => {
+    setFormData({
+      ...formData,
+      offers: [
+        ...formData.offers,
+        {
+          id: `offer-${formData.offers.length + 1}`,
+          title: 'New Offer',
+          description: 'Description',
+          image_url: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg',
+          badge: null,
+          badge_color: 'green',
+          price_display: '$0.00',
+          price_subtext: '',
+          discount_type: 'free',
+          discount_value: '0',
+          button_color: 'green'
+        }
+      ]
+    });
+  };
+
+  const removeOffer = (index: number) => {
+    setFormData({
+      ...formData,
+      offers: formData.offers.filter((_, i) => i !== index)
+    });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+      <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="bg-white border-b border-gray-200 p-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">
             {formData.id ? 'Edit Template' : 'Create Template'}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 text-2xl"
           >
             ✕
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Template Name
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL Slug
-              </label>
-              <input
-                type="text"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                placeholder="adoption-offer"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Page Title
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Subtitle
-            </label>
-            <input
-              type="text"
-              value={formData.subtitle}
-              onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
-              rows={3}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Hero Image URL
-            </label>
-            <input
-              type="text"
-              value={formData.hero_image_url}
-              onChange={(e) => setFormData({ ...formData, hero_image_url: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              CTA Button Text
-            </label>
-            <input
-              type="text"
-              value={formData.cta_text}
-              onChange={(e) => setFormData({ ...formData, cta_text: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2"
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Background Color
-              </label>
-              <input
-                type="color"
-                value={formData.background_color}
-                onChange={(e) => setFormData({ ...formData, background_color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Text Color
-              </label>
-              <input
-                type="color"
-                value={formData.text_color}
-                onChange={(e) => setFormData({ ...formData, text_color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Button Color
-              </label>
-              <input
-                type="color"
-                value={formData.button_color}
-                onChange={(e) => setFormData({ ...formData, button_color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                className="w-4 h-4 text-green-600 rounded"
-              />
-              <span className="text-sm font-medium text-gray-700">
-                Set as active template
-              </span>
-            </label>
-          </div>
+        <div className="border-b border-gray-200 px-6">
+          <nav className="flex gap-4">
+            {[
+              { id: 'basic', label: 'Basic Info' },
+              { id: 'header', label: 'Header Design' },
+              { id: 'offers', label: 'Offer Cards' },
+              { id: 'form', label: 'Email Form' },
+              { id: 'success', label: 'Success Page' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`px-4 py-3 border-b-2 font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-green-600 text-green-600'
+                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
         </div>
 
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-6 flex items-center justify-end gap-4">
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeTab === 'basic' && (
+            <div className="space-y-6 max-w-2xl">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Template Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  URL Slug
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  placeholder="adoption-offer"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Partners will use: /lead-registration?template={formData.slug}&ref=partner-slug
+                </p>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_active}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    className="w-4 h-4 text-green-600 rounded"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Set as active template
+                  </span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'header' && (
+            <div className="space-y-6 max-w-2xl">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Header Gradient Start
+                  </label>
+                  <input
+                    type="color"
+                    value={formData.header_gradient_from}
+                    onChange={(e) => setFormData({ ...formData, header_gradient_from: e.target.value })}
+                    className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Header Gradient End
+                  </label>
+                  <input
+                    type="color"
+                    value={formData.header_gradient_to}
+                    onChange={(e) => setFormData({ ...formData, header_gradient_to: e.target.value })}
+                    className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.show_partner_logo}
+                    onChange={(e) => setFormData({ ...formData, show_partner_logo: e.target.checked })}
+                    className="w-4 h-4 text-green-600 rounded"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Show partner logo in header
+                  </span>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Main Headline
+                </label>
+                <input
+                  type="text"
+                  value={formData.main_headline}
+                  onChange={(e) => setFormData({ ...formData, main_headline: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sub Headline
+                </label>
+                <input
+                  type="text"
+                  value={formData.sub_headline}
+                  onChange={(e) => setFormData({ ...formData, sub_headline: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preview
+                </label>
+                <div
+                  className="w-full h-48 rounded-lg flex flex-col items-center justify-center text-white p-8 text-center"
+                  style={{
+                    background: `linear-gradient(to right, ${formData.header_gradient_from}, ${formData.header_gradient_to})`
+                  }}
+                >
+                  <h1 className="text-2xl font-bold mb-2">{formData.main_headline}</h1>
+                  <p className="text-lg opacity-90">{formData.sub_headline}</p>
+                  <p className="text-xl font-bold mt-2">[Partner Organization Name]</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'offers' && (
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.offer_section_title}
+                  onChange={(e) => setFormData({ ...formData, offer_section_title: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section Description
+                </label>
+                <textarea
+                  value={formData.offer_section_description}
+                  onChange={(e) => setFormData({ ...formData, offer_section_description: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  rows={2}
+                />
+              </div>
+
+              <div className="flex items-center justify-between border-t pt-6">
+                <h3 className="text-lg font-semibold">Offer Cards ({formData.offers.length})</h3>
+                <button
+                  onClick={addOffer}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Offer
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {formData.offers.map((offer, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold">Offer {index + 1}</h4>
+                      <button
+                        onClick={() => removeOffer(index)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">ID</label>
+                      <input
+                        type="text"
+                        value={offer.id}
+                        onChange={(e) => updateOffer(index, { id: e.target.value })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Title</label>
+                      <input
+                        type="text"
+                        value={offer.title}
+                        onChange={(e) => updateOffer(index, { title: e.target.value })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
+                      <input
+                        type="text"
+                        value={offer.description}
+                        onChange={(e) => updateOffer(index, { description: e.target.value })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Image URL</label>
+                      <input
+                        type="text"
+                        value={offer.image_url}
+                        onChange={(e) => updateOffer(index, { image_url: e.target.value })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Badge Text (optional)</label>
+                      <input
+                        type="text"
+                        value={offer.badge || ''}
+                        onChange={(e) => updateOffer(index, { badge: e.target.value || null })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                        placeholder="POPULAR"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Badge Color</label>
+                      <select
+                        value={offer.badge_color}
+                        onChange={(e) => updateOffer(index, { badge_color: e.target.value as any })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                      >
+                        <option value="red">Red</option>
+                        <option value="amber">Amber</option>
+                        <option value="green">Green</option>
+                        <option value="blue">Blue</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Price Display</label>
+                      <input
+                        type="text"
+                        value={offer.price_display}
+                        onChange={(e) => updateOffer(index, { price_display: e.target.value })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                        placeholder="$0.00 or 50% OFF"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Price Subtext</label>
+                      <input
+                        type="text"
+                        value={offer.price_subtext}
+                        onChange={(e) => updateOffer(index, { price_subtext: e.target.value })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                        placeholder="+ shipping"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Button Color</label>
+                      <select
+                        value={offer.button_color}
+                        onChange={(e) => updateOffer(index, { button_color: e.target.value as any })}
+                        className="w-full border border-gray-300 rounded px-3 py-1.5 text-sm"
+                      >
+                        <option value="red">Red</option>
+                        <option value="amber">Amber</option>
+                        <option value="green">Green</option>
+                        <option value="blue">Blue</option>
+                      </select>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'form' && (
+            <div className="space-y-6 max-w-2xl">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Placeholder Text
+                </label>
+                <input
+                  type="text"
+                  value={formData.email_placeholder}
+                  onChange={(e) => setFormData({ ...formData, email_placeholder: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Submit Button Text
+                </label>
+                <input
+                  type="text"
+                  value={formData.submit_button_text}
+                  onChange={(e) => setFormData({ ...formData, submit_button_text: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'success' && (
+            <div className="space-y-6 max-w-2xl">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Success Page Title
+                </label>
+                <input
+                  type="text"
+                  value={formData.success_title}
+                  onChange={(e) => setFormData({ ...formData, success_title: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Success Message
+                </label>
+                <textarea
+                  value={formData.success_message}
+                  onChange={(e) => setFormData({ ...formData, success_message: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  rows={3}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-gray-50 border-t border-gray-200 p-6 flex items-center justify-end gap-4">
           <button
             onClick={onClose}
             className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
