@@ -373,7 +373,7 @@ export default function PartnerDashboardPage() {
   const loadLeads = async (nonprofitId: string) => {
     const { data, error } = await supabase
       .from('partner_leads')
-      .select('*')
+      .select('id, email, first_name, last_name, status, lead_source, created_at, expires_at, lifetime_gmv, total_orders, partner_id')
       .eq('partner_id', nonprofitId)
       .order('created_at', { ascending: false });
 
@@ -722,6 +722,19 @@ export default function PartnerDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Test Mode Banner */}
+      <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-6">
+        <div className="flex items-center gap-3">
+          <AlertCircle className="h-6 w-6 text-yellow-600 flex-shrink-0" />
+          <div className="flex-1">
+            <h3 className="font-bold text-yellow-900">Test Mode Active</h3>
+            <p className="text-sm text-yellow-800">
+              You are viewing test data. Real partner data will appear here once connected to production.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8">
         <div className="flex items-center justify-between">
