@@ -117,7 +117,7 @@ export default function PartnerDashboardPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'opportunities' | 'rewards' | 'profile' | 'giveaways' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'referrals' | 'opportunities' | 'rewards' | 'profile' | 'giveaways' | 'leads' | 'settings'>('overview');
   const [settingsTab, setSettingsTab] = useState<'partner' | 'transactions'>('partner');
   const [copied, setCopied] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
