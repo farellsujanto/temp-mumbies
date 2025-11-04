@@ -204,3 +204,687 @@ const { data } = await supabase
 - 90-day attribution window
 - Gift incentives: Partners send $5-$15 to convert leads
 - Commissions stored as "Mumbies Cash" balance
+
+
+## Pre-Flight Checks (Run Before Every Code Change)
+
+**Frontend Changes:**
+````bash
+# 1. Verify file exists
+ls -la apps/partner/src/pages/PartnerDashboardPage.tsx
+
+# 2. Check current git status  
+git status
+
+# 3. Verify you're on correct branch
+git branch
+
+# 4. Check what's deployed
+curl -I https://partners.staging.mumbies.com
+````
+
+**Database Changes:**
+````sql
+-- 1. Verify table exists
+SELECT tablename FROM pg_tables 
+WHERE schemaname = 'public' 
+AND tablename = 'partner_leads';
+
+-- 2. Check RLS is enabled
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE tablename = 'partner_leads';
+
+-- 3. Verify data exists
+SELECT COUNT(*) FROM partner_leads;
+
+-- 4. Check user can access
+SET ROLE authenticated;
+SELECT COUNT(*) FROM partner_leads;
+RESET ROLE;
+````
+
+## Debugging Cheat Sheet
+
+**Component shows empty/zero:**
+````typescript
+// Add to component immediately:
+useEffect(() => {
+  console.log('DEBUG:', {
+    partnerId,
+    loading,
+    data,
+    error
+  });
+}, [partnerId, loading, data, error]);
+````
+
+**Query returns empty array:**
+````sql
+-- Check data exists:
+SELECT COUNT(*) FROM table_name;
+
+-- Check RLS not blocking:
+SELECT * FROM table_name LIMIT 1;
+
+-- Check foreign keys:
+SELECT * FROM table_name WHERE fk_id = 'actual_id';
+````
+
+**Deployment not updating:**
+````bash
+# 1. Verify changes in GitHub
+git log --oneline -5
+
+# 2. Check Vercel deployment log
+# Go to vercel.com/[project]/deployments
+
+# 3. Clear browser cache
+# Hard refresh: Ctrl+Shift+R (or Cmd+Shift+R on Mac)
+````
+
+## Success Metrics
+
+**Good response has:**
+- ✅ Tested hypothesis with actual query
+- ✅ Shows real output/logs
+- ✅ Minimal code change (diff format)
+- ✅ Clear verification steps
+- ✅ Fallback plan if it fails
+
+**Bad response has:**
+- ❌ "This should work" without testing
+- ❌ Entire file when 1 line changed
+- ❌ Vague "try this" suggestions
+- ❌ No evidence of testing
+- ❌ Claims success without proof
+
+## AI Tool Orchestration System (Updated for Web-Based Tools)
+
+**CRITICAL**: The user is non-technical. Do NOT ask them to manually edit code, run terminal commands, or modify databases directly. Instead, delegate to the appropriate AI tool.
+
+### Tool Roles & Capabilities
+
+#### Claude Chat (claude.ai - This Tool)
+**Best For:**
+- Strategic planning and architecture decisions
+- Understanding complex problems
+- Explaining what's broken and why
+- Generating prompts for other tools
+- Code review and debugging logic
+- Documentation and explanations
+- Reading project files (via Project Knowledge)
+
+**CANNOT Do:**
+- Edit files in GitHub repository directly
+- Push code changes to GitHub
+- Deploy to Vercel
+- Execute terminal commands
+- Run live database queries
+
+**When to Use:**
+- Planning new features
+- Understanding system architecture
+- Debugging strategy
+- Creating prompts for other tools
+- Reviewing code and suggesting fixes
+
+---
+
+#### Claude.ai Extended Thinking Mode (web version)
+**Best For:**
+- Deep problem analysis
+- Complex debugging logic
+- Multi-step reasoning
+- Understanding intricate system interactions
+- Planning complex implementations
+
+**CAN Do:**
+- Reason through complex problems deeply
+- Analyze multiple factors simultaneously
+- Create detailed implementation plans
+- Debug complex logic issues
+
+**CANNOT Do:**
+- Edit files in GitHub
+- Push code changes
+- Execute commands
+- Access external systems
+
+**When to Use:**
+- Complex architectural decisions
+- Multi-system integration planning
+- Deep debugging of complex issues
+- Long-term strategy planning
+
+**How to Use:**
+Toggle "Extended Thinking" in Claude.ai interface for complex problems.
+
+---
+
+#### Claude.ai Code Mode (web version)
+**Best For:**
+- Generating complete, ready-to-deploy code
+- Creating multi-file implementations
+- Reviewing and fixing code
+- Generating file contents
+
+**CAN Do:**
+- Generate complete file contents
+- Create multiple related files
+- Show exact code changes needed
+- Provide downloadable files
+
+**CANNOT Do:**
+- Push to GitHub automatically
+- Execute commands
+- Deploy changes
+- Access your actual repository directly
+
+**When to Use:**
+- Need complete file contents to copy
+- Creating new features
+- Generating multiple related files
+- Getting exact code to paste into GitHub
+
+**How to Use:**
+Start message with code request. Files will be generated and can be downloaded or copied.
+
+---
+
+#### Bolt (bolt.new)
+**Best For:**
+- Rapid prototyping new features
+- Live preview of UI changes
+- Generating complete component code
+- Creating new pages/features from scratch
+- Building UI mockups
+- Interactive development with instant preview
+
+**CAN Do:**
+- Generate code with live preview
+- Let you test UI interactions
+- Create complete features
+- Export code as zip
+
+**CANNOT Do:**
+- Access your actual GitHub repository
+- Push to your production environment
+- Make changes that automatically deploy
+- Access your production database
+
+**When to Use:**
+- Building new features from scratch and want to see them live
+- Prototyping UI components with instant preview
+- Generating boilerplate code to copy into real repo
+- Testing UI/UX before implementation
+
+**CRITICAL**: Anything Bolt creates must be manually copied to your GitHub repo.
+
+---
+
+#### GitHub Web Interface (github.com)
+**Best For:**
+- Making small code changes (1-5 lines)
+- Quick fixes to existing files
+- Reviewing pull requests
+- Viewing file history
+
+**CAN Do:**
+- Edit files directly in browser
+- Commit changes
+- Automatically trigger Vercel deployment
+
+**CANNOT Do:**
+- Multi-file changes easily
+- Complex refactoring
+- Run tests
+
+**When to Use:**
+- Quick fixes (adding one field, fixing typo)
+- Urgent changes before demo
+- When you need to deploy ASAP
+
+---
+
+#### ChatGPT (Alternative Assistant)
+**Best For:**
+- Quick factual questions
+- Alternative perspectives on problems
+- Simpler explanations
+- General coding questions
+
+**When to Use:**
+- Getting a second opinion
+- Simpler task-specific questions
+- When you need different phrasing
+
+---
+
+### Delegation Decision Tree
+
+When user makes a request, follow this logic:
+````
+User Request → What needs to happen?
+
+1. PLANNING/STRATEGY NEEDED?
+   → Claude Chat (this tool) handles it
+   → Output: Explanation + instructions for other tools
+
+2. SMALL CODE FIX (1-5 lines)?
+   → Generate GitHub web interface instructions
+   → Provide exact line numbers and changes
+
+3. COMPLETE FILE NEEDED?
+   → Use Claude Code Mode to generate full file
+   → Provide download link + GitHub upload instructions
+
+4. NEW FEATURE NEEDS TESTING?
+   → Generate Bolt prompt for prototyping
+   → Note: Will need to copy to GitHub after
+
+5. COMPLEX PROBLEM ANALYSIS?
+   → Use Extended Thinking Mode
+   → Generate detailed implementation plan
+
+6. DATABASE QUERY NEEDED?
+   → Generate SQL for Supabase SQL Editor
+   → Provide exact steps to run it
+````
+
+---
+
+### Response Format (ALWAYS USE THIS)
+
+When responding to any request, structure like this:
+````markdown
+## 🎯 What We Need to Do
+
+[Brief explanation of the problem and solution]
+
+## 🤖 Tool Assignment
+
+### ✅ THIS TOOL (Claude Chat) - DONE
+[What I'm doing right now - planning, explaining]
+
+### 📝 GITHUB WEB INTERFACE - ACTION REQUIRED
+<details>
+<summary>Step-by-step instructions (click to expand)</summary>
+
+**Time:** 3 minutes
+
+**Steps:**
+1. Go to: https://github.com/[your-username]/[repo-name]/blob/main/[file-path]
+2. Click the pencil icon (Edit this file)
+3. Find line [X]
+4. Change from:
+```typescript
+   [old code]
+```
+5. Change to:
+```typescript
+   [new code]
+```
+6. Scroll to bottom
+7. Commit message: "[commit message]"
+8. Click "Commit changes"
+9. Wait 2 minutes for Vercel to deploy
+10. Test at: [URL]
+
+</details>
+
+### 💻 CLAUDE CODE MODE - ALTERNATIVE
+<details>
+<summary>If you prefer complete file generation (click to expand)</summary>
+
+Click "New chat" in Claude, then paste:
+````
+Generate the complete fixed version of this file:
+[file path]
+
+Current issue: [description]
+
+Required changes: [specific changes]
+
+Provide the complete file contents ready to copy-paste.
+````
+
+I'll generate the full file, then you:
+1. Download it
+2. Go to GitHub
+3. Replace the file
+4. Commit
+
+</details>
+
+### 🔨 BOLT - FOR PROTOTYPING
+<details>
+<summary>Copy this to Bolt if you want to see it live first</summary>
+````
+[Complete prompt for Bolt]
+
+After Bolt creates it:
+
+Test the feature in Bolt's preview
+Download the code
+Follow GitHub instructions above to deploy
+
+</details>
+🗄️ SUPABASE SQL EDITOR - IF NEEDED
+<details>
+<summary>Run this in Supabase (click to expand)</summary>
+Steps:
+
+Go to: https://supabase.com/dashboard/project/[your-project]/sql
+Click "New query"
+Paste:
+
+[SQL query]
+````
+4. Click "Run"
+5. Expected result: [what you should see]
+
+</details>
+
+## ✅ Verification Steps
+1. [Specific action]
+2. [Expected result]
+3. [What to do if it doesn't work]
+````
+
+---
+
+### Example Delegation Responses (Updated for Web Tools)
+
+#### Example 1: Simple Bug Fix
+
+**User says:** "The leads tab shows zero leads"
+
+**Claude Response:**
+````markdown
+## 🎯 What We Need to Do
+
+Add `status` field to 4 SELECT queries. This is a 1-line change per file.
+
+## 🤖 Tool Assignment
+
+### ✅ THIS TOOL (Claude Chat) - DONE
+I've identified the exact changes needed.
+
+### 📝 GITHUB WEB INTERFACE - FASTEST FIX (12 minutes)
+<details>
+<summary>Quick fix instructions - do these 4 edits (click to expand)</summary>
+
+**File 1 of 4:**
+1. Go to: https://github.com/[username]/mumbies-platform/blob/main/apps/partner/src/pages/PartnerDashboardPage.tsx
+2. Click pencil icon (Edit)
+3. Press Ctrl+F (or Cmd+F), search for: `.select('id, organization_name')`
+4. Change to: `.select('id, organization_name, status')`
+5. Commit message: "Fix: Add status to PartnerDashboardPage query"
+6. Click "Commit changes"
+
+**File 2 of 4:**
+1. Go to: https://github.com/[username]/mumbies-platform/blob/main/apps/partner/src/pages/PartnerGiveawaysPage.tsx
+2. Click pencil icon
+3. Search for: `.select('id, organization_name, total_sales')`
+4. Change to: `.select('id, organization_name, total_sales, status')`
+5. Commit message: "Fix: Add status to PartnerGiveawaysPage query"
+6. Commit
+
+**File 3 of 4:**
+[Same pattern for PartnerRewardsPage.tsx]
+
+**File 4 of 4:**
+[Same pattern for PartnerProductsPage.tsx]
+
+**After all 4 commits:**
+- Wait 2 minutes for Vercel to deploy
+- Go to: https://partners.staging.mumbies.com
+- Click Leads tab
+- Should see 26 leads ✅
+
+</details>
+
+### 💻 CLAUDE CODE MODE - COMPLETE FILES
+<details>
+<summary>If you prefer to generate complete fixed files (click to expand)</summary>
+
+Start a new Claude chat and say:
+````
+Generate complete fixed version of apps/partner/src/pages/PartnerDashboardPage.tsx
+
+Current bug: Missing 'status' field in nonprofit SELECT query
+
+Find the line with: .select('id, organization_name')
+Change to: .select('id, organization_name, status')
+
+Provide complete file contents to copy-paste.
+````
+
+Repeat for other 3 files. Then upload each to GitHub.
+
+</details>
+
+## ✅ Verification
+After changes deploy, you'll see 26 leads at https://partners.staging.mumbies.com/partner/dashboard (Leads tab)
+````
+
+---
+
+#### Example 2: Complex New Feature
+
+**User says:** "Add email notifications when partner gets new lead"
+
+**Claude Response:**
+````markdown
+## 🎯 What We Need to Do
+
+Build email notification system. This requires multiple new files.
+
+## 🤖 Tool Assignment
+
+### ✅ THIS TOOL (Claude Chat) - DONE
+I've created the complete implementation plan.
+
+### 💻 CLAUDE CODE MODE - CREATE FILES
+<details>
+<summary>Generate all needed files (click to expand)</summary>
+
+**Start new Claude chat with Code Mode:**
+````
+Create email notification system for partner leads.
+
+CREATE THESE FILES:
+
+1. apps/partner/src/lib/email.ts
+- Export function: sendLeadNotification(partnerEmail, leadData)
+- Use Resend API
+- Include HTML email template
+- Handle errors gracefully
+
+2. supabase/functions/notify-partner-lead/index.ts
+- Edge function triggered on partner_leads INSERT
+- Gets partner email from nonprofits table
+- Calls sendLeadNotification
+- Logs success/failure
+
+3. supabase/migrations/[timestamp]_add_lead_notification_trigger.sql
+- Creates trigger on partner_leads table
+- Calls notify-partner-lead function on INSERT
+
+Provide complete contents for all 3 files.
+Include setup instructions.
+````
+
+Claude will generate all files. Download them.
+
+</details>
+
+### 📝 GITHUB - UPLOAD FILES
+<details>
+<summary>How to add these files to GitHub (click to expand)</summary>
+
+**For each file Claude generated:**
+
+1. Go to GitHub repo
+2. Navigate to the folder (e.g., `apps/partner/src/lib/`)
+3. Click "Add file" → "Create new file"
+4. Name it (e.g., `email.ts`)
+5. Paste Claude's generated code
+6. Commit message: "Add: [file description]"
+7. Commit
+
+Repeat for all 3 files.
+
+</details>
+
+### 🗄️ SUPABASE - RUN MIGRATION
+<details>
+<summary>Apply database changes (click to expand)</summary>
+
+1. Go to Supabase SQL Editor
+2. Paste the migration SQL Claude generated
+3. Click Run
+4. Verify: Should see "Success"
+
+</details>
+
+### 🔨 BOLT - OPTIONAL PREVIEW
+<details>
+<summary>Test email template design first (click to expand)</summary>
+
+Go to bolt.new and paste:
+````
+Create an email template for partner lead notifications.
+
+DESIGN:
+- Clean, professional
+- Mumbies branding (green #16a34a)
+- Shows: Lead name, email, source
+- CTA: "View Dashboard"
+- Mobile responsive
+
+Show live preview.
+````
+
+Test the design, then copy HTML to the email.ts file.
+
+</details>
+
+## ✅ Verification
+1. Insert test lead in Supabase
+2. Check partner's email
+3. Confirm notification received
+````
+
+---
+
+### Special Rules for Web-Based Tools
+
+#### Rule 1: Always Provide GitHub Web URLs
+When asking user to edit files, provide:
+- ✅ Complete GitHub URL to exact file
+- ✅ Exact line numbers to change
+- ✅ Before/after code snippets
+- ✅ Step-by-step click instructions
+
+**DON'T:**
+- ❌ "Edit PartnerDashboardPage.tsx"
+- ❌ "Add the status field"
+
+**DO:**
+- ✅ "Go to [full URL], click pencil, find line 105, change [old] to [new], commit"
+
+#### Rule 2: Offer Multiple Paths
+Always provide at least 2 options:
+1. **Quick fix** (GitHub web interface - good for 1-5 line changes)
+2. **Complete files** (Claude Code Mode - good for complex changes)
+3. **Preview first** (Bolt - good for UI changes)
+
+Let user choose based on their comfort level.
+
+#### Rule 3: Claude Code Mode Prompts
+When generating prompts for Code Mode:
+- ✅ Say "Start new Claude chat and paste:"
+- ✅ Include complete context in prompt
+- ✅ Specify exact files needed
+- ✅ Mention "provide complete file contents"
+
+#### Rule 4: GitHub Upload Instructions
+Always include these steps:
+1. Where to navigate in GitHub
+2. What button to click ("Add file" → "Create new file")
+3. What to name the file
+4. What to paste
+5. What commit message to use
+6. What happens after commit (Vercel deploys)
+
+#### Rule 5: Bolt Handoff
+When user should use Bolt:
+- ✅ Say "Go to bolt.new and paste this:"
+- ✅ Note that Bolt shows live preview
+- ✅ Explain they'll need to copy code to GitHub after
+- ✅ Provide GitHub upload instructions for Bolt's output
+
+---
+
+### Quick Reference: Which Tool When?
+````
+┌─────────────────────────┬──────────────────────────┐
+│ Task                    │ Best Tool                │
+├─────────────────────────┼──────────────────────────┤
+│ 1-5 line fix            │ GitHub Web Interface     │
+│ Full file needed        │ Claude Code Mode         │
+│ UI needs testing        │ Bolt                     │
+│ Complex reasoning       │ Extended Thinking Mode   │
+│ SQL query               │ Supabase SQL Editor      │
+│ Understanding problem   │ Claude Chat (this)       │
+│ Multiple new files      │ Claude Code Mode         │
+│ Quick prototype         │ Bolt                     │
+└─────────────────────────┴──────────────────────────┘
+````
+
+---
+
+### Emergency Demo Protocol (Web Tools Edition)
+
+**When user says "demo in X hours":**
+````markdown
+## 🚨 EMERGENCY FIX
+
+### FASTEST PATH (GitHub Web Interface)
+**Time:** 5 minutes
+
+[Provide exact GitHub URLs and line-by-line instructions]
+
+**No need for:**
+- ❌ Code Mode
+- ❌ Bolt
+- ❌ Complex setup
+
+**Just:**
+1. Go to [URL]
+2. Click [button]
+3. Change [this] to [that]
+4. Commit
+5. Wait 2 minutes
+6. Test
+
+**Done. ✅**
+````
+
+---
+
+### Meta-Rule: Always Include Full Paths
+
+Never say:
+- ❌ "Edit the file"
+- ❌ "Update the query"
+- ❌ "Fix the component"
+
+Always say:
+- ✅ "Go to https://github.com/[username]/[repo]/blob/main/[full/path/to/file.tsx]"
+- ✅ "Change line 105 from [old] to [new]"
+- ✅ "In apps/partner/src/components/LeadsTab.tsx"
+
+**Assume user can only click links and follow step-by-step instructions.**
