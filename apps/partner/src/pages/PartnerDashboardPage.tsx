@@ -915,17 +915,6 @@ export default function PartnerDashboardPage() {
             Leads
           </button>
           <button
-            onClick={() => setActiveTab('opportunities')}
-            className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
-              activeTab === 'opportunities'
-                ? 'text-green-600 border-b-2 border-green-600'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Target className="h-5 w-5" />
-            Leads
-          </button>
-          <button
             onClick={() => setActiveTab('referrals')}
             className={`flex-1 px-6 py-4 font-medium transition-colors inline-flex items-center justify-center gap-2 whitespace-nowrap ${
               activeTab === 'referrals'
@@ -1625,15 +1614,6 @@ export default function PartnerDashboardPage() {
         />
       )}
 
-      {/* Opportunities Tab */}
-      {activeTab === 'opportunities' && nonprofit && (
-        <OpportunitiesTab
-          partnerId={nonprofit.id}
-          partnerBalance={nonprofit.mumbies_cash_balance || 0}
-          organizationName={nonprofit.organization_name}
-          logoUrl={nonprofit.logo_url}
-        />
-      )}
 
       {/* Withdrawal Modal - Available from all tabs */}
       {showWithdrawalModal && nonprofit && (
