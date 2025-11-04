@@ -22,7 +22,8 @@ import {
   Menu,
   X,
   FlaskConical,
-  Package
+  Package,
+  ChevronRight
 } from 'lucide-react';
 import DebugPanel from './DebugPanel';
 
@@ -49,6 +50,47 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }
     return location.pathname.startsWith(path);
   };
+
+  // Generate breadcrumbs based on current path
+  const getBreadcrumbs = () => {
+    const path = location.pathname;
+    const segments = path.split('/').filter(Boolean);
+
+    const breadcrumbMap: Record<string, string> = {
+      '': 'Dashboard',
+      'accounts': 'Accounts',
+      'partners': 'Partners',
+      'partner-applications': 'Applications',
+      'balance-health': 'Balance Health',
+      'payouts': 'Payouts',
+      'leads': 'Leads',
+      'giveaways': 'Giveaways',
+      'create-bundle': 'Create Bundle',
+      'rewards': 'Rewards',
+      'content': 'Content',
+      'hero': 'Hero Slides',
+      'banners': 'Banners',
+      'featured': 'Featured Rescue',
+      'shopify': 'Shopify',
+      'test-mode': 'Test Mode',
+      'settings': 'Settings',
+      'activity': 'Activity Log',
+      'team': 'Admin Users',
+    };
+
+    const breadcrumbs = [{ label: 'Dashboard', path: '/' }];
+
+    let currentPath = '';
+    segments.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      const label = breadcrumbMap[segment] || segment;
+      breadcrumbs.push({ label, path: currentPath });
+    });
+
+    return breadcrumbs;
+  };
+
+  const breadcrumbs = getBreadcrumbs();
 
   const navLinks = [
     {
@@ -227,9 +269,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <div className={`flex-1 flex flex-col overflow-hidden ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
         {/* Top Bar */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-          <div>
-            {/* Breadcrumb can go here */}
-          </div>
+          {/* Breadcrumbs */}
+          <nav className="flex items-center gap-2 text-sm">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={crumb.path} className="flex items-center gap-2">
+                {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
+                {index === breadcrumbs.length - 1 ? (
+                  <span className="text-gray-900 font-medium">{crumb.label}</span>
+                ) : (
+                  <Link
+                    to={crumb.path}
+                    className="text-gray-600 hover:text-green-600 transition-colors"
+                  >
+                    {crumb.label}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </nav>
 
           <div className="flex items-center gap-4">
             {/* Notifications */}
