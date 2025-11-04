@@ -170,21 +170,23 @@ export default function AdminGiveawaysPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Gift className="h-7 w-7 text-purple-600" />
-              Giveaways Management
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <Gift className="h-7 w-7 text-purple-600" />
+                Active Giveaways
+              </h1>
+              <button
+                onClick={() => navigate('/giveaway-bundles')}
+                className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-lg hover:bg-green-200 inline-flex items-center gap-1"
+              >
+                <Package className="h-3 w-3" />
+                Manage Bundles
+              </button>
+            </div>
             <p className="text-gray-600 mt-1">
-              Manage partner giveaways and select winners
+              Monitor active giveaways and select winners
             </p>
           </div>
-          <button
-            onClick={() => navigate('/giveaways/create-bundle')}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium inline-flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Create Giveaway Bundle
-          </button>
         </div>
 
         {/* Message */}

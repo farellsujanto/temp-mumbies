@@ -172,6 +172,37 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     }
   };
 
+  const canReuseBundle = (bundle: GiveawayBundle) => {
+    // Check if partner has used this bundle before
+    const partnerGiveawaysForBundle = giveaways.filter(g => g.bundle_id === bundle.id);
+
+    if (partnerGiveawaysForBundle.length === 0) {
+      // Never used before
+      return true;
+    }
+
+    // If bundle doesn't allow reuse, hide it
+    if (!bundle.allow_reuse) {
+      return false;
+    }
+
+    // Check cooldown period
+    if (bundle.cooldown_days > 0) {
+      const lastGiveaway = partnerGiveawaysForBundle
+        .filter(g => g.status === 'completed' || g.status === 'ended')
+        .sort((a, b) => new Date(b.ends_at).getTime() - new Date(a.ends_at).getTime())[0];
+
+      if (lastGiveaway) {
+        const daysSinceEnd = Math.floor(
+          (Date.now() - new Date(lastGiveaway.ends_at).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        return daysSinceEnd >= bundle.cooldown_days;
+      }
+    }
+
+    return true;
+  };
+
   const getUnlockProgress = (bundle: GiveawayBundle) => {
     const reqType = bundle.unlock_requirement_type || 'mumbies_cash';
     const reqValue = Number(bundle.unlock_requirement_value || bundle.sales_threshold || 0);
@@ -364,7 +395,9 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
-              {bundles.map((bundle) => {
+              {bundles
+                .filter(bundle => canReuseBundle(bundle))
+                .map((bundle) => {
                 const unlocked = canUnlockBundle(bundle);
                 const progress = getUnlockProgress(bundle);
                 const imageUrl = bundle.featured_image_url || bundle.image_url || 'https://via.placeholder.com/300x200?text=Bundle';
