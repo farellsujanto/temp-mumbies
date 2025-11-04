@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@mumbies/shared';
 import { Mail, Phone, Calendar, Gift, ExternalLink, AlertCircle, Clock, CheckCircle, Users } from 'lucide-react';
+import { useDebug } from '../../contexts/DebugContext';
 
 interface Lead {
   id: string;
@@ -26,6 +27,7 @@ export default function LeadsTab({ partnerId }: LeadsTabProps) {
   const [expiringLeads, setExpiringLeads] = useState<Lead[]>([]);
   const [giftedLeads, setGiftedLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const { logQuery, logData, logError } = useDebug();
 
   useEffect(() => {
     fetchLeads();
@@ -35,22 +37,28 @@ export default function LeadsTab({ partnerId }: LeadsTabProps) {
     setLoading(true);
     try {
       console.log('[LeadsTab] Fetching leads for partner:', partnerId);
+      logData('Fetching leads for partner', { partnerId });
 
-      const { data, error } = await supabase
+      const query = supabase
         .from('partner_leads')
         .select('*')
         .eq('partner_id', partnerId)
         .order('created_at', { ascending: false });
 
+      const { data, error } = await query;
+
       console.log('[LeadsTab] Query result:', { data, error, count: data?.length });
+      logQuery('partner_leads.fetchAll', { partnerId }, data, error);
 
       if (error) {
         console.error('[LeadsTab] Error fetching leads:', error);
+        logError(error, 'fetchLeads');
         throw error;
       }
 
       const leads = data || [];
       console.log('[LeadsTab] Setting leads:', leads.length);
+      logData('Leads fetched successfully', { count: leads.length, sample: leads.slice(0, 3) });
       setAllLeads(leads);
 
       // Filter expiring leads (expires within 30 days)
@@ -72,8 +80,14 @@ export default function LeadsTab({ partnerId }: LeadsTabProps) {
         expiring: expiring.length,
         gifted: gifted.length
       });
+      logData('Leads categorized', {
+        all: leads.length,
+        expiring: expiring.length,
+        gifted: gifted.length
+      });
     } catch (error) {
       console.error('[LeadsTab] Error fetching leads:', error);
+      logError(error as Error, 'fetchLeads');
       alert(`Error loading leads: ${error}`);
     } finally {
       setLoading(false);
