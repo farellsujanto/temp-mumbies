@@ -23,12 +23,45 @@ interface Product {
   brand: { name: string } | null;
 }
 
+interface TemplateOffer {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  badge: string | null;
+  badge_color: 'red' | 'amber' | 'green' | 'blue';
+  price_display: string;
+  price_subtext: string;
+  discount_type: 'free' | 'percentage' | 'fixed';
+  discount_value: string;
+  button_color: 'red' | 'amber' | 'green' | 'blue';
+}
+
+interface LandingPageTemplate {
+  id: string;
+  slug: string;
+  header_gradient_from: string;
+  header_gradient_to: string;
+  show_partner_logo: boolean;
+  main_headline: string;
+  sub_headline: string;
+  offer_section_title: string;
+  offer_section_description: string;
+  offers: TemplateOffer[];
+  email_placeholder: string;
+  submit_button_text: string;
+  success_title: string;
+  success_message: string;
+}
+
 export default function LeadRegistrationPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const ref = searchParams.get('ref');
+  const templateSlug = searchParams.get('template') || 'adoption-offer';
 
   const [nonprofit, setNonprofit] = useState<Nonprofit | null>(null);
+  const [template, setTemplate] = useState<LandingPageTemplate | null>(null);
   const [curatedProducts, setCuratedProducts] = useState<Product[]>([]);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -49,6 +82,7 @@ export default function LeadRegistrationPage() {
   const loadNonprofitData = async () => {
     if (!ref) return;
 
+    // Load nonprofit data
     const { data: nonprofitData } = await supabase
       .from('nonprofits')
       .select('id, organization_name, slug, logo_url, mission_statement, location_city, location_state')
@@ -63,6 +97,19 @@ export default function LeadRegistrationPage() {
 
     setNonprofit(nonprofitData);
 
+    // Load landing page template
+    const { data: templateData } = await supabase
+      .from('landing_page_templates')
+      .select('*')
+      .eq('slug', templateSlug)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (templateData) {
+      setTemplate(templateData);
+    }
+
+    // Load curated products
     const { data: productsData } = await supabase
       .from('nonprofit_curated_products')
       .select(`
@@ -219,12 +266,9 @@ export default function LeadRegistrationPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
-            <h1 className="text-4xl font-bold mb-4">Success! 🎉</h1>
-            <p className="text-xl text-gray-700 mb-2">
-              Your offer has been claimed!
-            </p>
-            <p className="text-lg text-gray-600 mb-6">
-              Check your email to complete your registration.
+            <h1 className="text-4xl font-bold mb-4">{template?.success_title || 'Success! 🎉'}</h1>
+            <p className="text-xl text-gray-700 mb-6">
+              {template?.success_message || 'Your offer has been claimed! Check your email to complete your registration.'}
             </p>
             <div className="bg-white border-2 border-green-200 rounded-lg p-6 mb-8">
               <div className="flex items-center justify-center gap-3 mb-4">
@@ -292,25 +336,34 @@ export default function LeadRegistrationPage() {
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-green-600 to-green-700 px-8 py-12 text-white text-center">
-            <div className="flex items-center justify-center mb-6">
-              {nonprofit.logo_url ? (
-                <img
-                  src={nonprofit.logo_url}
-                  alt={nonprofit.organization_name}
-                  className="h-24 w-24 object-contain bg-white rounded-lg p-2"
-                />
-              ) : (
-                <div className="bg-white rounded-lg p-4">
-                  <Heart className="h-16 w-16 text-green-600" />
-                </div>
-              )}
-            </div>
+          <div
+            className="px-8 py-12 text-white text-center"
+            style={{
+              background: template
+                ? `linear-gradient(to right, ${template.header_gradient_from}, ${template.header_gradient_to})`
+                : 'linear-gradient(to right, #16a34a, #15803d)'
+            }}
+          >
+            {(template?.show_partner_logo !== false) && (
+              <div className="flex items-center justify-center mb-6">
+                {nonprofit.logo_url ? (
+                  <img
+                    src={nonprofit.logo_url}
+                    alt={nonprofit.organization_name}
+                    className="h-24 w-24 object-contain bg-white rounded-lg p-2"
+                  />
+                ) : (
+                  <div className="bg-white rounded-lg p-4">
+                    <Heart className="h-16 w-16 text-green-600" />
+                  </div>
+                )}
+              </div>
+            )}
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              Shop for Your Pet Essentials at Mumbies
+              {template?.main_headline || 'Shop for Your Pet Essentials at Mumbies'}
             </h1>
             <p className="text-green-100 text-xl mb-2">
-              & Automatically Donate for Life to
+              {template?.sub_headline || '& Automatically Donate for Life to'}
             </p>
             <p className="text-2xl font-bold">
               {nonprofit.organization_name}
@@ -326,118 +379,75 @@ export default function LeadRegistrationPage() {
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold mb-4">
-                  Pick an Offer Below
+                  {template?.offer_section_title || 'Pick an Offer Below'}
                 </h2>
                 <p className="text-lg text-gray-700 mb-6">
-                  Choose your deal and start shopping premium natural pet products
+                  {template?.offer_section_description || 'Choose your deal and start shopping premium natural pet products'}
                 </p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedOffer('free-chew');
-                    setShowEmailField(true);
-                  }}
-                  className={`relative p-4 rounded-lg border-2 transition-all ${
-                    selectedOffer === 'free-chew'
-                      ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
-                      : 'border-gray-300 hover:border-green-300 hover:shadow-md'
-                  }`}
-                >
-                  {selectedOffer === 'free-chew' && (
-                    <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
-                      <CheckCircle className="h-5 w-5" />
-                    </div>
-                  )}
-                  <h3 className="font-bold text-xl mb-2">FREE Original Chew</h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Just pay shipping
-                  </p>
-                  <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
-                    <img
-                      src="https://cdn.shopify.com/s/files/1/0771/6913/1816/files/Mumbies_products-18_a37800b8-1a65-4bfc-ba68-fdfe12952a8a.jpg?v=1734747630"
-                      alt="Buy 2, Get a FREE Chew"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="bg-amber-100 rounded-lg px-3 py-2">
-                    <p className="text-amber-800 font-bold">$0.00</p>
-                    <p className="text-xs text-amber-700">+ shipping</p>
-                  </div>
-                </button>
+                {(template?.offers || []).map((offer) => {
+                  const badgeColorMap = {
+                    red: 'bg-red-500',
+                    amber: 'bg-amber-500',
+                    green: 'bg-green-500',
+                    blue: 'bg-blue-500'
+                  };
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedOffer('starter-pack');
-                    setShowEmailField(true);
-                  }}
-                  className={`relative p-4 rounded-lg border-2 transition-all ${
-                    selectedOffer === 'starter-pack'
-                      ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
-                      : 'border-gray-300 hover:border-green-300 hover:shadow-md'
-                  }`}
-                >
-                  {selectedOffer === 'starter-pack' && (
-                    <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
-                      <CheckCircle className="h-5 w-5" />
-                    </div>
-                  )}
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    POPULAR
-                  </div>
-                  <h3 className="font-bold text-xl mb-2">50% OFF Starter Pack</h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Try our best sellers
-                  </p>
-                  <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
-                    <img
-                      src="https://cdn.shopify.com/s/files/1/0771/6913/1816/files/Mumbies_BisonLiverLP-OfferGraphic.png?v=1740407847"
-                      alt="Mumbies Subscription"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="bg-green-100 rounded-lg px-3 py-2">
-                    <p className="text-green-800 font-bold">50% OFF</p>
-                    <p className="text-xs text-green-700">Limited time</p>
-                  </div>
-                </button>
+                  const buttonColorMap = {
+                    red: { bg: 'bg-red-100', text: 'text-red-800', subtext: 'text-red-700' },
+                    amber: { bg: 'bg-amber-100', text: 'text-amber-800', subtext: 'text-amber-700' },
+                    green: { bg: 'bg-green-100', text: 'text-green-800', subtext: 'text-green-700' },
+                    blue: { bg: 'bg-blue-100', text: 'text-blue-800', subtext: 'text-blue-700' }
+                  };
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedOffer('bundle-discount');
-                    setShowEmailField(true);
-                  }}
-                  className={`relative p-4 rounded-lg border-2 transition-all ${
-                    selectedOffer === 'bundle-discount'
-                      ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
-                      : 'border-gray-300 hover:border-green-300 hover:shadow-md'
-                  }`}
-                >
-                  {selectedOffer === 'bundle-discount' && (
-                    <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
-                      <CheckCircle className="h-5 w-5" />
-                    </div>
-                  )}
-                  <h3 className="font-bold text-xl mb-2">20% OFF Any Bundle</h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Stock up and save
-                  </p>
-                  <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
-                    <img
-                      src="https://cdn.shopify.com/s/files/1/0771/6913/1816/files/Mumbies_ProductListing_Variety-Welcome_Box.jpg?v=1761567120"
-                      alt="Play-Time Variety Bundles"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="bg-blue-100 rounded-lg px-3 py-2">
-                    <p className="text-blue-800 font-bold">20% OFF</p>
-                    <p className="text-xs text-blue-700">Best value</p>
-                  </div>
-                </button>
+                  const colors = buttonColorMap[offer.button_color];
+
+                  return (
+                    <button
+                      key={offer.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedOffer(offer.id);
+                        setShowEmailField(true);
+                      }}
+                      className={`relative p-4 rounded-lg border-2 transition-all ${
+                        selectedOffer === offer.id
+                          ? 'border-green-500 bg-green-50 shadow-lg transform scale-105'
+                          : 'border-gray-300 hover:border-green-300 hover:shadow-md'
+                      }`}
+                    >
+                      {selectedOffer === offer.id && (
+                        <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2">
+                          <CheckCircle className="h-5 w-5" />
+                        </div>
+                      )}
+                      {offer.badge && (
+                        <div className={`absolute -top-3 left-1/2 transform -translate-x-1/2 ${badgeColorMap[offer.badge_color]} text-white px-3 py-1 rounded-full text-xs font-bold`}>
+                          {offer.badge}
+                        </div>
+                      )}
+                      <h3 className="font-bold text-xl mb-2">{offer.title}</h3>
+                      <p className="text-sm text-gray-600 mb-3">
+                        {offer.description}
+                      </p>
+                      <div className="aspect-square bg-white rounded-lg overflow-hidden mb-3">
+                        <img
+                          src={offer.image_url}
+                          alt={offer.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className={`${colors.bg} rounded-lg px-3 py-2`}>
+                        <p className={`${colors.text} font-bold`}>{offer.price_display}</p>
+                        {offer.price_subtext && (
+                          <p className={`text-xs ${colors.subtext}`}>{offer.price_subtext}</p>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
 
               {showEmailField && selectedOffer && (
@@ -451,7 +461,7 @@ export default function LeadRegistrationPage() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="your@email.com"
+                    placeholder={template?.email_placeholder || 'Enter your email address'}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-lg"
                   />
@@ -469,7 +479,7 @@ export default function LeadRegistrationPage() {
                     className="w-full"
                     size="lg"
                   >
-                    {submitting ? 'Claiming Offer...' : 'Claim My Offer'}
+                    {submitting ? 'Claiming Offer...' : (template?.submit_button_text || 'Claim My Offer')}
                   </Button>
 
                   <p className="text-xs text-gray-500 text-center mt-4">
