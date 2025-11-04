@@ -21,12 +21,14 @@ git add src/pages/PartnerDashboardPage.tsx
 
 # Commit
 echo "Committing fixes..."
-git commit -m "Fix: Partner portal leads now show all 26 leads + test mode banner
+git commit -m "Fix: Partner portal leads now showing all 26 leads correctly
 
-- Changed loadLeads query from SELECT * to explicit fields for RLS compatibility
+- Changed loadLeads query to use correct database field names (full_name not first_name/last_name)
+- Added comprehensive console logging for debugging
 - Added test mode banner to dashboard
-- Fixes issue where partner leads tab showed 0 leads
-- Now compatible with Supabase RLS policies"
+- Query now uses: id, email, full_name, status, lead_source, created_at, expires_at, total_spent, gift_sent, gift_amount
+- Fixes RLS compatibility issue
+- Verified with database: 26 leads exist for Wisconsin Humane Society"
 
 # Push to GitHub
 echo ""

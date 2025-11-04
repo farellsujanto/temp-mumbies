@@ -371,20 +371,26 @@ export default function PartnerDashboardPage() {
   };
 
   const loadLeads = async (nonprofitId: string) => {
+    console.log('[LEADS] Loading leads for partner:', nonprofitId);
+
     const { data, error } = await supabase
       .from('partner_leads')
-      .select('id, email, first_name, last_name, status, lead_source, created_at, expires_at, lifetime_gmv, total_orders, partner_id')
+      .select('id, email, full_name, status, lead_source, created_at, expires_at, total_spent, partner_id, gift_sent, phone, notes, gift_amount')
       .eq('partner_id', nonprofitId)
       .order('created_at', { ascending: false });
 
-    if (data && !error) {
-      setLeads(data);
-      setLeadCount(data.length);
-    } else {
-      console.error('Error loading leads:', error);
+    if (error) {
+      console.error('[LEADS] Error loading leads:', error);
       setLeads([]);
       setLeadCount(0);
+      return;
     }
+
+    console.log('[LEADS] Successfully loaded leads:', data?.length || 0);
+    console.log('[LEADS] Sample lead data:', data?.[0]);
+
+    setLeads(data || []);
+    setLeadCount(data?.length || 0);
   };
 
   const loadRecentActivity = async (nonprofitId: string) => {
