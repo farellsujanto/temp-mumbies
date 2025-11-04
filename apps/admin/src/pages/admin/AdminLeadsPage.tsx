@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@mumbies/shared';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { UserPlus, Search, Filter, Mail, Phone, Gift, Calendar, ExternalLink, TrendingUp } from 'lucide-react';
+import { UserPlus, Search, Filter, Mail, Phone, Gift, Calendar, ExternalLink, TrendingUp, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 interface Lead {
   id: string;
@@ -25,6 +25,8 @@ interface Lead {
 }
 
 type LeadFilter = 'all' | 'new' | 'contacted' | 'gift_sent' | 'converted';
+type SortField = 'lead' | 'partner' | 'source' | 'status' | 'expires' | 'created';
+type SortDirection = 'asc' | 'desc';
 
 export default function AdminLeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -34,6 +36,8 @@ export default function AdminLeadsPage() {
   const [filter, setFilter] = useState<LeadFilter>('all');
   const [selectedPartner, setSelectedPartner] = useState<string>('all');
   const [partners, setPartners] = useState<any[]>([]);
+  const [sortField, setSortField] = useState<SortField>('created');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   useEffect(() => {
     fetchLeads();
@@ -42,7 +46,7 @@ export default function AdminLeadsPage() {
 
   useEffect(() => {
     applyFilters();
-  }, [leads, searchQuery, filter, selectedPartner]);
+  }, [leads, searchQuery, filter, selectedPartner, sortField, sortDirection]);
 
   const fetchPartners = async () => {
     try {
@@ -100,6 +104,15 @@ export default function AdminLeadsPage() {
     }
   };
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
   const applyFilters = () => {
     let filtered = [...leads];
 
@@ -123,6 +136,45 @@ export default function AdminLeadsPage() {
           lead.partner?.organization_name?.toLowerCase().includes(query)
       );
     }
+
+    // Sort
+    filtered.sort((a, b) => {
+      let aVal: any;
+      let bVal: any;
+
+      switch (sortField) {
+        case 'lead':
+          aVal = (a.full_name || a.email).toLowerCase();
+          bVal = (b.full_name || b.email).toLowerCase();
+          break;
+        case 'partner':
+          aVal = (a.partner?.organization_name || '').toLowerCase();
+          bVal = (b.partner?.organization_name || '').toLowerCase();
+          break;
+        case 'source':
+          aVal = a.lead_source.toLowerCase();
+          bVal = b.lead_source.toLowerCase();
+          break;
+        case 'status':
+          aVal = a.status.toLowerCase();
+          bVal = b.status.toLowerCase();
+          break;
+        case 'expires':
+          aVal = a.expires_at ? new Date(a.expires_at).getTime() : 0;
+          bVal = b.expires_at ? new Date(b.expires_at).getTime() : 0;
+          break;
+        case 'created':
+          aVal = new Date(a.created_at).getTime();
+          bVal = new Date(b.created_at).getTime();
+          break;
+        default:
+          return 0;
+      }
+
+      if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
 
     setFilteredLeads(filtered);
   };
@@ -287,13 +339,73 @@ export default function AdminLeadsPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Lead</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Partner</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Source</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Status</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Expires</th>
+                  <th
+                    className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort('lead')}
+                  >
+                    <div className="flex items-center gap-2">
+                      Lead
+                      {sortField === 'lead' && (
+                        sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
+                  <th
+                    className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort('partner')}
+                  >
+                    <div className="flex items-center gap-2">
+                      Partner
+                      {sortField === 'partner' && (
+                        sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
+                  <th
+                    className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort('source')}
+                  >
+                    <div className="flex items-center gap-2">
+                      Source
+                      {sortField === 'source' && (
+                        sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
+                  <th
+                    className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort('status')}
+                  >
+                    <div className="flex items-center gap-2">
+                      Status
+                      {sortField === 'status' && (
+                        sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
+                  <th
+                    className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort('expires')}
+                  >
+                    <div className="flex items-center gap-2">
+                      Expires
+                      {sortField === 'expires' && (
+                        sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
                   <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Gift</th>
-                  <th className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase">Created</th>
+                  <th
+                    className="text-left px-6 py-3 text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100 select-none"
+                    onClick={() => handleSort('created')}
+                  >
+                    <div className="flex items-center gap-2">
+                      Created
+                      {sortField === 'created' && (
+                        sortDirection === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
