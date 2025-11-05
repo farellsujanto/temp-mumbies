@@ -31,6 +31,7 @@ interface PartnerGiveaway {
   status: string;
   total_entries: number;
   total_leads_generated: number;
+  bundle_id: string;
   bundle: GiveawayBundle;
 }
 
@@ -119,7 +120,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     setCreatingGiveaway(true);
 
     try {
-      const slug = `${organizationName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
+      const slug = `${(organizationName || 'partner').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
       const endsAt = new Date();
       endsAt.setDate(endsAt.getDate() + giveawayDuration);
 
@@ -272,7 +273,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     }
   };
 
-  const getTierColor = (tier: string) => {
+  const getTierColor = (tier: string | null | undefined) => {
+    if (!tier) return 'from-green-400 to-green-600';
     const colors: Record<string, string> = {
       bronze: 'from-amber-700 to-yellow-600',
       silver: 'from-gray-400 to-gray-600',
@@ -282,7 +284,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     return colors[tier] || 'from-green-400 to-green-600';
   };
 
-  const getTierBadge = (tier: string) => {
+  const getTierBadge = (tier: string | null | undefined) => {
+    if (!tier) return 'bg-green-100 text-green-700';
     const badges: Record<string, string> = {
       bronze: 'bg-amber-100 text-amber-700',
       silver: 'bg-gray-100 text-gray-700',
@@ -405,7 +408,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                 const unlocked = canUnlockBundle(bundle);
                 const progress = getUnlockProgress(bundle);
                 const imageUrl = bundle.featured_image_url || bundle.image_url || 'https://via.placeholder.com/300x200?text=Bundle';
-                const value = bundle.total_value || bundle.retail_value || 0;
+                const value = Number(bundle.total_value || bundle.retail_value || 0);
 
                 return (
                   <div
@@ -422,7 +425,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                       />
                       {bundle.tier && (
                         <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${getTierBadge(bundle.tier)}`}>
-                          {bundle.tier.toUpperCase()}
+                          {bundle.tier?.toUpperCase() || ''}
                         </div>
                       )}
                       {unlocked ? (
@@ -510,7 +513,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             <div className="border-4 border-amber-400 rounded-lg overflow-hidden bg-amber-50">
               <div className="h-40">
                 <img
-                  src={activeGiveaway.bundle.featured_image_url || activeGiveaway.bundle.image_url || 'https://via.placeholder.com/300x200'}
+                  src={activeGiveaway.bundle?.featured_image_url || activeGiveaway.bundle?.image_url || 'https://via.placeholder.com/300x200'}
                   alt={activeGiveaway.title}
                   className="w-full h-full object-cover"
                 />
@@ -651,7 +654,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
             {completedGiveaways.map((giveaway) => (
               <div key={giveaway.id} className="bg-white border border-gray-200 rounded-lg p-4 flex items-center gap-4">
                 <img
-                  src={giveaway.bundle.featured_image_url || giveaway.bundle.image_url || 'https://via.placeholder.com/100'}
+                  src={giveaway.bundle?.featured_image_url || giveaway.bundle?.image_url || 'https://via.placeholder.com/100'}
                   alt={giveaway.title}
                   className="w-16 h-16 object-cover rounded"
                 />
