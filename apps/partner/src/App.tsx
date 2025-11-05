@@ -15,7 +15,7 @@ import PartnerDiagnosticPage from './pages/PartnerDiagnosticPage';
 
 function App() {
   return (
-    <BrowserRouter basename="/partner">
+    <BrowserRouter>
       <AuthProvider>
         <DebugProvider>
           <Routes>
