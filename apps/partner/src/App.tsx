@@ -28,6 +28,7 @@ function App() {
                 <ProtectedRoute requireRole="partner">
                   <Routes>
                     <Route path="/" element={<PartnerDashboardPage />} />
+                    <Route path="/dashboard" element={<PartnerDashboardPage />} />
                     <Route path="/leads" element={<PartnerLeadsPage />} />
                     <Route path="/giveaways" element={<PartnerGiveawaysPage />} />
                     <Route path="/rewards" element={<PartnerRewardsPage />} />
