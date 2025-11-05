@@ -116,7 +116,7 @@ export default function AdminPayoutsPage() {
             .from('partner_transactions')
             .select('amount')
             .eq('nonprofit_id', partner.id)
-            .eq('transaction_type', 'gift_sent');
+            .eq('transaction_type', 'gift_send');
 
           const { data: conversions } = await supabase
             .from('partner_transactions')
@@ -171,7 +171,7 @@ export default function AdminPayoutsPage() {
     switch (type) {
       case 'commission':
         return <ArrowUpRight className="h-4 w-4 text-green-600" />;
-      case 'gift_sent':
+      case 'gift_send':
         return <Gift className="h-4 w-4 text-purple-600" />;
       case 'conversion':
         return <ArrowDownRight className="h-4 w-4 text-blue-600" />;
@@ -319,7 +319,7 @@ export default function AdminPayoutsPage() {
               >
                 <option value="all">All Types</option>
                 <option value="commission">Commissions</option>
-                <option value="gift_sent">Gifts Sent</option>
+                <option value="gift_send">Gifts Sent</option>
                 <option value="conversion">Conversions</option>
                 <option value="redemption">Redemptions</option>
               </select>

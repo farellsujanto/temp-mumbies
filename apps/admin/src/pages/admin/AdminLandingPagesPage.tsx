@@ -66,6 +66,7 @@ export default function AdminLandingPagesPage() {
   const [loading, setLoading] = useState(true);
   const [showEditor, setShowEditor] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<LandingPageTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] = useState<LandingPageTemplate | null>(null);
 
   useEffect(() => {
     loadTemplates();
@@ -229,6 +230,13 @@ export default function AdminLandingPagesPage() {
 
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => setPreviewTemplate(template)}
+                      className="flex-1 bg-blue-50 text-blue-600 px-4 py-2 rounded hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      Preview
+                    </button>
+                    <button
                       onClick={() => handleEdit(template)}
                       className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
                     >
@@ -269,6 +277,107 @@ export default function AdminLandingPagesPage() {
               loadTemplates();
             }}
           />
+        )}
+
+        {previewTemplate && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-900">Preview: {previewTemplate.name}</h3>
+                <button
+                  onClick={() => setPreviewTemplate(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="p-6" style={{ backgroundColor: previewTemplate.background_color }}>
+                {/* Header Section */}
+                <div
+                  className="rounded-lg p-12 text-center mb-8"
+                  style={{
+                    background: `linear-gradient(135deg, ${previewTemplate.header_gradient_from} 0%, ${previewTemplate.header_gradient_to} 100%)`
+                  }}
+                >
+                  <h1 className="text-4xl font-bold text-white mb-4">{previewTemplate.main_headline}</h1>
+                  <h2 className="text-xl text-white/90">{previewTemplate.sub_headline}</h2>
+                  {previewTemplate.show_partner_logo && (
+                    <div className="mt-4 text-white/80 text-sm">
+                      [Partner Logo Would Appear Here]
+                    </div>
+                  )}
+                </div>
+
+                {/* Offers Section */}
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-center mb-2" style={{ color: previewTemplate.text_color }}>
+                    {previewTemplate.offer_section_title}
+                  </h3>
+                  <p className="text-center mb-6" style={{ color: previewTemplate.text_color }}>
+                    {previewTemplate.offer_section_description}
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {previewTemplate.offers.map((offer, index) => (
+                      <div key={index} className="bg-white rounded-lg shadow-lg p-6 relative">
+                        {offer.badge && (
+                          <div className={`absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-sm font-bold text-white bg-${offer.badge_color}-500`}>
+                            {offer.badge}
+                          </div>
+                        )}
+                        <img
+                          src={offer.image_url || 'https://via.placeholder.com/300x200'}
+                          alt={offer.title}
+                          className="w-full h-48 object-cover rounded-lg mb-4"
+                        />
+                        <h4 className="text-xl font-bold mb-2">{offer.title}</h4>
+                        <p className="text-gray-600 mb-4 text-sm">{offer.description}</p>
+                        <div className="mb-4">
+                          <div className="text-2xl font-bold text-green-600">{offer.price_display}</div>
+                          <div className="text-sm text-gray-500">{offer.price_subtext}</div>
+                        </div>
+                        <button
+                          className={`w-full py-3 px-4 rounded-lg font-semibold text-white bg-${offer.button_color}-500 hover:bg-${offer.button_color}-600 transition-colors`}
+                        >
+                          {offer.discount_type === 'free' ? 'Get Free Sample' : 'Shop Now'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Email Form Section */}
+                <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+                  <h3 className="text-2xl font-bold text-center mb-6">Get Started</h3>
+                  <div className="flex gap-4">
+                    <input
+                      type="email"
+                      placeholder={previewTemplate.email_placeholder}
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg"
+                      disabled
+                    />
+                    <button
+                      className="px-8 py-3 rounded-lg font-semibold text-white"
+                      style={{ backgroundColor: previewTemplate.button_color }}
+                      disabled
+                    >
+                      {previewTemplate.submit_button_text}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 border-t border-gray-200 p-4">
+                <button
+                  onClick={() => setPreviewTemplate(null)}
+                  className="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Close Preview
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </AdminLayout>

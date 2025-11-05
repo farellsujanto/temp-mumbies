@@ -94,14 +94,18 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
       .order('unlock_requirement_value', { ascending: true });
 
     // Fetch giveaways
-    const { data: giveawaysData } = await supabase
+    const { data: giveawaysData, error: giveawaysError } = await supabase
       .from('partner_giveaways')
       .select(`
         *,
-        bundle:bundle_id (*)
+        bundle:giveaway_bundles!bundle_id(*)
       `)
       .eq('partner_id', partnerId)
       .order('created_at', { ascending: false });
+
+    if (giveawaysError) {
+      console.error('Error fetching giveaways:', giveawaysError);
+    }
 
     if (bundlesData) setBundles(bundlesData);
     if (giveawaysData) setGiveaways(giveawaysData as any);
