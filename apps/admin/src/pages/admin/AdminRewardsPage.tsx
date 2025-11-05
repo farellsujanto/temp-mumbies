@@ -160,7 +160,42 @@ export default function AdminRewardsPage() {
               Organize rewards into tracks, featured promotions, and seasonal events
             </p>
           </div>
-          <button className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
+          <button
+            onClick={() => setEditingReward({
+              id: 'new',
+              title: '',
+              description: '',
+              reward_type: 'cash_bonus',
+              status: 'active',
+              reward_value: 0,
+              reward_description: '',
+              requirement_type: 'leads',
+              requirement_value: 0,
+              requirement_description: '',
+              max_winners: null,
+              featured_image_url: '',
+              category: 'evergreen',
+              display_section: 'general',
+              active_start_date: null,
+              active_end_date: null,
+              is_featured: false,
+              milestone_track_id: null,
+              milestone_order: null,
+              sort_order: null,
+              current_participants: 0,
+              is_global: true,
+              target_partner_ids: null,
+              featured: false,
+              badge_icon: null,
+              badge_color: null,
+              starts_at: null,
+              ends_at: null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              is_test_data: false
+            } as any)}
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+          >
             <Plus className="h-5 w-5" />
             Create Reward
           </button>
@@ -407,7 +442,9 @@ export default function AdminRewardsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Edit Reward</h2>
+              <h2 className="text-xl font-bold text-gray-900">
+                {editingReward.id === 'new' ? 'Create New Reward' : 'Edit Reward'}
+              </h2>
               <button
                 onClick={() => setEditingReward(null)}
                 className="text-gray-400 hover:text-gray-600"
@@ -416,56 +453,167 @@ export default function AdminRewardsPage() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                <input
-                  type="text"
-                  value={editingReward.title}
-                  onChange={(e) => setEditingReward({...editingReward, title: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <textarea
-                  value={editingReward.description}
-                  onChange={(e) => setEditingReward({...editingReward, description: e.target.value})}
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-
+            <div className="p-6 space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                  <select
-                    value={editingReward.category}
-                    onChange={(e) => setEditingReward({...editingReward, category: e.target.value})}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                  <input
+                    type="text"
+                    value={editingReward.title}
+                    onChange={(e) => setEditingReward({...editingReward, title: e.target.value})}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  >
-                    <option value="evergreen">Evergreen</option>
-                    <option value="milestone_track">Milestone Track</option>
-                    <option value="seasonal">Seasonal</option>
-                    <option value="special_event">Special Event</option>
-                  </select>
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Display Section</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Reward Type *</label>
                   <select
-                    value={editingReward.display_section}
-                    onChange={(e) => setEditingReward({...editingReward, display_section: e.target.value})}
+                    value={editingReward.reward_type}
+                    onChange={(e) => setEditingReward({...editingReward, reward_type: e.target.value})}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
-                    <option value="general">General</option>
-                    <option value="sales">Sales</option>
-                    <option value="leads">Leads</option>
-                    <option value="referrals">Referrals</option>
-                    <option value="engagement">Engagement</option>
-                    <option value="special">Special</option>
+                    <option value="cash_bonus">Cash Bonus</option>
+                    <option value="product_bundle">Product Bundle</option>
+                    <option value="discount_code">Discount Code</option>
+                    <option value="badge">Badge</option>
+                    <option value="premium_access">Premium Access</option>
+                    <option value="free_shipping">Free Shipping</option>
                   </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  value={editingReward.description}
+                  onChange={(e) => setEditingReward({...editingReward, description: e.target.value})}
+                  rows={2}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="border-t border-gray-200 pt-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Requirement</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select
+                      value={editingReward.requirement_type || 'leads'}
+                      onChange={(e) => setEditingReward({...editingReward, requirement_type: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                      <option value="leads">Leads</option>
+                      <option value="sales">Sales</option>
+                      <option value="orders">Orders</option>
+                      <option value="referrals">Referrals</option>
+                      <option value="engagement">Engagement</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Target Value</label>
+                    <input
+                      type="number"
+                      value={editingReward.requirement_value || 0}
+                      onChange={(e) => setEditingReward({...editingReward, requirement_value: parseFloat(e.target.value)})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Max Winners</label>
+                    <input
+                      type="number"
+                      value={editingReward.max_winners || ''}
+                      onChange={(e) => setEditingReward({...editingReward, max_winners: e.target.value ? parseInt(e.target.value) : null})}
+                      placeholder="Unlimited"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Requirement Description</label>
+                  <input
+                    type="text"
+                    value={editingReward.requirement_description || ''}
+                    onChange={(e) => setEditingReward({...editingReward, requirement_description: e.target.value})}
+                    placeholder="e.g., Generate 50 qualified leads in 30 days"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Reward Details</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Reward Value ($)</label>
+                    <input
+                      type="number"
+                      value={editingReward.reward_value || 0}
+                      onChange={(e) => setEditingReward({...editingReward, reward_value: parseFloat(e.target.value)})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
+                    <input
+                      type="text"
+                      value={editingReward.featured_image_url || ''}
+                      onChange={(e) => setEditingReward({...editingReward, featured_image_url: e.target.value})}
+                      placeholder="https://..."
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Recommended: 1200x675px (16:9)</p>
+                  </div>
+                </div>
+
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Reward Description</label>
+                  <input
+                    type="text"
+                    value={editingReward.reward_description || ''}
+                    onChange={(e) => setEditingReward({...editingReward, reward_description: e.target.value})}
+                    placeholder="e.g., $50 Mumbies Cash + Premium Badge"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-gray-200 pt-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Categorization</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                      value={editingReward.category}
+                      onChange={(e) => setEditingReward({...editingReward, category: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                      <option value="evergreen">Evergreen</option>
+                      <option value="milestone_track">Milestone Track</option>
+                      <option value="seasonal">Seasonal</option>
+                      <option value="special_event">Special Event</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Display Section</label>
+                    <select
+                      value={editingReward.display_section}
+                      onChange={(e) => setEditingReward({...editingReward, display_section: e.target.value})}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                      <option value="general">General</option>
+                      <option value="sales">Sales</option>
+                      <option value="leads">Leads</option>
+                      <option value="referrals">Referrals</option>
+                      <option value="engagement">Engagement</option>
+                      <option value="special">Special</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -527,18 +675,39 @@ export default function AdminRewardsPage() {
               </button>
               <button
                 onClick={async () => {
-                  const { error } = await supabase
-                    .from('partner_rewards')
-                    .update({
-                      title: editingReward.title,
-                      description: editingReward.description,
-                      category: editingReward.category,
-                      display_section: editingReward.display_section,
-                      active_start_date: editingReward.active_start_date,
-                      active_end_date: editingReward.active_end_date,
-                      is_featured: editingReward.is_featured
-                    })
-                    .eq('id', editingReward.id);
+                  const isNew = editingReward.id === 'new';
+                  const rewardData = {
+                    title: editingReward.title,
+                    description: editingReward.description,
+                    reward_type: editingReward.reward_type,
+                    status: 'active',
+                    reward_value: editingReward.reward_value,
+                    reward_description: editingReward.reward_description,
+                    requirement_type: editingReward.requirement_type,
+                    requirement_value: editingReward.requirement_value,
+                    requirement_description: editingReward.requirement_description,
+                    max_winners: editingReward.max_winners,
+                    featured_image_url: editingReward.featured_image_url,
+                    category: editingReward.category,
+                    display_section: editingReward.display_section,
+                    active_start_date: editingReward.active_start_date,
+                    active_end_date: editingReward.active_end_date,
+                    is_featured: editingReward.is_featured
+                  };
+
+                  let error;
+                  if (isNew) {
+                    const result = await supabase
+                      .from('partner_rewards')
+                      .insert([rewardData]);
+                    error = result.error;
+                  } else {
+                    const result = await supabase
+                      .from('partner_rewards')
+                      .update(rewardData)
+                      .eq('id', editingReward.id);
+                    error = result.error;
+                  }
 
                   if (!error) {
                     setEditingReward(null);
@@ -549,7 +718,7 @@ export default function AdminRewardsPage() {
                 }}
                 className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
               >
-                Save Changes
+                {editingReward.id === 'new' ? 'Create Reward' : 'Save Changes'}
               </button>
             </div>
           </div>
