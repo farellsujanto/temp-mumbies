@@ -6,19 +6,19 @@ import { Tooltip } from '@mumbies/shared';
 
 interface GiveawayBundle {
   id: string;
-  name: string;
-  description: string;
-  total_value: number;
-  featured_image_url: string;
-  unlock_requirement_type: string;
-  unlock_requirement_value: number;
+  name: string | null;
+  description: string | null;
+  total_value: number | null;
+  featured_image_url: string | null;
+  unlock_requirement_type: string | null;
+  unlock_requirement_value: number | null;
   is_active: boolean;
 
   // Legacy fields
-  retail_value?: number;
-  image_url?: string;
-  tier?: string;
-  sales_threshold?: number;
+  retail_value?: number | null;
+  image_url?: string | null;
+  tier?: string | null;
+  sales_threshold?: number | null;
 }
 
 interface PartnerGiveaway {
@@ -32,7 +32,7 @@ interface PartnerGiveaway {
   total_entries: number;
   total_leads_generated: number;
   bundle_id: string;
-  bundle: GiveawayBundle;
+  bundle?: GiveawayBundle | null;
 }
 
 interface PartnerStats {
@@ -273,27 +273,6 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
     }
   };
 
-  const getTierColor = (tier: string | null | undefined) => {
-    if (!tier) return 'from-green-400 to-green-600';
-    const colors: Record<string, string> = {
-      bronze: 'from-amber-700 to-yellow-600',
-      silver: 'from-gray-400 to-gray-600',
-      gold: 'from-yellow-400 to-yellow-600',
-      platinum: 'from-purple-400 to-pink-600'
-    };
-    return colors[tier] || 'from-green-400 to-green-600';
-  };
-
-  const getTierBadge = (tier: string | null | undefined) => {
-    if (!tier) return 'bg-green-100 text-green-700';
-    const badges: Record<string, string> = {
-      bronze: 'bg-amber-100 text-amber-700',
-      silver: 'bg-gray-100 text-gray-700',
-      gold: 'bg-yellow-100 text-yellow-700',
-      platinum: 'bg-purple-100 text-purple-700'
-    };
-    return badges[tier] || 'bg-green-100 text-green-700';
-  };
 
   if (loading) {
     return (
@@ -407,8 +386,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                 .map((bundle) => {
                 const unlocked = canUnlockBundle(bundle);
                 const progress = getUnlockProgress(bundle);
-                const imageUrl = bundle.featured_image_url || bundle.image_url || 'https://via.placeholder.com/300x200?text=Bundle';
-                const value = Number(bundle.total_value || bundle.retail_value || 0);
+                const imageUrl = bundle?.featured_image_url || bundle?.image_url || 'https://via.placeholder.com/300x200?text=Bundle';
+                const value = Number(bundle?.total_value || bundle?.retail_value || 0);
 
                 return (
                   <div
@@ -420,14 +399,9 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                     <div className="relative h-32">
                       <img
                         src={imageUrl}
-                        alt={bundle.name}
+                        alt={bundle?.name || 'Giveaway Bundle'}
                         className={`w-full h-full object-cover ${!unlocked && 'opacity-50 grayscale'}`}
                       />
-                      {bundle.tier && (
-                        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${getTierBadge(bundle.tier)}`}>
-                          {bundle.tier?.toUpperCase() || ''}
-                        </div>
-                      )}
                       {unlocked ? (
                         <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                           <CheckCircle className="h-3 w-3" />
@@ -442,8 +416,8 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                     </div>
 
                     <div className="p-4">
-                      <h4 className="font-bold mb-2">{bundle.name}</h4>
-                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">{bundle.description}</p>
+                      <h4 className="font-bold mb-2">{bundle?.name || 'Giveaway Bundle'}</h4>
+                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">{bundle?.description || 'Exclusive bundle for partners'}</p>
 
                       <div className="bg-white border border-gray-200 rounded-lg p-2 mb-2">
                         <div className="flex items-center justify-between mb-1">
@@ -464,7 +438,7 @@ export default function GiveawaySection({ partnerId, totalSales, organizationNam
                         <div>
                           <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
                             <div
-                              className={`bg-gradient-to-r ${getTierColor(bundle.tier || 'gold')} h-1.5 rounded-full`}
+                              className="bg-gradient-to-r from-green-400 to-green-600 h-1.5 rounded-full"
                               style={{ width: `${progress}%` }}
                             ></div>
                           </div>
