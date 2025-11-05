@@ -27,8 +27,16 @@ interface Giveaway {
   total_entries: number;
   winner_selected_at?: string;
   winner_entry_id?: string;
+  bundle_id?: string;
   partner: {
     organization_name: string;
+  };
+  bundle?: {
+    name: string;
+    description: string;
+    featured_image_url: string;
+    products_description: string;
+    total_value: number;
   };
 }
 
@@ -61,7 +69,8 @@ export default function AdminGiveawaysPage() {
       .from('partner_giveaways')
       .select(`
         *,
-        partner:nonprofits(organization_name)
+        partner:nonprofits(organization_name),
+        bundle:giveaway_bundles(name, description, featured_image_url, products_description, total_value)
       `)
       .order('created_at', { ascending: false });
 
@@ -442,6 +451,54 @@ export default function AdminGiveawaysPage() {
                     <p className="text-gray-900 mt-1">{new Date(selectedGiveaway.ends_at).toLocaleDateString()}</p>
                   </div>
                 </div>
+
+                {/* Giveaway Bundle/Products */}
+                {selectedGiveaway.bundle && (
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                      <Package className="h-5 w-5 text-purple-600" />
+                      Giveaway Products
+                    </h3>
+
+                    {selectedGiveaway.bundle.featured_image_url && (
+                      <div className="mb-4">
+                        <img
+                          src={selectedGiveaway.bundle.featured_image_url}
+                          alt={selectedGiveaway.bundle.name}
+                          className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                        />
+                      </div>
+                    )}
+
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 space-y-3">
+                      <div>
+                        <label className="text-sm font-medium text-purple-700">Bundle Name</label>
+                        <p className="text-gray-900 font-semibold mt-1">{selectedGiveaway.bundle.name}</p>
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-medium text-purple-700">Total Value</label>
+                        <p className="text-2xl font-bold text-green-600 mt-1">
+                          ${selectedGiveaway.bundle.total_value?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+
+                      {selectedGiveaway.bundle.products_description && (
+                        <div>
+                          <label className="text-sm font-medium text-purple-700">Products Included</label>
+                          <p className="text-gray-900 mt-1 whitespace-pre-line">{selectedGiveaway.bundle.products_description}</p>
+                        </div>
+                      )}
+
+                      {selectedGiveaway.bundle.description && (
+                        <div>
+                          <label className="text-sm font-medium text-purple-700">Description</label>
+                          <p className="text-gray-700 mt-1">{selectedGiveaway.bundle.description}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Winner Section */}
                 {selectedGiveaway.winner_selected_at && winner ? (

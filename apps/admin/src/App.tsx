@@ -48,8 +48,7 @@ function App() {
                     <Route path="/accounts" element={<AdminAccountsPage />} />
                     <Route path="/payouts" element={<AdminPayoutsPage />} />
                     <Route path="/leads" element={<AdminLeadsPage />} />
-                    <Route path="/giveaways" element={<AdminGiveawaysMainPage />} />
-                    <Route path="/giveaways/bundles" element={<AdminGiveawayBundlesPage />} />
+                    <Route path="/giveaways" element={<AdminGiveawayBundlesPage />} />
                     <Route path="/giveaways/active" element={<AdminGiveawaysPage />} />
                     <Route path="/giveaways/create" element={<AdminCreateGiveawayBundlePage />} />
                     <Route path="/rewards" element={<AdminRewardsPage />} />

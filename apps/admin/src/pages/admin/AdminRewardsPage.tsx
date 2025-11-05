@@ -44,6 +44,7 @@ export default function AdminRewardsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [loading, setLoading] = useState(true);
   const [editingReward, setEditingReward] = useState<Reward | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -123,6 +124,35 @@ export default function AdminRewardsPage() {
         return 'bg-gray-100 text-gray-600';
       default:
         return 'bg-gray-100 text-gray-600';
+    }
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !editingReward) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `reward-${editingReward.id || 'new'}-${Date.now()}.${fileExt}`;
+      const filePath = `rewards/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('public-assets')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('public-assets')
+        .getPublicUrl(filePath);
+
+      setEditingReward({...editingReward, featured_image_url: publicUrl});
+      alert('Image uploaded successfully!');
+    } catch (error: any) {
+      alert('Error uploading image: ' + error.message);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -558,15 +588,34 @@ export default function AdminRewardsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image URL</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+
+                    {editingReward.featured_image_url && (
+                      <div className="mb-3 relative">
+                        <img
+                          src={editingReward.featured_image_url}
+                          alt="Preview"
+                          className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          onClick={() => setEditingReward({...editingReward, featured_image_url: ''})}
+                          className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
+
                     <input
-                      type="text"
-                      value={editingReward.featured_image_url || ''}
-                      onChange={(e) => setEditingReward({...editingReward, featured_image_url: e.target.value})}
-                      placeholder="https://..."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Recommended: 1200x675px (16:9)</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {uploading ? 'Uploading...' : 'Recommended: 1200x675px (16:9) - Max 5MB'}
+                    </p>
                   </div>
                 </div>
 

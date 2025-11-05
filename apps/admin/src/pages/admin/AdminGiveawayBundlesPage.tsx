@@ -67,7 +67,7 @@ export default function AdminGiveawayBundlesPage() {
       .order('created_at', { ascending: false });
 
     if (data) setBundles(data);
-    if (error) console.error('Error loading bundles:', error);
+    if (error) console.error('Error loading giveaways:', error);
     setLoading(false);
   };
 
@@ -170,7 +170,7 @@ export default function AdminGiveawayBundlesPage() {
       .single();
 
     if (data) {
-      alert('Bundle cloned successfully!');
+      alert('Giveaway cloned successfully!');
       loadBundles();
       setEditingBundle(data);
       setShowModal(true);
@@ -207,7 +207,7 @@ export default function AdminGiveawayBundlesPage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-gray-900">Giveaway Bundles</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Giveaways</h1>
               <button
                 onClick={() => navigate('/giveaways/active')}
                 className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-lg hover:bg-blue-200 inline-flex items-center gap-1"
@@ -216,14 +216,14 @@ export default function AdminGiveawayBundlesPage() {
                 View Active
               </button>
             </div>
-            <p className="text-gray-600 mt-1">Manage giveaway bundle templates</p>
+            <p className="text-gray-600 mt-1">Manage giveaway templates and partner rewards</p>
           </div>
           <button
             onClick={() => navigate('/giveaways/create')}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
           >
             <Plus className="h-5 w-5" />
-            Create Bundle
+            Create Giveaway
           </button>
         </div>
 
@@ -237,7 +237,7 @@ export default function AdminGiveawayBundlesPage() {
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            All Bundles ({bundles.length})
+            All Giveaways ({bundles.length})
           </button>
           <button
             onClick={() => setActiveTab('progress')}
