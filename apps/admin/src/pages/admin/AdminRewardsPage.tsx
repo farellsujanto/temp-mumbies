@@ -43,6 +43,7 @@ export default function AdminRewardsPage() {
   const [milestoneTracks, setMilestoneTracks] = useState<MilestoneTrack[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [loading, setLoading] = useState(true);
+  const [editingReward, setEditingReward] = useState<Reward | null>(null);
 
   useEffect(() => {
     loadData();
@@ -94,6 +95,35 @@ export default function AdminRewardsPage() {
     return rewards
       .filter(r => r.milestone_track_id === trackId)
       .sort((a, b) => (a.milestone_order || 0) - (b.milestone_order || 0));
+  };
+
+  const getComputedStatus = (reward: Reward): 'upcoming' | 'active' | 'ended' => {
+    const now = new Date();
+    const startDate = reward.active_start_date ? new Date(reward.active_start_date) : null;
+    const endDate = reward.active_end_date ? new Date(reward.active_end_date) : null;
+
+    if (startDate && now < startDate) {
+      return 'upcoming';
+    }
+
+    if (endDate && now > endDate) {
+      return 'ended';
+    }
+
+    return 'active';
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'upcoming':
+        return 'bg-blue-100 text-blue-700';
+      case 'active':
+        return 'bg-green-100 text-green-700';
+      case 'ended':
+        return 'bg-gray-100 text-gray-600';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
   };
 
   const tabs = [
@@ -239,14 +269,13 @@ export default function AdminRewardsPage() {
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                                reward.status === 'active'
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-gray-100 text-gray-600'
-                              }`}>
-                                {reward.status}
+                              <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(getComputedStatus(reward))}`}>
+                                {getComputedStatus(reward)}
                               </span>
-                              <button className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded">
+                              <button
+                                onClick={() => setEditingReward(reward)}
+                                className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded"
+                              >
                                 <Edit2 className="h-4 w-4" />
                               </button>
                               <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded">
@@ -351,14 +380,13 @@ export default function AdminRewardsPage() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                            reward.status === 'active'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}>
-                            {reward.status}
+                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(getComputedStatus(reward))}`}>
+                            {getComputedStatus(reward)}
                           </span>
-                          <button className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded">
+                          <button
+                            onClick={() => setEditingReward(reward)}
+                            className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded"
+                          >
                             <Edit2 className="h-4 w-4" />
                           </button>
                           <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded">
@@ -374,6 +402,159 @@ export default function AdminRewardsPage() {
           </div>
         )}
       </div>
+
+      {editingReward && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Edit Reward</h2>
+              <button
+                onClick={() => setEditingReward(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input
+                  type="text"
+                  value={editingReward.title}
+                  onChange={(e) => setEditingReward({...editingReward, title: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={editingReward.description}
+                  onChange={(e) => setEditingReward({...editingReward, description: e.target.value})}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <select
+                    value={editingReward.category}
+                    onChange={(e) => setEditingReward({...editingReward, category: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="evergreen">Evergreen</option>
+                    <option value="milestone_track">Milestone Track</option>
+                    <option value="seasonal">Seasonal</option>
+                    <option value="special_event">Special Event</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Display Section</label>
+                  <select
+                    value={editingReward.display_section}
+                    onChange={(e) => setEditingReward({...editingReward, display_section: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="general">General</option>
+                    <option value="sales">Sales</option>
+                    <option value="leads">Leads</option>
+                    <option value="referrals">Referrals</option>
+                    <option value="engagement">Engagement</option>
+                    <option value="special">Special</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                  <input
+                    type="datetime-local"
+                    value={editingReward.active_start_date ? new Date(editingReward.active_start_date).toISOString().slice(0, 16) : ''}
+                    onChange={(e) => setEditingReward({...editingReward, active_start_date: e.target.value ? new Date(e.target.value).toISOString() : null})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty for immediate activation</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                  <input
+                    type="datetime-local"
+                    value={editingReward.active_end_date ? new Date(editingReward.active_end_date).toISOString().slice(0, 16) : ''}
+                    onChange={(e) => setEditingReward({...editingReward, active_end_date: e.target.value ? new Date(e.target.value).toISOString() : null})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty for no end date</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editingReward.is_featured}
+                    onChange={(e) => setEditingReward({...editingReward, is_featured: e.target.checked})}
+                    className="w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                  />
+                  <span className="text-sm text-gray-700">Featured (highlight this reward)</span>
+                </label>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-blue-900 mb-2">Status Logic</h3>
+                <ul className="text-xs text-blue-800 space-y-1">
+                  <li>• <strong>Upcoming:</strong> Start date is in the future - partners cannot enroll yet</li>
+                  <li>• <strong>Active:</strong> Between start and end dates (or no dates set) - partners can enroll</li>
+                  <li>• <strong>Ended:</strong> End date has passed - no new enrollments</li>
+                </ul>
+                <p className="text-sm text-blue-900 mt-3">
+                  Current computed status: <strong className="capitalize">{getComputedStatus(editingReward)}</strong>
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 border-t border-gray-200 p-6 flex items-center justify-end gap-4">
+              <button
+                onClick={() => setEditingReward(null)}
+                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  const { error } = await supabase
+                    .from('partner_rewards')
+                    .update({
+                      title: editingReward.title,
+                      description: editingReward.description,
+                      category: editingReward.category,
+                      display_section: editingReward.display_section,
+                      active_start_date: editingReward.active_start_date,
+                      active_end_date: editingReward.active_end_date,
+                      is_featured: editingReward.is_featured
+                    })
+                    .eq('id', editingReward.id);
+
+                  if (!error) {
+                    setEditingReward(null);
+                    loadData();
+                  } else {
+                    alert('Error saving: ' + error.message);
+                  }
+                }}
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
