@@ -1,13 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
-import { Gift, Package, Activity, Plus } from 'lucide-react';
+import { Gift, Package, Activity, Plus, TrendingUp } from 'lucide-react';
 
 export default function AdminGiveawaysMainPage() {
   const location = useLocation();
 
   const tabs = [
-    { path: '/giveaways/bundles', label: 'Bundle Templates', icon: Package },
+    { path: '/giveaways/bundles', label: 'Giveaway Templates', icon: Package },
     { path: '/giveaways/active', label: 'Active Giveaways', icon: Activity },
+    { path: '/giveaways/tracks', label: 'Giveaway Tracks', icon: TrendingUp },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -22,14 +23,14 @@ export default function AdminGiveawaysMainPage() {
               <Gift className="h-8 w-8 text-purple-600" />
               Giveaways Management
             </h1>
-            <p className="text-gray-600 mt-1">Create bundle templates and monitor active giveaways</p>
+            <p className="text-gray-600 mt-1">Create giveaway templates, set up milestone tracks, and monitor active giveaways</p>
           </div>
           <Link
             to="/giveaways/create"
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium"
           >
             <Plus className="h-5 w-5" />
-            Create Bundle
+            Create Giveaway
           </Link>
         </div>
 
@@ -67,12 +68,12 @@ export default function AdminGiveawaysMainPage() {
                 <Package className="h-6 w-6 text-white" />
               </div>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Bundle Templates</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Giveaway Templates</h3>
             <p className="text-gray-600 text-sm mb-4">
-              Create giveaway bundles by selecting products from your Shopify store. Set unlock requirements and reuse rules.
+              Create giveaway templates by selecting products from your Shopify store. Set unlock requirements and reuse rules.
             </p>
             <div className="text-purple-600 font-medium text-sm">
-              Manage Bundles →
+              Manage Templates →
             </div>
           </Link>
 
@@ -103,9 +104,9 @@ export default function AdminGiveawaysMainPage() {
               <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mb-3">
                 1
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Create Bundles</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Create Templates</h4>
               <p className="text-sm text-gray-600">
-                Select products from Shopify to create giveaway bundles. Set unlock requirements based on partner sales.
+                Select products from Shopify to create giveaway templates. Set unlock requirements based on partner sales.
               </p>
             </div>
             <div>
@@ -114,7 +115,7 @@ export default function AdminGiveawaysMainPage() {
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Partners Launch</h4>
               <p className="text-sm text-gray-600">
-                When partners hit sales thresholds, they can launch giveaways using your bundles from their portal.
+                When partners hit sales thresholds, they can launch giveaways using your templates from their portal.
               </p>
             </div>
             <div>

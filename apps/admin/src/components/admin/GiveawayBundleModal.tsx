@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@mumbies/shared';
-import { X, Upload, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import ProductSelectionModal from './ProductSelectionModal';
+import { X, Upload, Image as ImageIcon, AlertCircle, Plus, Trash2, Package } from 'lucide-react';
 
 interface GiveawayBundle {
   id: string;
@@ -16,6 +17,26 @@ interface GiveawayBundle {
   assigned_partner_ids: string[];
   is_active: boolean;
   products_description: string | null;
+}
+
+interface Product {
+  id: string;
+  shopify_id: string;
+  title: string;
+  description: string;
+  vendor: string;
+  price: number;
+  featured_image: string;
+  images: any[];
+  variants: any[];
+  has_variants: boolean;
+}
+
+interface SelectedProduct {
+  product: Product;
+  variant_id?: string;
+  variant_title?: string;
+  quantity: number;
 }
 
 interface GiveawayBundleModalProps {
@@ -35,6 +56,9 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([]);
+  const [showProductModal, setShowProductModal] = useState(false);
   const [formData, setFormData] = useState({
     name: bundle?.name || '',
     description: bundle?.description || '',
@@ -52,6 +76,10 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
 
   useEffect(() => {
     loadPartners();
+    loadProducts();
+    if (isEdit && bundle) {
+      loadBundleProducts();
+    }
   }, []);
 
   const loadPartners = async () => {
@@ -62,6 +90,52 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
       .order('organization_name');
 
     if (data) setPartners(data);
+  };
+
+  const loadProducts = async () => {
+    const { data } = await supabase
+      .from('shopify_products')
+      .select('*')
+      .eq('status', 'active')
+      .order('title');
+
+    if (data) setProducts(data);
+  };
+
+  const loadBundleProducts = async () => {
+    if (!bundle) return;
+
+    const { data } = await supabase
+      .from('giveaway_bundle_products')
+      .select(`
+        *,
+        product:shopify_products(*)
+      `)
+      .eq('bundle_id', bundle.id)
+      .order('display_order');
+
+    if (data) {
+      const selected: SelectedProduct[] = data.map(item => ({
+        product: item.product as Product,
+        variant_id: item.variant_id || undefined,
+        variant_title: item.variant_title || undefined,
+        quantity: item.quantity || 1
+      }));
+      setSelectedProducts(selected);
+    }
+  };
+
+  const handleProductsSelected = (newProducts: SelectedProduct[]) => {
+    setSelectedProducts(newProducts);
+    const totalValue = newProducts.reduce((sum, sp) => sum + (sp.product.price * sp.quantity), 0);
+    setFormData({ ...formData, total_value: totalValue });
+  };
+
+  const removeProduct = (index: number) => {
+    const newProducts = selectedProducts.filter((_, i) => i !== index);
+    setSelectedProducts(newProducts);
+    const totalValue = newProducts.reduce((sum, sp) => sum + (sp.product.price * sp.quantity), 0);
+    setFormData({ ...formData, total_value: totalValue });
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +182,12 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
   const handleSave = async () => {
     // Validation
     if (!formData.name.trim()) {
-      alert('Please enter a bundle name');
+      alert('Please enter a giveaway name');
+      return;
+    }
+
+    if (selectedProducts.length === 0) {
+      alert('Please select at least one product');
       return;
     }
 
@@ -118,7 +197,7 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
     }
 
     if (!formData.is_universal && formData.assigned_partner_ids.length === 0) {
-      alert('Please select at least one partner for partner-specific bundles');
+      alert('Please select at least one partner for partner-specific giveaways');
       return;
     }
 
@@ -130,6 +209,8 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
         assigned_partner_ids: formData.is_universal ? [] : formData.assigned_partner_ids
       };
 
+      let bundleId: string;
+
       if (isEdit) {
         const { error } = await supabase
           .from('giveaway_bundles')
@@ -137,13 +218,39 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
           .eq('id', bundle.id);
 
         if (error) throw error;
+        bundleId = bundle.id;
+
+        // Delete existing products
+        await supabase
+          .from('giveaway_bundle_products')
+          .delete()
+          .eq('bundle_id', bundleId);
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('giveaway_bundles')
-          .insert(bundleData);
+          .insert(bundleData)
+          .select()
+          .single();
 
         if (error) throw error;
+        bundleId = data.id;
       }
+
+      // Insert new products
+      const productInserts = selectedProducts.map((sp, index) => ({
+        bundle_id: bundleId,
+        shopify_product_id: sp.product.id,
+        quantity: sp.quantity,
+        variant_id: sp.variant_id || null,
+        variant_title: sp.variant_title || null,
+        display_order: index
+      }));
+
+      const { error: productsError } = await supabase
+        .from('giveaway_bundle_products')
+        .insert(productInserts);
+
+      if (productsError) throw productsError;
 
       onSave();
       onClose();
@@ -248,16 +355,61 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
             )}
           </div>
 
-          {/* Products Description */}
+          {/* Product Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Included Products</label>
-            <textarea
-              value={formData.products_description}
-              onChange={(e) => setFormData({ ...formData, products_description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              rows={3}
-              placeholder="e.g., 2x Mumbies Original Chew, 1x Yummies Bison Liver Treats, 1x Rope Toy"
-            />
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Included Products *</label>
+              <button
+                type="button"
+                onClick={() => setShowProductModal(true)}
+                className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700"
+              >
+                <Plus className="h-3 w-3" />
+                Add Products
+              </button>
+            </div>
+
+            {selectedProducts.length === 0 ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <Package className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-500 mb-3">No products selected</p>
+                <button
+                  type="button"
+                  onClick={() => setShowProductModal(true)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                >
+                  Select Products from Shopify
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {selectedProducts.map((sp, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <img
+                      src={sp.product.featured_image}
+                      alt={sp.product.title}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{sp.product.title}</p>
+                      {sp.variant_title && (
+                        <p className="text-sm text-gray-600">{sp.variant_title}</p>
+                      )}
+                      <p className="text-sm text-gray-500">
+                        Quantity: {sp.quantity} × ${sp.product.price.toFixed(2)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeProduct(index)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Total Value */}
@@ -433,6 +585,16 @@ export default function GiveawayBundleModal({ bundle, onClose, onSave }: Giveawa
           </button>
         </div>
       </div>
+
+      {/* Product Selection Modal */}
+      {showProductModal && (
+        <ProductSelectionModal
+          products={products}
+          selectedProducts={selectedProducts}
+          onClose={() => setShowProductModal(false)}
+          onSave={handleProductsSelected}
+        />
+      )}
     </div>
   );
 }
