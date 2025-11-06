@@ -13,12 +13,16 @@ import {
   normalizeGiveawayArray,
   normalizeRewardArray,
   normalizeTransactionArray,
+  normalizeReferral,
+  normalizePartnerProfile,
   normalizeStats,
   type NormalizedPartner,
   type NormalizedLead,
   type NormalizedGiveaway,
   type NormalizedReward,
   type NormalizedTransaction,
+  type NormalizedReferral,
+  type NormalizedPartnerProfile,
   type NormalizedStats,
 } from './normalize';
 
@@ -208,5 +212,53 @@ export async function fetchPartnerStats(partnerId: string): Promise<NormalizedSt
   } catch (err) {
     console.error('Exception fetching partner stats:', err);
     return normalizeStats({});
+  }
+}
+
+// =============================================================================
+// DETAILED PARTNER PROFILE FOR SETTINGS
+// =============================================================================
+
+export async function fetchPartnerProfileDetailed(partnerId: string): Promise<NormalizedPartnerProfile | null> {
+  try {
+    const { data, error } = await supabase
+      .from('partners')
+      .select('*')
+      .eq('id', partnerId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching detailed partner profile:', error);
+      return null;
+    }
+
+    return data ? normalizePartnerProfile(data) : null;
+  } catch (err) {
+    console.error('Exception fetching detailed partner profile:', err);
+    return null;
+  }
+}
+
+// =============================================================================
+// REFERRALS
+// =============================================================================
+
+export async function fetchPartnerReferrals(partnerId: string): Promise<NormalizedReferral[]> {
+  try {
+    const { data, error } = await supabase
+      .from('partner_referrals')
+      .select('*')
+      .eq('referrer_partner_id', partnerId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching partner referrals:', error);
+      return [];
+    }
+
+    return (data || []).map(normalizeReferral);
+  } catch (err) {
+    console.error('Exception fetching partner referrals:', err);
+    return [];
   }
 }

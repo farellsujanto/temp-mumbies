@@ -81,6 +81,32 @@ export interface NormalizedTransaction {
   created_at: string;
 }
 
+export interface NormalizedReferral {
+  id: string;
+  referrer_partner_id: string;
+  referred_partner_id: string;
+  referred_partner_name: string;
+  referred_partner_email: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  commission_amount: number;
+  commission_rate: number;
+  created_at: string;
+  completed_at: string | null;
+}
+
+export interface NormalizedPartnerProfile {
+  id: string;
+  organization_name: string;
+  partner_type: string;
+  email: string;
+  phone: string;
+  address: string;
+  website: string;
+  description: string;
+  status: 'pending' | 'active' | 'suspended';
+  created_at: string;
+}
+
 export interface NormalizedStats {
   total_leads: number;
   active_giveaways: number;
@@ -175,6 +201,36 @@ export function normalizeTransaction(data: any): NormalizedTransaction {
     amount: parseFloat(data?.amount || '0'),
     description: data?.description || '',
     reference_id: data?.reference_id || '',
+    created_at: data?.created_at || new Date().toISOString(),
+  };
+}
+
+export function normalizeReferral(data: any): NormalizedReferral {
+  return {
+    id: data?.id || '',
+    referrer_partner_id: data?.referrer_partner_id || '',
+    referred_partner_id: data?.referred_partner_id || '',
+    referred_partner_name: data?.referred_partner_name || 'Unknown',
+    referred_partner_email: data?.referred_partner_email || '',
+    status: data?.status || 'pending',
+    commission_amount: parseFloat(data?.commission_amount || '0'),
+    commission_rate: parseFloat(data?.commission_rate || '0'),
+    created_at: data?.created_at || new Date().toISOString(),
+    completed_at: data?.completed_at || null,
+  };
+}
+
+export function normalizePartnerProfile(data: any): NormalizedPartnerProfile {
+  return {
+    id: data?.id || '',
+    organization_name: data?.organization_name || 'Unknown Organization',
+    partner_type: data?.partner_type || 'partner',
+    email: data?.email || data?.contact_email || '',
+    phone: data?.phone || data?.contact_phone || '',
+    address: data?.address || '',
+    website: data?.website || '',
+    description: data?.description || '',
+    status: data?.status || 'pending',
     created_at: data?.created_at || new Date().toISOString(),
   };
 }

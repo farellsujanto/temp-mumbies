@@ -42,26 +42,6 @@ function normalizeGiveaway(giveaway: any): PartnerGiveaway {
   };
 }
 
-/**
- * Fetches partner giveaways with normalized data
- */
-export async function fetchPartnerGiveaways(partnerId: string) {
-  const { data, error } = await supabase
-    .from('partner_giveaways')
-    .select(`
-      *,
-      bundle:giveaway_bundles!bundle_id(*)
-    `)
-    .eq('partner_id', partnerId)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching giveaways:', error);
-    throw error;
-  }
-
-  return (data || []).map(normalizeGiveaway);
-}
 
 /**
  * Creates a new giveaway
