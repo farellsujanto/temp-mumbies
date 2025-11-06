@@ -7,21 +7,29 @@
 - Vercel (hosting)
 - GitHub: https://github.com/mumbies/platform-mvp
 
-## Critical URLs
-- Partner Portal: partners.staging.mumbies.com
-- Admin Portal: admin.mumbies.com
+## Critical URLs & Preview
+- **Partner Portal:** https://partners.staging.mumbies.com/partner/dashboard ← **PREVIEW THIS**
+- Admin Portal: https://admin.mumbies.com
 - Supabase: zsrkexpnfvivrtgzmgdw.supabase.co
+
+**IMPORTANT:** Bolt's preview should show partners.staging.mumbies.com/partner/dashboard, NOT the shopping site!
 
 ## File Structure - DO NOT CONFUSE
 ```
 /src/                    ← Main consumer site (mumbies.com)
                          ← DO NOT edit for partner portal
-
+                         
 /apps/partner/          ← Partner portal (partners.staging.mumbies.com)
                         ← ONLY edit these files
-
+                        
 /apps/admin/            ← Admin portal (admin.mumbies.com)
 ```
+
+## Bolt Working Directory
+When building partner portal:
+1. Work in: `/apps/partner/src/pages/`
+2. Preview: `https://partners.staging.mumbies.com/partner/dashboard`
+3. If wrong site shows, manually update preview URL
 
 ## Code Rules
 ✅ DO:
@@ -44,7 +52,7 @@ const { data, error } = await supabase
   .from('partner_leads')
   .select('id, email, status, created_at')
   .eq('partner_id', partnerId);
-
+  
 if (error) {
   console.error('Error:', error);
   return;
