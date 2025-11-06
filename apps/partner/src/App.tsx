@@ -5,6 +5,8 @@ import PartnerLoginPage from './pages/PartnerLoginPage';
 import PartnerDashboardPage from './pages/PartnerDashboardPage';
 import PartnerLeadsPage from './pages/PartnerLeadsPage';
 import PartnerGiveawaysPage from './pages/PartnerGiveawaysPage';
+import PartnerRewardsPage from './pages/PartnerRewardsPage';
+import PartnerReferralsPage from './pages/PartnerReferralsPage';
 import PartnerSettingsPage from './pages/PartnerSettingsPage';
 import PartnerApplyPage from './pages/PartnerApplyPage';
 
@@ -25,6 +27,8 @@ function App() {
                   <Route path="/dashboard" element={<PartnerDashboardPage />} />
                   <Route path="/leads" element={<PartnerLeadsPage />} />
                   <Route path="/giveaways" element={<PartnerGiveawaysPage />} />
+                  <Route path="/rewards" element={<PartnerRewardsPage />} />
+                  <Route path="/referrals" element={<PartnerReferralsPage />} />
                   <Route path="/settings" element={<PartnerSettingsPage />} />
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
