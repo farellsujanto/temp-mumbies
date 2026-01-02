@@ -72,14 +72,16 @@ export async function POST(request: NextRequest) {
             // Determine referral percentage from variant -> product -> 0
             let referralPercentage = 0;
             if (item.variant_id) {
+              console.log(`Looking up variant ID: ${item.variant_id}`);
               const v = variantMap.get(String(item.variant_id));
               if (v) referralPercentage = v.referralPercentage;
             }
             if (!referralPercentage && item.product_id) {
+              console.log(`Looking up product ID: ${item.product_id}`);
               const p = productMap.get(String(item.product_id));
               if (p) referralPercentage = p.referralPercentage;
             }
-
+            console.log(`Item ${item.id} referral percentage determined as:`, referralPercentage);
             totalReferral += (basePrice || 0) * quantity * (Number(referralPercentage || 0) / 100);
           }
           console.log('Total referral earnings calculated:', totalReferral);
