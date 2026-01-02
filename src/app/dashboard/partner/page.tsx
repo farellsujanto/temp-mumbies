@@ -1,10 +1,51 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Handshake, Store, TrendingUp, DollarSign, Users, LogOut, Package, BarChart3 } from 'lucide-react';
+import { Handshake, TrendingUp, DollarSign, Users, LogOut, Copy, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+interface ReferredUser {
+  id: number;
+  name: string | null;
+  email: string;
+  joinedAt: string;
+}
+
+interface PartnerStats {
+  referralCode: string;
+  referralUrl: string;
+  totalReferralEarnings: number;
+  withdrawableBalance: number;
+  totalReferredUsers: number;
+  referredUsers: ReferredUser[];
+}
 
 export default function PartnerDashboard() {
   const router = useRouter();
+  const [stats, setStats] = useState<PartnerStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    fetchPartnerStats();
+  }, []);
+
+  const fetchPartnerStats = async () => {
+    try {
+      const response = await fetch('/api/v1/partner/statistics');
+      const data = await response.json();
+      
+      if (data.success) {
+        setStats(data.data);
+      } else {
+        console.error('Failed to fetch stats:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching partner stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -15,6 +56,14 @@ export default function PartnerDashboard() {
     } catch (error) {
       console.error('Logout error:', error);
       router.push('/login');
+    }
+  };
+
+  const copyReferralUrl = async () => {
+    if (stats?.referralUrl) {
+      await navigator.clipboard.writeText(stats.referralUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -59,32 +108,38 @@ export default function PartnerDashboard() {
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-green-600" />
               </div>
-              <span className="text-2xl font-bold text-green-600">$0</span>
+              <span className="text-2xl font-bold text-green-600">
+                ${loading ? '...' : stats?.totalReferralEarnings.toFixed(2) || '0.00'}
+              </span>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">Total Revenue</h3>
-            <p className="text-xs text-gray-400 mt-1">This month</p>
+            <h3 className="text-sm font-medium text-gray-600">Total Earnings</h3>
+            <p className="text-xs text-gray-400 mt-1">From referrals</p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
+                <DollarSign className="w-6 h-6 text-blue-600" />
               </div>
-              <span className="text-2xl font-bold text-blue-600">0</span>
+              <span className="text-2xl font-bold text-blue-600">
+                ${loading ? '...' : stats?.withdrawableBalance.toFixed(2) || '0.00'}
+              </span>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">Customers Served</h3>
-            <p className="text-xs text-gray-400 mt-1">Last 30 days</p>
+            <h3 className="text-sm font-medium text-gray-600">Withdrawable Balance</h3>
+            <p className="text-xs text-gray-400 mt-1">Available now</p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Package className="w-6 h-6 text-purple-600" />
+                <Users className="w-6 h-6 text-purple-600" />
               </div>
-              <span className="text-2xl font-bold text-purple-600">0</span>
+              <span className="text-2xl font-bold text-purple-600">
+                {loading ? '...' : stats?.totalReferredUsers || 0}
+              </span>
             </div>
-            <h3 className="text-sm font-medium text-gray-600">Active Listings</h3>
-            <p className="text-xs text-gray-400 mt-1">Currently available</p>
+            <h3 className="text-sm font-medium text-gray-600">Total Referrals</h3>
+            <p className="text-xs text-gray-400 mt-1">Users referred</p>
           </div>
 
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -99,117 +154,81 @@ export default function PartnerDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions & Analytics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Quick Actions */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Store className="w-5 h-5 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Quick Actions</h3>
-            </div>
-            <div className="space-y-3">
-              <button className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Package className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">Add New Listing</h4>
-                  <p className="text-sm text-gray-600">Create a new product or service</p>
-                </div>
-              </button>
-
-              <button className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <DollarSign className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">View Earnings</h4>
-                  <p className="text-sm text-gray-600">Check your revenue & payouts</p>
-                </div>
-              </button>
-
-              <button className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition-all text-left">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Users className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">Customer Insights</h4>
-                  <p className="text-sm text-gray-600">Understand your audience</p>
-                </div>
-              </button>
-
-              <button className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left">
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Store className="w-5 h-5 text-orange-600" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-900">Manage Store</h4>
-                  <p className="text-sm text-gray-600">Update your business profile</p>
-                </div>
-              </button>
-            </div>
+        {/* Referral Link Section */}
+        <div className="mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 shadow-lg">
+          <h3 className="text-white text-lg font-bold mb-3">Your Referral Link 🔗</h3>
+          <div className="bg-white rounded-xl p-4 flex items-center gap-3">
+            <input
+              type="text"
+              readOnly
+              value={loading ? 'Loading...' : stats?.referralUrl || ''}
+              className="flex-1 bg-transparent text-gray-700 font-mono text-sm outline-none"
+            />
+            <button
+              onClick={copyReferralUrl}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span className="text-sm font-medium">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span className="text-sm font-medium">Copy</span>
+                </>
+              )}
+            </button>
           </div>
-
-          {/* Performance Overview */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-green-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Performance</h3>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Customer Satisfaction</span>
-                  <span className="text-sm font-bold text-green-600">0%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '0%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Order Fulfillment</span>
-                  <span className="text-sm font-bold text-blue-600">0%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: '0%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600">Response Time</span>
-                  <span className="text-sm font-bold text-purple-600">0%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-purple-500 h-2 rounded-full" style={{ width: '0%' }}></div>
-                </div>
-              </div>
-
-              <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                <p className="text-sm text-gray-600 mb-2">💡 Pro Tip</p>
-                <p className="text-xs text-gray-700">Keep your listings updated and respond quickly to customer inquiries to improve your performance metrics!</p>
-              </div>
-            </div>
-          </div>
+          <p className="text-white text-xs mt-3 opacity-90">
+            Share this link with customers to earn commission on their purchases!
+          </p>
         </div>
 
         {/* Recent Activity */}
         <div className="mt-6 bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h3>
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-gray-400" />
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Referred Users</h3>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading...</p>
             </div>
-            <p className="text-gray-600">No recent activity yet</p>
-            <p className="text-sm text-gray-500 mt-2">Your transactions and updates will appear here</p>
-          </div>
+          ) : stats?.referredUsers && stats.referredUsers.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Name</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Email</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Joined Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.referredUsers.map((user) => (
+                    <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-sm text-gray-900">{user.name || 'N/A'}</td>
+                      <td className="py-3 px-4 text-sm text-gray-600 font-mono">{user.email}</td>
+                      <td className="py-3 px-4 text-sm text-gray-600">
+                        {new Date(user.joinedAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-gray-600">No referred users yet</p>
+              <p className="text-sm text-gray-500 mt-2">Share your referral link to start earning!</p>
+            </div>
+          )}
         </div>
       </main>
     </div>

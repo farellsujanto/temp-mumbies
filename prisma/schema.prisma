@@ -30,10 +30,21 @@ model User {
   referrerId        Int?    // ID of the user who referred this user
   referrer          User?   @relation("UserReferrals", fields: [referrerId], references: [id])
   referredUsers     User[]  @relation("UserReferrals")
+  
+  // Relations for referral logs and earnings
+  referralLogsUsed           ReferralLog[]           @relation("ReferralLogUser")
+  referralLogsReceived       ReferralLog[]           @relation("ReferralLogReferer")
+  referralEarningsGenerated  ReferralEarningsLog[]   @relation("ReferralEarningUser")
+  referralEarningsReceived   ReferralEarningsLog[]   @relation("ReferralEarningReferer")
 
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   enabled           Boolean   @default(true)
+
+  // Referral statistics
+  totalReferralEarnings Decimal @db.Decimal(10, 2) @default(0.00)
+  withdrawableBalance  Decimal @db.Decimal(10, 2) @default(0.00)
+  totalReferredUsers   Int     @default(0)
 
   @@index([referralCode])
   @@index([referrerId])
@@ -59,4 +70,185 @@ model EmailOtp {
   @@index([email])
   @@index([expiresAt])
   @@index([blockedUntil])
+}
+
+model Vendor {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  slug                String    @unique
+  description         String?   @db.Text
+  
+  products            Product[]
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  enabled             Boolean   @default(true)
+
+  @@index([slug])
+}
+
+model ProductType {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  slug                String    @unique
+  description         String?   @db.Text
+  
+  products            Product[]
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  enabled             Boolean   @default(true)
+
+  @@index([slug])
+}
+
+model Category {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  slug                String    @unique
+  description         String?   @db.Text
+
+  products            Product[]
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  enabled             Boolean   @default(true)
+
+  @@index([slug])
+}
+
+model Product {
+  id                  Int               @id @default(autoincrement())
+  title               String
+  slug                String            @unique
+  description         String?           @db.Text
+  
+  // Relations to Vendor and ProductType
+  vendorId            Int?
+  vendor              Vendor?           @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  
+  productTypeId       Int?
+  productType         ProductType?      @relation(fields: [productTypeId], references: [id], onDelete: SetNull)
+  
+  published           Boolean           @default(false)
+  publishedAt         DateTime?
+  
+  // For products WITHOUT variants (simple products)
+  price               Decimal?          @db.Decimal(10, 2)
+  discountedPrice     Decimal?          @db.Decimal(10, 2)
+  sku                 String?
+  inventoryQuantity   Int?
+  available           Boolean           @default(true)
+  
+  // Referral percentage for this specific product
+  referralPercentage  Float             @default(0.0) // Default 0%
+  
+  // Shopify integration (optional)
+  shopifyProductId    String?           @unique
+  
+  variants            ProductVariant[]
+  images              String[] // Url to images
+  
+  categoryId           Int?
+  category             Category?   @relation(fields: [categoryId], references: [id])
+  tagId           Int?
+  tag             Tag?   @relation(fields: [tagId], references: [id])
+  
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  enabled             Boolean           @default(true)
+
+  @@index([slug])
+  @@index([shopifyProductId])
+  @@index([vendorId])
+  @@index([productTypeId])
+}
+
+model ProductVariant {
+  id                  Int       @id @default(autoincrement())
+  productId           Int
+  product             Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  // Parent-child relationship for multi-level variants
+  parentVariantId     Int?
+  parentVariant       ProductVariant?  @relation("VariantHierarchy", fields: [parentVariantId], references: [id], onDelete: Cascade)
+  childVariants       ProductVariant[] @relation("VariantHierarchy")
+
+  // Shopify integration (optional)
+  shopifyProductId    String?           @unique
+  
+  title               String
+  sku                 String?
+  price               Decimal?  @db.Decimal(10, 2) // Nullable for parent variants
+  discountedPrice     Decimal?  @db.Decimal(10, 2)
+  // Referral percentage for this specific product
+  referralPercentage  Float             @default(0.0) // Default 0%
+  
+  // Stock management (only for leaf variants)
+  available           Boolean   @default(true)
+  inventoryQuantity   Int       @default(0)
+
+  // Featured image for this specific variant
+  images              String[] // Url to images
+  
+  // Physical properties (only for leaf variants)
+  weight              Int?      // grams
+  requiresShipping    Boolean   @default(true)
+  taxable             Boolean   @default(true)
+  
+  // Shopify integration (optional)
+  shopifyVariantId    String?   @unique
+  
+  position            Int       @default(1)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  enabled             Boolean   @default(true)
+
+  @@index([productId])
+  @@index([parentVariantId])
+  @@index([sku])
+  @@index([shopifyVariantId])
+}
+
+model Tag {
+  id                  Int       @id @default(autoincrement())
+  name                String    @unique
+  slug                String    @unique
+  description         String?   @db.Text
+  
+  products            Product[]
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  enabled             Boolean   @default(true)
+
+  @@index([slug])
+}
+
+model ReferralLog {
+  id          Int      @id @default(autoincrement())
+  userId      Int      // user who used the code (buyer)
+  user        User     @relation("ReferralLogUser", fields: [userId], references: [id])
+  codeUsed    String
+  refererId   Int      // the user who owns the code
+  referer     User     @relation("ReferralLogReferer", fields: [refererId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([refererId])
+}
+
+model ReferralEarningsLog {
+  id             Int      @id @default(autoincrement())
+  userId         Int      // buyer/user who generated the earning
+  user           User     @relation("ReferralEarningUser", fields: [userId], references: [id])
+  refererId      Int      // referer who receives the earning
+  referer        User     @relation("ReferralEarningReferer", fields: [refererId], references: [id])
+  shopifyOrderId String?
+  amount         Decimal  @db.Decimal(10, 2)
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([refererId])
+  @@index([shopifyOrderId])
 }

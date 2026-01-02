@@ -268,7 +268,7 @@ export default function LoginPage() {
                       onChange={(e) => handleOTPChange(index, e.target.value)}
                       onKeyDown={(e) => handleOTPKeyDown(index, e)}
                       onPaste={handleOTPPaste}
-                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none caret-gray-700 text-gray-900"
+                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 text-gray-900 rounded-xl focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none caret-gray-700"
                     />
                   ))}
                 </div>

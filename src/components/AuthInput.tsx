@@ -38,10 +38,10 @@ export default function AuthInput({
           required={required}
           disabled={disabled}
           placeholder={placeholder}
-          className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none placeholder:text-gray-500 caret-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full pl-12 pr-4 py-4 text-gray-900 text-lg border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all outline-none placeholder:text-gray-500 caret-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         {Icon && (
-          <Icon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Icon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-900" />
         )}
       </div>
     </div>

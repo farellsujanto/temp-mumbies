@@ -27,10 +27,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if email is currently blocked
+console.log('Checking existing OTP for email:', email);
     const existingOtp = await prisma.emailOtp.findFirst({
       where: { email: email.toLowerCase() },
     });
-
+console.log('Existing OTP record:', existingOtp);
     if (existingOtp?.blockedUntil && existingOtp.blockedUntil > new Date()) {
       const remainingMinutes = Math.ceil(
         (existingOtp.blockedUntil.getTime() - new Date().getTime()) / 60000
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Send OTP error:', error);
+    // console.error('Send OTP error:', error);
     return NextResponse.json<ApiResponse>({
       success: false,
       message: 'An error occurred. Please try again.',

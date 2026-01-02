@@ -153,18 +153,3 @@ export async function sendOTPEmail({ email, otp, userName }: SendOTPEmailParams)
 export function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
-
-/**
- * Generate a unique Mumbies referral code
- * Format: MUMBXXXXXXXX (where X is alphanumeric)
- */
-export function generateReferralCode(): string {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let randomPart = '';
-  
-  for (let i = 0; i < 8; i++) {
-    randomPart += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  
-  return `MUMB${randomPart}`;
-}

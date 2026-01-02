@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/src/utils/prismaOrm.util';
-import { generateReferralCode } from '@/src/utils/emailService.util';
 import { generateToken } from '@/src/utils/jwt.edge.util';
 import { ApiResponse } from '@/src/types/apiResponse.type';
 import { UserRole } from '@/generated/prisma/client';
+import { generateReferralCode } from '@/src/utils/referral.util';
 
 export async function POST(request: NextRequest) {
   try {

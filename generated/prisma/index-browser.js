@@ -129,7 +129,10 @@ exports.Prisma.UserScalarFieldEnum = {
   referrerId: 'referrerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  enabled: 'enabled'
+  enabled: 'enabled',
+  totalReferralEarnings: 'totalReferralEarnings',
+  withdrawableBalance: 'withdrawableBalance',
+  totalReferredUsers: 'totalReferredUsers'
 };
 
 exports.Prisma.EmailOtpScalarFieldEnum = {
@@ -143,6 +146,110 @@ exports.Prisma.EmailOtpScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   enabled: 'enabled'
+};
+
+exports.Prisma.VendorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ProductTypeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  vendorId: 'vendorId',
+  productTypeId: 'productTypeId',
+  published: 'published',
+  publishedAt: 'publishedAt',
+  price: 'price',
+  discountedPrice: 'discountedPrice',
+  sku: 'sku',
+  inventoryQuantity: 'inventoryQuantity',
+  available: 'available',
+  referralPercentage: 'referralPercentage',
+  shopifyProductId: 'shopifyProductId',
+  images: 'images',
+  categoryId: 'categoryId',
+  tagId: 'tagId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ProductVariantScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  parentVariantId: 'parentVariantId',
+  shopifyProductId: 'shopifyProductId',
+  title: 'title',
+  sku: 'sku',
+  price: 'price',
+  discountedPrice: 'discountedPrice',
+  referralPercentage: 'referralPercentage',
+  available: 'available',
+  inventoryQuantity: 'inventoryQuantity',
+  images: 'images',
+  weight: 'weight',
+  requiresShipping: 'requiresShipping',
+  taxable: 'taxable',
+  shopifyVariantId: 'shopifyVariantId',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ReferralLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  codeUsed: 'codeUsed',
+  refererId: 'refererId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReferralEarningsLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  refererId: 'refererId',
+  shopifyOrderId: 'shopifyOrderId',
+  amount: 'amount',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -167,7 +274,15 @@ exports.UserRole = exports.$Enums.UserRole = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  EmailOtp: 'EmailOtp'
+  EmailOtp: 'EmailOtp',
+  Vendor: 'Vendor',
+  ProductType: 'ProductType',
+  Category: 'Category',
+  Product: 'Product',
+  ProductVariant: 'ProductVariant',
+  Tag: 'Tag',
+  ReferralLog: 'ReferralLog',
+  ReferralEarningsLog: 'ReferralEarningsLog'
 };
 
 /**

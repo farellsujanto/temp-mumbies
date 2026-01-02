@@ -101,7 +101,10 @@ exports.Prisma.UserScalarFieldEnum = {
   referrerId: 'referrerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  enabled: 'enabled'
+  enabled: 'enabled',
+  totalReferralEarnings: 'totalReferralEarnings',
+  withdrawableBalance: 'withdrawableBalance',
+  totalReferredUsers: 'totalReferredUsers'
 };
 
 exports.Prisma.EmailOtpScalarFieldEnum = {
@@ -115,6 +118,110 @@ exports.Prisma.EmailOtpScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   enabled: 'enabled'
+};
+
+exports.Prisma.VendorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ProductTypeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  vendorId: 'vendorId',
+  productTypeId: 'productTypeId',
+  published: 'published',
+  publishedAt: 'publishedAt',
+  price: 'price',
+  discountedPrice: 'discountedPrice',
+  sku: 'sku',
+  inventoryQuantity: 'inventoryQuantity',
+  available: 'available',
+  referralPercentage: 'referralPercentage',
+  shopifyProductId: 'shopifyProductId',
+  images: 'images',
+  categoryId: 'categoryId',
+  tagId: 'tagId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ProductVariantScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  parentVariantId: 'parentVariantId',
+  shopifyProductId: 'shopifyProductId',
+  title: 'title',
+  sku: 'sku',
+  price: 'price',
+  discountedPrice: 'discountedPrice',
+  referralPercentage: 'referralPercentage',
+  available: 'available',
+  inventoryQuantity: 'inventoryQuantity',
+  images: 'images',
+  weight: 'weight',
+  requiresShipping: 'requiresShipping',
+  taxable: 'taxable',
+  shopifyVariantId: 'shopifyVariantId',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.ReferralLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  codeUsed: 'codeUsed',
+  refererId: 'refererId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ReferralEarningsLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  refererId: 'refererId',
+  shopifyOrderId: 'shopifyOrderId',
+  amount: 'amount',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -139,7 +246,15 @@ exports.UserRole = exports.$Enums.UserRole = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  EmailOtp: 'EmailOtp'
+  EmailOtp: 'EmailOtp',
+  Vendor: 'Vendor',
+  ProductType: 'ProductType',
+  Category: 'Category',
+  Product: 'Product',
+  ProductVariant: 'ProductVariant',
+  Tag: 'Tag',
+  ReferralLog: 'ReferralLog',
+  ReferralEarningsLog: 'ReferralEarningsLog'
 };
 /**
  * Create the Client
@@ -149,10 +264,10 @@ const config = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum UserRole {\n  ADMIN\n  CUSTOMER\n  PARTNER\n}\n\nmodel User {\n  id    Int      @id @default(autoincrement())\n  name  String?\n  email String   @unique\n  role  UserRole @default(CUSTOMER)\n\n  // Referral System\n  referralCode  String @unique\n  referrerId    Int? // ID of the user who referred this user\n  referrer      User?  @relation(\"UserReferrals\", fields: [referrerId], references: [id])\n  referredUsers User[] @relation(\"UserReferrals\")\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([referralCode])\n  @@index([referrerId])\n}\n\nmodel EmailOtp {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  otp       String // \"483920\"\n  expiresAt DateTime\n\n  // Wrong attempt tracking, maximum 3x attempts\n  wrongAttempts Int       @default(0)\n  blockedUntil  DateTime?\n\n  // Resend tracking, maximum 3x resend\n  resendCount Int @default(0)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([email])\n  @@index([expiresAt])\n  @@index([blockedUntil])\n}\n"
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nenum UserRole {\n  ADMIN\n  CUSTOMER\n  PARTNER\n}\n\nmodel User {\n  id    Int      @id @default(autoincrement())\n  name  String?\n  email String   @unique\n  role  UserRole @default(CUSTOMER)\n\n  // Referral System\n  referralCode  String @unique\n  referrerId    Int? // ID of the user who referred this user\n  referrer      User?  @relation(\"UserReferrals\", fields: [referrerId], references: [id])\n  referredUsers User[] @relation(\"UserReferrals\")\n\n  // Relations for referral logs and earnings\n  referralLogsUsed          ReferralLog[]         @relation(\"ReferralLogUser\")\n  referralLogsReceived      ReferralLog[]         @relation(\"ReferralLogReferer\")\n  referralEarningsGenerated ReferralEarningsLog[] @relation(\"ReferralEarningUser\")\n  referralEarningsReceived  ReferralEarningsLog[] @relation(\"ReferralEarningReferer\")\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  // Referral statistics\n  totalReferralEarnings Decimal @default(0.00) @db.Decimal(10, 2)\n  withdrawableBalance   Decimal @default(0.00) @db.Decimal(10, 2)\n  totalReferredUsers    Int     @default(0)\n\n  @@index([referralCode])\n  @@index([referrerId])\n}\n\nmodel EmailOtp {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  otp       String // \"483920\"\n  expiresAt DateTime\n\n  // Wrong attempt tracking, maximum 3x attempts\n  wrongAttempts Int       @default(0)\n  blockedUntil  DateTime?\n\n  // Resend tracking, maximum 3x resend\n  resendCount Int @default(0)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([email])\n  @@index([expiresAt])\n  @@index([blockedUntil])\n}\n\nmodel Vendor {\n  id          Int     @id @default(autoincrement())\n  name        String  @unique\n  slug        String  @unique\n  description String? @db.Text\n\n  products Product[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([slug])\n}\n\nmodel ProductType {\n  id          Int     @id @default(autoincrement())\n  name        String  @unique\n  slug        String  @unique\n  description String? @db.Text\n\n  products Product[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([slug])\n}\n\nmodel Category {\n  id          Int     @id @default(autoincrement())\n  name        String  @unique\n  slug        String  @unique\n  description String? @db.Text\n\n  products Product[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([slug])\n}\n\nmodel Product {\n  id          Int     @id @default(autoincrement())\n  title       String\n  slug        String  @unique\n  description String? @db.Text\n\n  // Relations to Vendor and ProductType\n  vendorId Int?\n  vendor   Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)\n\n  productTypeId Int?\n  productType   ProductType? @relation(fields: [productTypeId], references: [id], onDelete: SetNull)\n\n  published   Boolean   @default(false)\n  publishedAt DateTime?\n\n  // For products WITHOUT variants (simple products)\n  price             Decimal? @db.Decimal(10, 2)\n  discountedPrice   Decimal? @db.Decimal(10, 2)\n  sku               String?\n  inventoryQuantity Int?\n  available         Boolean  @default(true)\n\n  // Referral percentage for this specific product\n  referralPercentage Float @default(0.0) // Default 0%\n\n  // Shopify integration (optional)\n  shopifyProductId String? @unique\n\n  variants ProductVariant[]\n  images   String[] // Url to images\n\n  categoryId Int?\n  category   Category? @relation(fields: [categoryId], references: [id])\n  tagId      Int?\n  tag        Tag?      @relation(fields: [tagId], references: [id])\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([slug])\n  @@index([shopifyProductId])\n  @@index([vendorId])\n  @@index([productTypeId])\n}\n\nmodel ProductVariant {\n  id        Int     @id @default(autoincrement())\n  productId Int\n  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  // Parent-child relationship for multi-level variants\n  parentVariantId Int?\n  parentVariant   ProductVariant?  @relation(\"VariantHierarchy\", fields: [parentVariantId], references: [id], onDelete: Cascade)\n  childVariants   ProductVariant[] @relation(\"VariantHierarchy\")\n\n  // Shopify integration (optional)\n  shopifyProductId String? @unique\n\n  title              String\n  sku                String?\n  price              Decimal? @db.Decimal(10, 2) // Nullable for parent variants\n  discountedPrice    Decimal? @db.Decimal(10, 2)\n  // Referral percentage for this specific product\n  referralPercentage Float    @default(0.0) // Default 0%\n\n  // Stock management (only for leaf variants)\n  available         Boolean @default(true)\n  inventoryQuantity Int     @default(0)\n\n  // Featured image for this specific variant\n  images String[] // Url to images\n\n  // Physical properties (only for leaf variants)\n  weight           Int? // grams\n  requiresShipping Boolean @default(true)\n  taxable          Boolean @default(true)\n\n  // Shopify integration (optional)\n  shopifyVariantId String? @unique\n\n  position  Int      @default(1)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([productId])\n  @@index([parentVariantId])\n  @@index([sku])\n  @@index([shopifyVariantId])\n}\n\nmodel Tag {\n  id          Int     @id @default(autoincrement())\n  name        String  @unique\n  slug        String  @unique\n  description String? @db.Text\n\n  products Product[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  enabled   Boolean  @default(true)\n\n  @@index([slug])\n}\n\nmodel ReferralLog {\n  id        Int      @id @default(autoincrement())\n  userId    Int // user who used the code (buyer)\n  user      User     @relation(\"ReferralLogUser\", fields: [userId], references: [id])\n  codeUsed  String\n  refererId Int // the user who owns the code\n  referer   User     @relation(\"ReferralLogReferer\", fields: [refererId], references: [id])\n  createdAt DateTime @default(now())\n\n  @@index([userId])\n  @@index([refererId])\n}\n\nmodel ReferralEarningsLog {\n  id             Int      @id @default(autoincrement())\n  userId         Int // buyer/user who generated the earning\n  user           User     @relation(\"ReferralEarningUser\", fields: [userId], references: [id])\n  refererId      Int // referer who receives the earning\n  referer        User     @relation(\"ReferralEarningReferer\", fields: [refererId], references: [id])\n  shopifyOrderId String?\n  amount         Decimal  @db.Decimal(10, 2)\n  createdAt      DateTime @default(now())\n\n  @@index([userId])\n  @@index([refererId])\n  @@index([shopifyOrderId])\n}\n"
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"referralCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referrerId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"referrer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserReferrals\"},{\"name\":\"referredUsers\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserReferrals\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"EmailOtp\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"otp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"wrongAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"blockedUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"resendCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"UserRole\"},{\"name\":\"referralCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"referrerId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"referrer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserReferrals\"},{\"name\":\"referredUsers\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserReferrals\"},{\"name\":\"referralLogsUsed\",\"kind\":\"object\",\"type\":\"ReferralLog\",\"relationName\":\"ReferralLogUser\"},{\"name\":\"referralLogsReceived\",\"kind\":\"object\",\"type\":\"ReferralLog\",\"relationName\":\"ReferralLogReferer\"},{\"name\":\"referralEarningsGenerated\",\"kind\":\"object\",\"type\":\"ReferralEarningsLog\",\"relationName\":\"ReferralEarningUser\"},{\"name\":\"referralEarningsReceived\",\"kind\":\"object\",\"type\":\"ReferralEarningsLog\",\"relationName\":\"ReferralEarningReferer\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"totalReferralEarnings\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"withdrawableBalance\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"totalReferredUsers\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"EmailOtp\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"otp\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"wrongAttempts\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"blockedUntil\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"resendCount\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"Vendor\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToVendor\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"ProductType\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductType\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"Category\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"vendorId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"vendor\",\"kind\":\"object\",\"type\":\"Vendor\",\"relationName\":\"ProductToVendor\"},{\"name\":\"productTypeId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"productType\",\"kind\":\"object\",\"type\":\"ProductType\",\"relationName\":\"ProductToProductType\"},{\"name\":\"published\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"publishedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"discountedPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"inventoryQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"available\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"referralPercentage\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"shopifyProductId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"variants\",\"kind\":\"object\",\"type\":\"ProductVariant\",\"relationName\":\"ProductToProductVariant\"},{\"name\":\"images\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"categoryId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"category\",\"kind\":\"object\",\"type\":\"Category\",\"relationName\":\"CategoryToProduct\"},{\"name\":\"tagId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"tag\",\"kind\":\"object\",\"type\":\"Tag\",\"relationName\":\"ProductToTag\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"ProductVariant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToProductVariant\"},{\"name\":\"parentVariantId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"parentVariant\",\"kind\":\"object\",\"type\":\"ProductVariant\",\"relationName\":\"VariantHierarchy\"},{\"name\":\"childVariants\",\"kind\":\"object\",\"type\":\"ProductVariant\",\"relationName\":\"VariantHierarchy\"},{\"name\":\"shopifyProductId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"discountedPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"referralPercentage\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"available\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"inventoryQuantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"images\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"weight\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"requiresShipping\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"taxable\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"shopifyVariantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"position\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"Tag\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"products\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToTag\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"enabled\",\"kind\":\"scalar\",\"type\":\"Boolean\"}],\"dbName\":null},\"ReferralLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferralLogUser\"},{\"name\":\"codeUsed\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refererId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"referer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferralLogReferer\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"ReferralEarningsLog\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferralEarningUser\"},{\"name\":\"refererId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"referer\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"ReferralEarningReferer\"},{\"name\":\"shopifyOrderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.compilerWasm = {
   getRuntime: async () => require('./query_compiler_bg.js'),
