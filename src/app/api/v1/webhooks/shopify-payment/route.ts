@@ -49,7 +49,9 @@ export async function POST(request: NextRequest) {
       const email = data.email || data.customer?.email;
       if (email) {
         const user = await prisma.user.findFirst({ where: { email } });
+        console.log('Matched user for referral processing:', user);
         if (user && user.referrerId) {
+          console.log('Processing referral earnings for user:', user.id);
           let totalReferral = 0;
           const items = data.line_items || [];
 
@@ -100,6 +102,7 @@ export async function POST(request: NextRequest) {
       console.error('Referral processing error:', err);
     }
     
+    console.log('Webhook processed successfully');
     return NextResponse.json(
       { success: true, message: 'Webhook received' },
       { status: 200 }
