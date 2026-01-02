@@ -49,9 +49,7 @@ export async function POST(request: NextRequest) {
       const email = data.email || data.customer?.email;
       if (email) {
         const user = await prisma.user.findFirst({ where: { email } });
-        console.log('Matched user for referral processing:', user);
         if (user && user.referrerId) {
-          console.log('Processing referral earnings for user:', user.id);
           let totalReferral = 0;
           const items = data.line_items || [];
 
@@ -67,24 +65,20 @@ export async function POST(request: NextRequest) {
               const totalAlloc = item.discount_allocations.reduce((acc: number, d: any) => acc + (parseFloat(d.amount || 0) || 0), 0);
               basePrice = Math.max(0, price - totalAlloc);
             }
-            console.log(`Item ${item.id} base price determined as:`, basePrice);
 
             // Determine referral percentage from variant -> product -> 0
             let referralPercentage = 0;
             if (item.variant_id) {
-              console.log(`Looking up variant ID: ${item.variant_id}`);
               const v = variantMap.get(String(item.variant_id));
               if (v) referralPercentage = v.referralPercentage;
             }
             if (!referralPercentage && item.product_id) {
-              console.log(`Looking up product ID: ${item.product_id}`);
               const p = productMap.get(String(item.product_id));
               if (p) referralPercentage = p.referralPercentage;
             }
-            console.log(`Item ${item.id} referral percentage determined as:`, referralPercentage);
+
             totalReferral += (basePrice || 0) * quantity * (Number(referralPercentage || 0) / 100);
           }
-          console.log('Total referral earnings calculated:', totalReferral);
 
           if (totalReferral > 0) {
             const shopifyOrderId = String(data.id || data.order_id || '');
@@ -106,7 +100,6 @@ export async function POST(request: NextRequest) {
       console.error('Referral processing error:', err);
     }
     
-    console.log('Webhook processed successfully');
     return NextResponse.json(
       { success: true, message: 'Webhook received' },
       { status: 200 }
