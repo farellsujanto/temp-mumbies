@@ -69,17 +69,21 @@ export async function POST(request: NextRequest) {
             // Determine referral percentage from variant -> product -> 0
             let referralPercentage = 0;
             if (item.variant_id) {
+              console.log('Looking up variant for referral percentage, item:', item);
               const v = variantMap.get(String(item.variant_id));
               if (v) referralPercentage = v.referralPercentage;
             }
             if (!referralPercentage && item.product_id) {
+              console.log('Looking up product for referral percentage, item:', item);
               const p = productMap.get(String(item.product_id));
               if (p) referralPercentage = p.referralPercentage;
             }
 
+            console.log(`Item ${item.name}: basePrice=${basePrice}, quantity=${quantity}, referralPercentage=${referralPercentage}`);
             totalReferral += (basePrice || 0) * quantity * (Number(referralPercentage || 0) / 100);
           }
 
+          console.log(`Total referral earnings for order ${data.id || data.order_id}: $${totalReferral.toFixed(2)}`);
           if (totalReferral > 0) {
             const shopifyOrderId = String(data.id || data.order_id || '');
             const refererId = user.referrerId as number;
@@ -96,6 +100,7 @@ export async function POST(request: NextRequest) {
           }
         }
       }
+      console.log('Referral processing completed for webhook.');
     } catch (err) {
       console.error('Referral processing error:', err);
     }
