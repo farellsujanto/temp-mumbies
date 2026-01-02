@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
               const totalAlloc = item.discount_allocations.reduce((acc: number, d: any) => acc + (parseFloat(d.amount || 0) || 0), 0);
               basePrice = Math.max(0, price - totalAlloc);
             }
+            console.log(`Item ${item.id} base price determined as:`, basePrice);
 
             // Determine referral percentage from variant -> product -> 0
             let referralPercentage = 0;
@@ -81,6 +82,7 @@ export async function POST(request: NextRequest) {
 
             totalReferral += (basePrice || 0) * quantity * (Number(referralPercentage || 0) / 100);
           }
+          console.log('Total referral earnings calculated:', totalReferral);
 
           if (totalReferral > 0) {
             const shopifyOrderId = String(data.id || data.order_id || '');
