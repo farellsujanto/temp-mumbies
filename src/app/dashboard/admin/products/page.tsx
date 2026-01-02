@@ -6,6 +6,7 @@ import AdminInput from '@/src/components/AdminInput';
 import AdminButton from '@/src/components/AdminButton';
 import AdminTextarea from '@/src/components/AdminTextarea';
 import DeleteConfirmationModal from '@/src/components/DeleteConfirmationModal';
+import ConfirmationModal from '@/src/components/ConfirmationModal';
 import { Product, ProductVariant, Vendor, ProductType, Category, Tag } from '@/generated/prisma';
 
 type ProductVariantWithChildren = ProductVariant & {
@@ -26,6 +27,7 @@ interface ChildVariantFormData {
     price: string;
     discountedPrice: string;
     inventoryQuantity: string;
+    referralPercentage: string;
 }
 
 interface ParentVariantFormData {
@@ -44,6 +46,8 @@ export default function ProductsPage() {
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<ProductWithVariants | null>(null);
     const [deleteModal, setDeleteModal] = useState<{ show: boolean; product: ProductWithVariants | null; deleting: boolean }>({ show: false, product: null, deleting: false });
+    const [syncModal, setSyncModal] = useState<{ show: boolean; confirming: boolean }>({ show: false, confirming: false });
+    const [syncResultModal, setSyncResultModal] = useState<{ show: boolean; success: boolean; message: string; data?: any }>({ show: false, success: false, message: '', data: null });
     const [expandedProducts, setExpandedProducts] = useState<Set<number>>(new Set());
     const [formData, setFormData] = useState({
         title: '',
@@ -59,6 +63,7 @@ export default function ProductsPage() {
     });
     const [variants, setVariants] = useState<ParentVariantFormData[]>([]);
     const [showVariants, setShowVariants] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -100,6 +105,7 @@ export default function ProductsPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setSubmitting(true);
 
         try {
             const body: any = {
@@ -126,6 +132,7 @@ export default function ProductsPage() {
                             discountedPrice: child.discountedPrice ? parseFloat(child.discountedPrice) : null,
                             inventoryQuantity: child.inventoryQuantity ? parseInt(child.inventoryQuantity) : 0,
                             available: true,
+                            referralPercentage: child.referralPercentage ? parseFloat(child.referralPercentage) : 0,
                             children: [],
                         };
                     }
@@ -142,6 +149,7 @@ export default function ProductsPage() {
                             discountedPrice: child.discountedPrice ? parseFloat(child.discountedPrice) : null,
                             inventoryQuantity: child.inventoryQuantity ? parseInt(child.inventoryQuantity) : 0,
                             available: true,
+                            referralPercentage: child.referralPercentage ? parseFloat(child.referralPercentage) : 0,
                         })),
                     };
                 }) : [],
@@ -184,6 +192,8 @@ export default function ProductsPage() {
         } catch (error) {
             console.error('Error saving product:', error);
             alert('Failed to save product');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -197,6 +207,7 @@ export default function ProductsPage() {
                 price: '',
                 discountedPrice: '',
                 inventoryQuantity: '',
+                referralPercentage: '',
             }] : [],
         }]);
     };
@@ -219,6 +230,7 @@ export default function ProductsPage() {
             price: '',
             discountedPrice: '',
             inventoryQuantity: '',
+            referralPercentage: '',
         });
         setVariants(updated);
     };
@@ -239,8 +251,7 @@ export default function ProductsPage() {
     };
 
     const handleSyncShopify = async () => {
-        if (!confirm('Sync products from Shopify? This may take a few moments.')) return;
-
+        setSyncModal({ show: false, confirming: true });
         setSyncing(true);
         try {
             const res = await fetch('/api/v1/admin/products/sync-shopify', {
@@ -249,16 +260,32 @@ export default function ProductsPage() {
             const data = await res.json();
 
             if (data.success) {
-                alert(`✅ ${data.message}\n\nCreated: ${data.data.created}\nUpdated: ${data.data.updated}\nTotal: ${data.data.total}`);
+                setSyncResultModal({
+                    show: true,
+                    success: true,
+                    message: data.message,
+                    data: data.data
+                });
                 await fetchProducts();
             } else {
-                alert(`❌ ${data.message}`);
+                setSyncResultModal({
+                    show: true,
+                    success: false,
+                    message: data.message,
+                    data: null
+                });
             }
         } catch (error) {
             console.error('Sync error:', error);
-            alert('Failed to sync with Shopify');
+            setSyncResultModal({
+                show: true,
+                success: false,
+                message: 'Failed to sync with Shopify',
+                data: null
+            });
         } finally {
             setSyncing(false);
+            setSyncModal({ show: false, confirming: false });
         }
     };
 
@@ -292,12 +319,14 @@ export default function ProductsPage() {
                         price: parentVariant.price?.toString() || '',
                         discountedPrice: parentVariant.discountedPrice?.toString() || '',
                         inventoryQuantity: parentVariant.inventoryQuantity?.toString() || '',
+                        referralPercentage: parentVariant.referralPercentage?.toString() || '',
                     }] : (parentVariant.childVariants?.map(child => ({
                         title: child.title,
                         sku: child.sku || '',
                         price: child.price?.toString() || '',
                         discountedPrice: child.discountedPrice?.toString() || '',
                         inventoryQuantity: child.inventoryQuantity?.toString() || '',
+                        referralPercentage: child.referralPercentage?.toString() || '',
                     })) || [])
                 };
             });
@@ -369,7 +398,7 @@ export default function ProductsPage() {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        onClick={handleSyncShopify}
+                        onClick={() => setSyncModal({ show: true, confirming: false })}
                         disabled={syncing}
                         className="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -427,7 +456,30 @@ export default function ProductsPage() {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {loading ? (
-                            <tr><td colSpan={7} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
+                            <>
+                                {[...Array(5)].map((_, i) => (
+                                    <tr key={i} className="animate-pulse">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-12 h-12 bg-gray-200 rounded"></div>
+                                                <div>
+                                                    <div className="h-4 bg-gray-200 rounded w-32 mb-2"></div>
+                                                    <div className="h-3 bg-gray-200 rounded w-24"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-20"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-16"></div></td>
+                                        <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-12"></div></td>
+                                        <td className="px-6 py-4"><div className="h-6 bg-gray-200 rounded-full w-20"></div></td>
+                                        <td className="px-6 py-4"><div className="flex justify-end gap-2">
+                                            <div className="h-8 bg-gray-200 rounded w-16"></div>
+                                            <div className="h-8 bg-gray-200 rounded w-16"></div>
+                                        </div></td>
+                                    </tr>
+                                ))}
+                            </>
                         ) : filteredProducts.length === 0 ? (
                             <tr><td colSpan={7} className="px-6 py-12 text-center text-gray-500">No products found</td></tr>
                         ) : (
@@ -690,12 +742,11 @@ export default function ProductsPage() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Category <span className="text-red-500">*</span>
+                                        Category
                                     </label>
                                     <select
                                         value={formData.categoryId}
                                         onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                                        required
                                         className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
                                     >
                                         <option value="">Select category</option>
@@ -707,12 +758,11 @@ export default function ProductsPage() {
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Tag <span className="text-red-500">*</span>
+                                        Tag
                                     </label>
                                     <select
                                         value={formData.tagId}
                                         onChange={(e) => setFormData({ ...formData, tagId: e.target.value })}
-                                        required
                                         className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none"
                                     >
                                         <option value="">Select tag</option>
@@ -841,6 +891,7 @@ export default function ProductsPage() {
                                                                         price: '',
                                                                         discountedPrice: '',
                                                                         inventoryQuantity: '',
+                                                                        referralPercentage: '',
                                                                     }] : updated[parentIndex].children
                                                                 };
                                                                 setVariants(updated);
@@ -937,7 +988,6 @@ export default function ProductsPage() {
                                                                 value={child.price}
                                                                 onChange={(e) => updateChildVariant(parentIndex, childIndex, 'price', e.target.value)}
                                                                 placeholder="0.00"
-                                                                required={showVariants}
                                                             />
                                                             <AdminInput
                                                                 label="Discounted Price"
@@ -947,6 +997,15 @@ export default function ProductsPage() {
                                                                 placeholder="0.00"
                                                             />
                                                         </div>
+
+                                                        <AdminInput
+                                                            label="Referral Percentage (%)"
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={child.referralPercentage}
+                                                            onChange={(e) => updateChildVariant(parentIndex, childIndex, 'referralPercentage', e.target.value)}
+                                                            placeholder="10.00"
+                                                        />
                                                     </div>
                                                 ))}
                                             </div>
@@ -961,11 +1020,12 @@ export default function ProductsPage() {
                                     onClick={() => setShowModal(false)}
                                     variant="secondary"
                                     className="flex-1"
+                                    disabled={submitting}
                                 >
                                     Cancel
                                 </AdminButton>
-                                <AdminButton type="submit" className="flex-1">
-                                    {editingProduct ? 'Update Product' : 'Create Product'}
+                                <AdminButton type="submit" className="flex-1" disabled={submitting}>
+                                    {submitting ? 'Saving...' : editingProduct ? 'Update Product' : 'Create Product'}
                                 </AdminButton>
                             </div>
                         </form>
@@ -982,6 +1042,78 @@ export default function ProductsPage() {
                 itemName={deleteModal.product?.title}
                 isDeleting={deleteModal.deleting}
             />
+
+            {/* Sync Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={syncModal.show}
+                onClose={() => setSyncModal({ show: false, confirming: false })}
+                onConfirm={handleSyncShopify}
+                title="Sync Products"
+                message="Sync products from Shopify? This may take a few moments and will update existing products with matching Shopify IDs."
+                confirmText="Sync Now"
+                cancelText="Cancel"
+                isProcessing={syncModal.confirming}
+                variant="success"
+            />
+
+            {/* Sync Result Modal */}
+            {syncResultModal.show && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl max-w-md w-full p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${syncResultModal.success ? 'bg-green-100' : 'bg-red-100'}`}>
+                                    {syncResultModal.success ? (
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    ) : (
+                                        <X className="w-6 h-6 text-red-600" />
+                                    )}
+                                </div>
+                                <h2 className="text-2xl font-bold text-gray-900">
+                                    {syncResultModal.success ? 'Sync Complete' : 'Sync Failed'}
+                                </h2>
+                            </div>
+                            <button
+                                onClick={() => setSyncResultModal({ show: false, success: false, message: '', data: null })}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        <div className="mb-6">
+                            <p className="text-gray-700 text-lg mb-4">
+                                {syncResultModal.message}
+                            </p>
+                            {syncResultModal.success && syncResultModal.data && (
+                                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-600">Created:</span>
+                                        <span className="font-semibold text-gray-900">{syncResultModal.data.created}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-600">Updated:</span>
+                                        <span className="font-semibold text-gray-900">{syncResultModal.data.updated}</span>
+                                    </div>
+                                    <div className="flex justify-between border-t border-gray-200 pt-2">
+                                        <span className="text-gray-600">Total:</span>
+                                        <span className="font-semibold text-gray-900">{syncResultModal.data.total}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            onClick={() => setSyncResultModal({ show: false, success: false, message: '', data: null })}
+                            className="w-full px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

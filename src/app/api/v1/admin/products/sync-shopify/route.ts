@@ -30,88 +30,62 @@ export async function POST(request: NextRequest) {
     const shopifyData = await response.json();
     const products = shopifyData.products || [];
 
+    // Prefetch all vendors, categories, and tags for faster lookups
+    const [allVendors, allCategories, allTags, existingProducts] = await Promise.all([
+      prisma.vendor.findMany({ select: { id: true, name: true } }),
+      prisma.category.findMany({ select: { id: true, name: true } }),
+      prisma.tag.findMany({ select: { id: true, name: true } }),
+      prisma.product.findMany({ select: { id: true, shopifyProductId: true } }),
+    ]);
+
+    // Create lookup maps for faster matching
+    const vendorMap = new Map(allVendors.map(v => [v.name.toLowerCase(), v.id]));
+    const categoryMap = new Map(allCategories.map(c => [c.name.toLowerCase(), c.id]));
+    const tagMap = new Map(allTags.map(t => [t.name.toLowerCase(), t.id]));
+    const existingProductMap = new Map(existingProducts.map(p => [p.shopifyProductId || '', p.id]));
+
+    // Process products in batches to avoid transaction timeouts
     let syncedCount = 0;
     let createdCount = 0;
     let updatedCount = 0;
+    
+    const BATCH_SIZE = 5; // Process 5 products at a time
+    
+    for (let i = 0; i < products.length; i += BATCH_SIZE) {
+      const batch = products.slice(i, i + BATCH_SIZE);
+      
+      // Process each batch in its own transaction
+      const batchResult = await prisma.$transaction(async (tx) => {
+        let batchSynced = 0;
+        let batchCreated = 0;
+        let batchUpdated = 0;
 
-    for (const shopifyProduct of products) {
-      try {
-        // Check if product exists
-        const existingProduct = await prisma.product.findFirst({
-          where: { shopifyProductId: shopifyProduct.id.toString() },
-        });
+        const syncProduct = async (shopifyProduct: any) => {
+        const shopifyProductId = shopifyProduct.id.toString();
+        const existingProductId = existingProductMap.get(shopifyProductId);
 
-        // Try to find vendor by name if vendor is provided
+        // Try to find vendor by exact name match (case-insensitive)
         let vendorId = null;
         if (shopifyProduct.vendor) {
-          const vendor = await prisma.vendor.findFirst({
-            where: { 
-              name: {
-                equals: shopifyProduct.vendor,
-                mode: 'insensitive'
-              }
-            }
-          });
-          if (vendor) {
-            vendorId = vendor.id;
-          }
+          vendorId = vendorMap.get(shopifyProduct.vendor.toLowerCase()) || null;
         }
 
-        // Try to find tag by name if tags are provided
-        let tagId = null;
-        if (shopifyProduct.tags) {
-          // Shopify tags are comma-separated
-          const tagNames = shopifyProduct.tags.split(',').map((t: string) => t.trim());
-          if (tagNames.length > 0) {
-            // Try to match the first tag
-            const tag = await prisma.tag.findFirst({
-              where: { 
-                name: {
-                  equals: tagNames[0],
-                  mode: 'insensitive'
-                }
-              }
-            });
-            if (tag) {
-              tagId = tag.id;
-            }
-          }
-        }
-
-        // Get first available category (or you can set a default)
+        // Try to find category by exact product_type match (case-insensitive)
         let categoryId = null;
         if (shopifyProduct.product_type) {
-          // Try to match category by product_type
-          const category = await prisma.category.findFirst({
-            where: { 
-              name: {
-                equals: shopifyProduct.product_type,
-                mode: 'insensitive'
-              }
-            }
-          });
-          if (category) {
-            categoryId = category.id;
-          }
-        }
-        
-        // If no category found, get the first available category
-        if (!categoryId) {
-          const firstCategory = await prisma.category.findFirst({
-            where: { enabled: true }
-          });
-          if (firstCategory) {
-            categoryId = firstCategory.id;
-          }
+          categoryId = categoryMap.get(shopifyProduct.product_type.toLowerCase()) || null;
         }
 
-        // Get first available tag if not matched
-        if (!tagId) {
-          const firstTag = await prisma.tag.findFirst({
-            where: { enabled: true }
-          });
-          if (firstTag) {
-            tagId = firstTag.id;
+        // Try to find tag by exact name match (case-insensitive)
+        let tagId = null;
+        if (shopifyProduct.tags) {
+          const tagNames = shopifyProduct.tags.split(',').map((t: string) => t.trim());
+          for (const tagName of tagNames) {
+            const matchedTagId = tagMap.get(tagName.toLowerCase());
+            if (matchedTagId) {
+              tagId = matchedTagId;
+              break; // Use first matching tag
+            }
           }
         }
 
@@ -123,41 +97,45 @@ export async function POST(request: NextRequest) {
           images: shopifyProduct.images?.map((img: any) => img.src) || [],
           published: shopifyProduct.status === 'active',
           publishedAt: shopifyProduct.published_at ? new Date(shopifyProduct.published_at) : null,
-          shopifyProductId: shopifyProduct.id.toString(),
+          shopifyProductId: shopifyProductId,
         };
 
-        // Add optional relations if found
+        // Add optional vendor if found
         if (vendorId) productData.vendorId = vendorId;
+        // Add optional category if found
         if (categoryId) productData.categoryId = categoryId;
+        // Add optional tag if found
         if (tagId) productData.tagId = tagId;
 
-        if (existingProduct) {
+        let productId: number;
+        let isUpdate = false;
+
+        if (existingProductId) {
           // Update existing product
-          await prisma.product.update({
-            where: { id: existingProduct.id },
+          await tx.product.update({
+            where: { id: existingProductId },
             data: productData,
           });
-          updatedCount++;
+          productId = existingProductId;
+          isUpdate = true;
         } else {
           // Create new product
-          await prisma.product.create({
+          const newProduct = await tx.product.create({
             data: productData,
           });
-          createdCount++;
+          productId = newProduct.id;
         }
 
-        // Sync variants with hierarchical structure
+        // Sync variants with hierarchical structure using transaction
         if (shopifyProduct.variants && shopifyProduct.variants.length > 0) {
-          const productId = existingProduct?.id || (await prisma.product.findFirst({
-            where: { shopifyProductId: shopifyProduct.id.toString() }
-          }))?.id;
+          const variantOperations = [];
 
-          if (!productId) continue;
-
-          // Delete existing variants for clean sync
-          await prisma.productVariant.deleteMany({
-            where: { productId }
-          });
+          // Delete existing variants
+          variantOperations.push(
+            tx.productVariant.deleteMany({
+              where: { productId }
+            })
+          );
 
           // Check if product has multiple option levels
           const hasMultipleOptions = shopifyProduct.options && shopifyProduct.options.length > 1;
@@ -182,36 +160,35 @@ export async function POST(request: NextRequest) {
               // If only 1 variant in this group, treat it as a standalone child variant (not a parent)
               if (childVariantData.length === 1) {
                 const singleVariant = childVariantData[0];
-                await prisma.productVariant.create({
-                  data: {
-                    productId,
-                    parentVariantId: null,
-                    title: singleVariant.title,
-                    sku: singleVariant.sku || null,
-                    // Use price and compare_at_price directly
-                    discountedPrice: singleVariant.price ? parseFloat(singleVariant.price) : 0,
-                    price: singleVariant.compare_at_price ? parseFloat(singleVariant.compare_at_price) : null,
-                    available: singleVariant.available ?? true,
-                    inventoryQuantity: singleVariant.inventory_quantity || 0,
-                    weight: singleVariant.grams || null,
-                    requiresShipping: singleVariant.requires_shipping ?? true,
-                    taxable: singleVariant.taxable ?? true,
-                    images: [],
-                    shopifyVariantId: singleVariant.id.toString(),
-                    referralPercentage: 10.0,
-                    position: singleVariant.position || 1,
-                  }
-                });
-                continue;
-              }
-
-              // Create parent variant (option1 level) for multiple children
-              const parentVariant = await prisma.productVariant.create({
-                data: {
+                variantOperations.push(
+                  tx.productVariant.create({
+                    data: {
+                      productId,
+                      parentVariantId: null,
+                      title: singleVariant.title,
+                      sku: singleVariant.sku || null,
+                      discountedPrice: singleVariant.price ? parseFloat(singleVariant.price) : 0,
+                      price: singleVariant.compare_at_price ? parseFloat(singleVariant.compare_at_price) : null,
+                      available: singleVariant.available ?? true,
+                      inventoryQuantity: singleVariant.inventory_quantity || 0,
+                      weight: singleVariant.grams || null,
+                      requiresShipping: singleVariant.requires_shipping ?? true,
+                      taxable: singleVariant.taxable ?? true,
+                      images: [],
+                      shopifyVariantId: singleVariant.id.toString(),
+                      referralPercentage: 0,
+                      position: singleVariant.position || 1,
+                    }
+                  })
+                );
+              } else {
+                // Create parent variant first, then create children in a nested transaction
+                // We need to do this sequentially within the group to get the parent ID
+                const parentData = {
                   productId,
                   title: option1Value,
                   parentVariantId: null,
-                  price: null, // Parent variants don't have prices
+                  price: null,
                   discountedPrice: null,
                   sku: null,
                   available: true,
@@ -219,12 +196,54 @@ export async function POST(request: NextRequest) {
                   images: [],
                   referralPercentage: 0,
                   position: option1Values.indexOf(option1Value) + 1 || 1,
-                }
+                };
+
+                // We'll handle this after the main transaction
+                // Store the data for later processing
+                if (!shopifyProduct._parentVariants) shopifyProduct._parentVariants = [];
+                shopifyProduct._parentVariants.push({ parentData, childVariantData });
+              }
+            }
+          } else {
+            // Single-level variants (no parent-child structure)
+            for (const shopifyVariant of shopifyProduct.variants) {
+              variantOperations.push(
+                tx.productVariant.create({
+                  data: {
+                    productId,
+                    parentVariantId: null,
+                    title: shopifyVariant.option1 || shopifyVariant.title,
+                    sku: shopifyVariant.sku || null,
+                    discountedPrice: shopifyVariant.price ? parseFloat(shopifyVariant.price) : 0,
+                    price: shopifyVariant.compare_at_price ? parseFloat(shopifyVariant.compare_at_price) : null,
+                    available: shopifyVariant.available ?? true,
+                    inventoryQuantity: shopifyVariant.inventory_quantity || 0,
+                    weight: shopifyVariant.grams || null,
+                    requiresShipping: shopifyVariant.requires_shipping ?? true,
+                    taxable: shopifyVariant.taxable ?? true,
+                    images: [],
+                    shopifyVariantId: shopifyVariant.id.toString(),
+                    referralPercentage: 0,
+                    position: shopifyVariant.position || 1,
+                  }
+                })
+              );
+            }
+          }
+
+          // Execute variant operations in transaction
+          await Promise.all(variantOperations);
+
+          // Handle parent-child variants separately (requires sequential creation)
+          if (shopifyProduct._parentVariants && shopifyProduct._parentVariants.length > 0) {
+            for (const { parentData, childVariantData } of shopifyProduct._parentVariants) {
+              const parentVariant = await tx.productVariant.create({
+                data: parentData
               });
 
-              // Create child variants (option2 level)
-              for (const shopifyVariant of childVariantData) {
-                await prisma.productVariant.create({
+              // Create child variants
+              const childOperations = childVariantData.map((shopifyVariant: any) =>
+                tx.productVariant.create({
                   data: {
                     productId,
                     parentVariantId: parentVariant.id,
@@ -239,44 +258,43 @@ export async function POST(request: NextRequest) {
                     taxable: shopifyVariant.taxable ?? true,
                     images: [],
                     shopifyVariantId: shopifyVariant.id.toString(),
-                    referralPercentage: 10.0, // Default referral percentage
+                    referralPercentage: 0,
                     position: shopifyVariant.position || 1,
                   }
-                });
-              }
-            }
-          } else {
-            // Single-level variants (no parent-child structure)
-            for (const shopifyVariant of shopifyProduct.variants) {
-              await prisma.productVariant.create({
-                data: {
-                  productId,
-                  parentVariantId: null,
-                  title: shopifyVariant.option1 || shopifyVariant.title,
-                  sku: shopifyVariant.sku || null,
-                  discountedPrice: shopifyVariant.price ? parseFloat(shopifyVariant.price) : 0,
-                  price: shopifyVariant.compare_at_price ? parseFloat(shopifyVariant.compare_at_price) : null,
-                  available: shopifyVariant.available ?? true,
-                  inventoryQuantity: shopifyVariant.inventory_quantity || 0,
-                  weight: shopifyVariant.grams || null,
-                  requiresShipping: shopifyVariant.requires_shipping ?? true,
-                  taxable: shopifyVariant.taxable ?? true,
-                  images: [],
-                  shopifyVariantId: shopifyVariant.id.toString(),
-                  referralPercentage: 10.0, // Default referral percentage
-                  position: shopifyVariant.position || 1,
-                }
-              });
+                })
+              );
+
+              await Promise.all(childOperations);
             }
           }
         }
 
-        syncedCount++;
-      } catch (error) {
-        console.error(`Error syncing product ${shopifyProduct.id}:`, error);
-        // Continue with next product
+        return { synced: true, created: !isUpdate, updated: isUpdate };
+      };
+
+      // Process all products in this batch
+      const results = await Promise.all(batch.map(syncProduct));
+
+      // Count results for this batch
+      for (const result of results) {
+        if (result.synced) {
+          batchSynced++;
+          if (result.created) batchCreated++;
+          if (result.updated) batchUpdated++;
+        }
       }
-    }
+
+      return { syncedCount: batchSynced, createdCount: batchCreated, updatedCount: batchUpdated };
+    }, {
+      maxWait: 30000, // Maximum time to wait for a transaction slot (30s)
+      timeout: 60000, // Maximum time for the transaction to complete (60s)
+    });
+    
+    // Accumulate batch results
+    syncedCount += batchResult.syncedCount;
+    createdCount += batchResult.createdCount;
+    updatedCount += batchResult.updatedCount;
+  }
 
     return NextResponse.json<ApiResponse>({
       success: true,

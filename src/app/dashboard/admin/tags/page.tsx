@@ -23,6 +23,7 @@ export default function TagsPage() {
   const [editingTag, setEditingTag] = useState<TagItem | null>(null);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; tag: TagItem | null; deleting: boolean }>({ show: false, tag: null, deleting: false });
   const [formData, setFormData] = useState({ name: '', slug: '', description: '' });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchTags();
@@ -42,6 +43,7 @@ export default function TagsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const method = editingTag ? 'PATCH' : 'POST';
       const body = editingTag ? { ...formData, id: editingTag.id } : formData;
@@ -63,6 +65,8 @@ export default function TagsPage() {
       }
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -136,7 +140,26 @@ export default function TagsPage() {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {loading ? (
-              <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
+              <>
+                {[...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                        <div className="h-4 bg-gray-200 rounded w-32"></div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
+                    <td className="px-6 py-4"><div className="h-6 bg-gray-200 rounded-full w-12"></div></td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-2">
+                        <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
+                        <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </>
             ) : filteredTags.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">No tags found</td></tr>
             ) : (
@@ -241,11 +264,12 @@ export default function TagsPage() {
                   }}
                   variant="secondary"
                   className="flex-1"
+                  disabled={submitting}
                 >
                   Cancel
                 </AdminButton>
-                <AdminButton type="submit" className="flex-1">
-                  {editingTag ? 'Update' : 'Create'}
+                <AdminButton type="submit" className="flex-1" disabled={submitting}>
+                  {submitting ? 'Saving...' : editingTag ? 'Update' : 'Create'}
                 </AdminButton>
               </div>
             </form>

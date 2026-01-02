@@ -60,10 +60,10 @@ export async function POST(request: NextRequest) {
       variants,
     } = body;
 
-    if (!title || !slug || !categoryId || !tagId) {
+    if (!title || !slug) {
       return NextResponse.json<ApiResponse>({
         success: false,
-        message: 'Title, slug, category, and tag are required',
+        message: 'Title and slug are required',
         data: null,
       }, { status: 400 });
     }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         discountedPrice: discountedPrice || null,
         sku: sku || null,
         inventoryQuantity: inventoryQuantity || null,
-        referralPercentage: referralPercentage || 10.0,
+        referralPercentage: referralPercentage || 0,
         images: images || [],
         published: published || false,
         publishedAt: published ? new Date() : null,
@@ -214,7 +214,7 @@ export async function PATCH(request: NextRequest) {
                 discountedPrice: child.discountedPrice || null,
                 inventoryQuantity: child.inventoryQuantity || 0,
                 available: child.available ?? true,
-                referralPercentage: 10.0,
+                referralPercentage: child.referralPercentage ?? 0,
                 position: parentVariant.position || 1,
               }
             });
@@ -229,7 +229,7 @@ export async function PATCH(request: NextRequest) {
                 sku: null,
                 inventoryQuantity: 0,
                 available: true,
-                referralPercentage: 0,
+                referralPercentage: parentVariant.referralPercentage ?? 0,
                 position: parentVariant.position || 1,
               }
             });
@@ -247,7 +247,7 @@ export async function PATCH(request: NextRequest) {
                     discountedPrice: child.discountedPrice || null,
                     inventoryQuantity: child.inventoryQuantity || 0,
                     available: child.available ?? true,
-                    referralPercentage: 10.0,
+                    referralPercentage: child.referralPercentage ?? 0,
                     position: 1,
                   }
                 });

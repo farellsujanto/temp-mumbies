@@ -22,6 +22,7 @@ export default function VendorsPage() {
   const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; vendor: Vendor | null; deleting: boolean }>({ show: false, vendor: null, deleting: false });
   const [formData, setFormData] = useState({ name: '', slug: '', description: '' });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchVendors();
@@ -43,6 +44,7 @@ export default function VendorsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     
     try {
       const method = editingVendor ? 'PATCH' : 'POST';
@@ -69,6 +71,8 @@ export default function VendorsPage() {
     } catch (error) {
       console.error('Error saving vendor:', error);
       alert('Failed to save vendor');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -159,11 +163,27 @@ export default function VendorsPage() {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {loading ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                  Loading vendors...
-                </td>
-              </tr>
+              <>
+                {[...Array(5)].map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
+                        <div className="h-4 bg-gray-200 rounded w-32"></div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
+                    <td className="px-6 py-4"><div className="h-6 bg-gray-200 rounded-full w-20"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-40"></div></td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-2">
+                        <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
+                        <div className="h-8 w-8 bg-gray-200 rounded-lg"></div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </>
             ) : filteredVendors.length === 0 ? (
               <tr>
                 <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
@@ -267,11 +287,12 @@ export default function VendorsPage() {
                   }}
                   variant="secondary"
                   className="flex-1"
+                  disabled={submitting}
                 >
                   Cancel
                 </AdminButton>
-                <AdminButton type="submit" className="flex-1">
-                  {editingVendor ? 'Update' : 'Create'}
+                <AdminButton type="submit" className="flex-1" disabled={submitting}>
+                  {submitting ? 'Saving...' : editingVendor ? 'Update' : 'Create'}
                 </AdminButton>
               </div>
             </form>
