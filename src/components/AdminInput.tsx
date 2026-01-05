@@ -6,7 +6,7 @@ interface AdminInputProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
-  label?: string;
+  label?: string | React.ReactNode;
   required?: boolean;
   disabled?: boolean;
   className?: string;

@@ -33,23 +33,24 @@ export async function POST(request: NextRequest) {
     // Parse the verified data
     const data = JSON.parse(rawBody);
     console.log('Received Shopify webhook data:', data);
-    // Prefetch products and variants for faster lookups and compute referral earnings
+    
     try {
-      const [products, variants] = await Promise.all([
-        prisma.product.findMany({ select: { id: true, sku: true, referralPercentage: true } }),
-        prisma.productVariant.findMany({ select: { id: true, sku: true, referralPercentage: true } }),
-      ]);
-
-      const productMap = new Map<string, { id: number; referralPercentage: number }>();
-      for (const p of products) if (p.sku) productMap.set(p.sku, { id: p.id, referralPercentage: Number(p.referralPercentage ?? 0) });
-
-      const variantMap = new Map<string, { id: number; referralPercentage: number }>();
-      for (const v of variants) if (v.sku) variantMap.set(v.sku, { id: v.id, referralPercentage: Number(v.referralPercentage ?? 0) });
-
       const email = data.email || data.customer?.email;
       if (email) {
-        const user = await prisma.user.findFirst({ where: { email } });
+        const user = await prisma.user.findFirst({ 
+          where: { email },
+          include: {
+            partnerTag: {
+              select: {
+                referralPercentage: true
+              }
+            }
+          }
+        });
         if (user && user.referrerId) {
+          // Get referral percentage from user's partner tag
+          const referralPercentage = user.partnerTag?.referralPercentage ? Number(user.partnerTag.referralPercentage) : 0;
+          
           let totalReferral = 0;
           const items = data.line_items || [];
 
@@ -66,22 +67,6 @@ export async function POST(request: NextRequest) {
               basePrice = Math.max(0, price - totalAlloc);
             }
 
-            // Determine referral percentage from variant -> product -> 0
-            let referralPercentage = 0;
-            if (item.sku) {
-              console.log('Looking up variant by SKU for referral percentage, item:', item);
-              const v = variantMap.get(item.sku);
-              if (v) {
-                referralPercentage = v.referralPercentage;
-              } else {
-                // Try product map if not found in variant map
-                console.log('Looking up product by SKU for referral percentage, item:', item);
-                const p = productMap.get(item.sku);
-                if (p) referralPercentage = p.referralPercentage;
-              }
-            }
-
-            console.log(`Item ${item.name} ${item.sku}: basePrice=${basePrice}, quantity=${quantity}, referralPercentage=${referralPercentage}`);
             totalReferral += (basePrice || 0) * quantity * (Number(referralPercentage || 0) / 100);
           }
 

@@ -56,7 +56,6 @@ export const POST = withAuth(async (request: NextRequest) => {
       discountedPrice,
       sku,
       inventoryQuantity,
-      referralPercentage,
       images,
       published,
       variants,
@@ -83,7 +82,6 @@ export const POST = withAuth(async (request: NextRequest) => {
         discountedPrice: discountedPrice || null,
         sku: sku || null,
         inventoryQuantity: inventoryQuantity || null,
-        referralPercentage: referralPercentage || 0,
         images: images || [],
         published: published || false,
         publishedAt: published ? new Date() : null,
@@ -226,7 +224,6 @@ export const PATCH = withAuth(async (request: NextRequest) => {
               discountedPrice: parentVariant.discountedPrice || null,
               inventoryQuantity: parentVariant.inventoryQuantity || 0,
               available: parentVariant.available ?? true,
-              referralPercentage: parentVariant.referralPercentage ?? (existing?.referralPercentage || 0),
               position: parentVariant.position || 1,
             };
 
@@ -258,7 +255,6 @@ export const PATCH = withAuth(async (request: NextRequest) => {
                 where: { id: existingParent.id },
                 data: {
                   title: parentVariant.title,
-                  referralPercentage: parentVariant.referralPercentage ?? existingParent.referralPercentage,
                   position: parentVariant.position || 1,
                 },
               });
@@ -275,7 +271,6 @@ export const PATCH = withAuth(async (request: NextRequest) => {
                   sku: null,
                   inventoryQuantity: 0,
                   available: true,
-                  referralPercentage: parentVariant.referralPercentage ?? 0,
                   position: parentVariant.position || 1,
                 },
               });
@@ -303,7 +298,6 @@ export const PATCH = withAuth(async (request: NextRequest) => {
                   discountedPrice: child.discountedPrice || null,
                   inventoryQuantity: child.inventoryQuantity || 0,
                   available: child.available ?? true,
-                  referralPercentage: child.referralPercentage ?? (existingChild?.referralPercentage || 0),
                   position: 1,
                 };
 

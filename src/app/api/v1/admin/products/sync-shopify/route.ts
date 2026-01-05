@@ -136,8 +136,7 @@ export const POST = withAuth(async (request: NextRequest) => {
             select: { 
               id: true, 
               sku: true, 
-              shopifyVariantId: true, 
-              referralPercentage: true,
+              shopifyVariantId: true,
               parentVariantId: true,
               title: true
             }
@@ -195,7 +194,7 @@ export const POST = withAuth(async (request: NextRequest) => {
                 };
 
                 if (existing) {
-                  // Update existing variant (preserves referralPercentage)
+                  // Update existing variant
                   await tx.productVariant.update({
                     where: { id: existing.id },
                     data: variantData,
@@ -204,7 +203,7 @@ export const POST = withAuth(async (request: NextRequest) => {
                 } else {
                   // Create new variant
                   const created = await tx.productVariant.create({
-                    data: { ...variantData, referralPercentage: 0 },
+                    data: variantData,
                   });
                   processedVariantIds.add(created.id);
                 }
@@ -232,7 +231,6 @@ export const POST = withAuth(async (request: NextRequest) => {
                       available: true,
                       inventoryQuantity: 0,
                       images: [],
-                      referralPercentage: 0,
                       position: option1Values.indexOf(option1Value) + 1 || 1,
                     }
                   });
@@ -275,7 +273,7 @@ export const POST = withAuth(async (request: NextRequest) => {
                   } else {
                     // Create new child variant
                     const created = await tx.productVariant.create({
-                      data: { ...childData, referralPercentage: 0 },
+                      data: childData,
                     });
                     processedVariantIds.add(created.id);
                   }
@@ -309,7 +307,7 @@ export const POST = withAuth(async (request: NextRequest) => {
               };
 
               if (existing) {
-                // Update existing variant (preserves referralPercentage)
+                // Update existing variant
                 await tx.productVariant.update({
                   where: { id: existing.id },
                   data: variantData,
@@ -318,7 +316,7 @@ export const POST = withAuth(async (request: NextRequest) => {
               } else {
                 // Create new variant
                 const created = await tx.productVariant.create({
-                  data: { ...variantData, referralPercentage: 0 },
+                  data: variantData,
                 });
                 processedVariantIds.add(created.id);
               }

@@ -27,7 +27,6 @@ interface ChildVariantFormData {
     price: string;
     discountedPrice: string;
     inventoryQuantity: string;
-    referralPercentage: string;
 }
 
 interface ParentVariantFormData {
@@ -58,7 +57,6 @@ export default function ProductsPage() {
         price: '',
         sku: '',
         inventoryQuantity: '',
-        referralPercentage: '',
         published: false,
     });
     const [variants, setVariants] = useState<ParentVariantFormData[]>([]);
@@ -117,7 +115,6 @@ export default function ProductsPage() {
                 price: formData.price ? parseFloat(formData.price) : null,
                 sku: formData.sku || null,
                 inventoryQuantity: formData.inventoryQuantity ? parseInt(formData.inventoryQuantity) : null,
-                referralPercentage: formData.referralPercentage ? parseFloat(formData.referralPercentage) : 0,
                 published: formData.published,
                 variants: showVariants ? variants.map((parent, index) => {
                     // Check if this is a standalone variant
@@ -132,7 +129,6 @@ export default function ProductsPage() {
                             discountedPrice: child.discountedPrice ? parseFloat(child.discountedPrice) : null,
                             inventoryQuantity: child.inventoryQuantity ? parseInt(child.inventoryQuantity) : 0,
                             available: true,
-                            referralPercentage: child.referralPercentage ? parseFloat(child.referralPercentage) : 0,
                             children: [],
                         };
                     }
@@ -149,7 +145,6 @@ export default function ProductsPage() {
                             discountedPrice: child.discountedPrice ? parseFloat(child.discountedPrice) : null,
                             inventoryQuantity: child.inventoryQuantity ? parseInt(child.inventoryQuantity) : 0,
                             available: true,
-                            referralPercentage: child.referralPercentage ? parseFloat(child.referralPercentage) : 0,
                         })),
                     };
                 }) : [],
@@ -181,7 +176,6 @@ export default function ProductsPage() {
                     price: '',
                     sku: '',
                     inventoryQuantity: '',
-                    referralPercentage: '',
                     published: false,
                 });
                 setVariants([]);
@@ -207,7 +201,6 @@ export default function ProductsPage() {
                 price: '',
                 discountedPrice: '',
                 inventoryQuantity: '',
-                referralPercentage: '',
             }] : [],
         }]);
     };
@@ -230,7 +223,6 @@ export default function ProductsPage() {
             price: '',
             discountedPrice: '',
             inventoryQuantity: '',
-            referralPercentage: '',
         });
         setVariants(updated);
     };
@@ -300,7 +292,6 @@ export default function ProductsPage() {
             price: product.price?.toString() || '',
             sku: product.sku || '',
             inventoryQuantity: product.inventoryQuantity?.toString() || '',
-            referralPercentage: product.referralPercentage?.toString() || '',
             published: product.published,
         });
 
@@ -319,14 +310,12 @@ export default function ProductsPage() {
                         price: parentVariant.price?.toString() || '',
                         discountedPrice: parentVariant.discountedPrice?.toString() || '',
                         inventoryQuantity: parentVariant.inventoryQuantity?.toString() || '',
-                        referralPercentage: parentVariant.referralPercentage?.toString() || '',
                     }] : (parentVariant.childVariants?.map(child => ({
                         title: child.title,
                         sku: child.sku || '',
                         price: child.price?.toString() || '',
                         discountedPrice: child.discountedPrice?.toString() || '',
                         inventoryQuantity: child.inventoryQuantity?.toString() || '',
-                        referralPercentage: child.referralPercentage?.toString() || '',
                     })) || [])
                 };
             });
@@ -416,7 +405,6 @@ export default function ProductsPage() {
                             price: '',
                             sku: '',
                             inventoryQuantity: '',
-                            referralPercentage: '',
                             published: false,
                         });
                         setVariants([]);
@@ -449,7 +437,6 @@ export default function ProductsPage() {
                             <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Vendor</th>
                             <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Type</th>
                             <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Price</th>
-                            <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Referral %</th>
                             <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
                             <th className="text-right px-6 py-4 text-sm font-semibold text-gray-700">Actions</th>
                         </tr>
@@ -530,15 +517,6 @@ export default function ProductsPage() {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {product.variants.length === 0 ? (
-                                                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
-                                                    {product.referralPercentage}%
-                                                </span>
-                                            ) : (
-                                                <span className="text-xs text-gray-500">See variants</span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${product.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                                                 }`}>
                                                 {product.published ? 'Published' : 'Draft'}
@@ -594,11 +572,6 @@ export default function ProductsPage() {
                                                             ) : (
                                                                 <span className="text-xs text-gray-400">-</span>
                                                             )}
-                                                        </td>
-                                                        <td className="px-6 py-2">
-                                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">
-                                                                {parentVariant.referralPercentage}%
-                                                            </span>
                                                         </td>
                                                         <td className="px-6 py-2">
                                                             <span className="text-xs text-green-700">Stock: {parentVariant.inventoryQuantity}</span>
@@ -661,11 +634,6 @@ export default function ProductsPage() {
                                                                 )}
                                                             </td>
                                                             <td className="px-6 py-2">
-                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">
-                                                                    {childVariant.referralPercentage}%
-                                                                </span>
-                                                            </td>
-                                                            <td className="px-6 py-2">
                                                                 <span className="text-xs text-green-700">Stock: {childVariant.inventoryQuantity}</span>
                                                             </td>
                                                             <td className="px-6 py-2"></td>
@@ -702,7 +670,6 @@ export default function ProductsPage() {
                                         price: '',
                                         sku: '',
                                         inventoryQuantity: '',
-                                        referralPercentage: '',
                                         published: false,
                                     });
                                     setVariants([]);
@@ -799,20 +766,6 @@ export default function ProductsPage() {
                                     />
                                 </div>
                             )}
-
-                            {!showVariants && (
-                                <AdminInput
-                                    label="Referral Percentage (%)"
-                                    type="number"
-                                    value={formData.referralPercentage}
-                                    onChange={(e) => setFormData({ ...formData, referralPercentage: e.target.value })}
-                                    placeholder="0"
-                                    step="0.1"
-                                    min="0"
-                                    max="100"
-                                />
-                            )}
-
                             <div className="space-y-3">
                                 <div className="flex items-center gap-2">
                                     <input
@@ -891,7 +844,6 @@ export default function ProductsPage() {
                                                                         price: '',
                                                                         discountedPrice: '',
                                                                         inventoryQuantity: '',
-                                                                        referralPercentage: '',
                                                                     }] : updated[parentIndex].children
                                                                 };
                                                                 setVariants(updated);
@@ -997,15 +949,6 @@ export default function ProductsPage() {
                                                                 placeholder="0.00"
                                                             />
                                                         </div>
-
-                                                        <AdminInput
-                                                            label="Referral Percentage (%)"
-                                                            type="number"
-                                                            step="0.01"
-                                                            value={child.referralPercentage}
-                                                            onChange={(e) => updateChildVariant(parentIndex, childIndex, 'referralPercentage', e.target.value)}
-                                                            placeholder="0"
-                                                        />
                                                     </div>
                                                 ))}
                                             </div>

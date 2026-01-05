@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Mail, ArrowRight, Sparkles, Lock, CheckCircle2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Mail, ArrowRight, Sparkles, Lock, CheckCircle2, Users } from 'lucide-react';
 import { apiRequest } from '@/src/utils/apiRequest.util';
 import AuthInput from '@/src/components/AuthInput';
 import PrimaryButton from '@/src/components/PrimaryButton';
@@ -10,6 +10,9 @@ import TertiaryButton from '@/src/components/TertiaryButton';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isPartnerRegistration = searchParams.get('partnerRegistration') === 'true';
+  
   const [step, setStep] = useState<'email' | 'otp'>('email');
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -159,7 +162,11 @@ export default function LoginPage() {
         
         // Add slight delay before redirect
         setTimeout(() => {
-          router.push(data.data?.redirectUrl || '/dashboard/account');
+          if (isPartnerRegistration) {
+            router.push('/partner-application');
+          } else {
+            router.push(data.data?.redirectUrl || '/dashboard/account');
+          }
         }, 500);
       } else {
         setError(data.message || 'Invalid code. Try again!');
@@ -185,15 +192,27 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl mb-4 shadow-lg shadow-green-500/30">
-            <Sparkles className="w-8 h-8 text-white" />
+          <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg ${
+            isPartnerRegistration 
+              ? 'bg-gradient-to-br from-purple-500 to-pink-600 shadow-purple-500/30'
+              : 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-green-500/30'
+          }`}>
+            {isPartnerRegistration ? (
+              <Users className="w-8 h-8 text-white" />
+            ) : (
+              <Sparkles className="w-8 h-8 text-white" />
+            )}
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
-            Welcome to Mumbies
+          <h1 className={`text-4xl font-bold bg-clip-text text-transparent mb-2 ${
+            isPartnerRegistration
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600'
+              : 'bg-gradient-to-r from-green-600 to-emerald-600'
+          }`}>
+            {isPartnerRegistration ? 'Become a Partner' : 'Welcome to Mumbies'}
           </h1>
           <p className="text-gray-600 text-lg">
             {step === 'email' 
-              ? 'Natural dog chews that make tails wag 🐾' 
+              ? (isPartnerRegistration ? 'Sign in to apply for partnership' : 'Natural dog chews that make tails wag 🐾')
               : 'Enter the code we just sent you'}
           </p>
         </div>
