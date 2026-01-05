@@ -54,24 +54,9 @@ export async function POST(request: NextRequest) {
           const referralPercentage = referer.partnerTag?.referralPercentage ? Number(referer.partnerTag.referralPercentage) : 0;
           console.log(`User ${user.id} referred by ${user.referrerId} with referral percentage: ${referralPercentage}%`);
 
-          let totalReferral = 0;
-          const items = data.line_items || [];
-
-          for (const item of items) {
-            const quantity = item.quantity || 1;
-
-            // Determine price: prefer discounted price if present, fall back to price
-            let basePrice = 0;
-            if (item.discounted_price != null) basePrice = parseFloat(item.discounted_price) || 0;
-            else if (item.price != null) basePrice = parseFloat(item.price) || 0;
-            else if (item.price && item.discount_allocations && item.discount_allocations.length > 0) {
-              const price = parseFloat(item.price) || 0;
-              const totalAlloc = item.discount_allocations.reduce((acc: number, d: any) => acc + (parseFloat(d.amount || 0) || 0), 0);
-              basePrice = Math.max(0, price - totalAlloc);
-            }
-
-            totalReferral += (basePrice || 0) * quantity * (Number(referralPercentage || 0) / 100);
-          }
+          // Using subtotal_price as total amount for referral calculation (excluding taxes, shipping)
+          const totalAmount = parseFloat(data.subtotal_price || '0') || 0;
+          const totalReferral = totalAmount * (referralPercentage / 100);
 
           console.log(`Total referral earnings for order ${data.id || data.order_id}: $${totalReferral.toFixed(2)}`);
           if (totalReferral > 0) {
