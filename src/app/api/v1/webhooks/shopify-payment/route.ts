@@ -33,25 +33,27 @@ export async function POST(request: NextRequest) {
     // Parse the verified data
     const data = JSON.parse(rawBody);
     console.log('Received Shopify webhook data:', data);
-    
+
     try {
       const email = data.email || data.customer?.email;
       if (email) {
-        const user = await prisma.user.findFirst({ 
+        const user = await prisma.user.findFirst({
           where: { email },
-          include: {
-            partnerTag: {
-              select: {
-                referralPercentage: true
-              }
-            }
-          }
         });
         if (user && user.referrerId) {
           // Get referral percentage from user's partner tag
-          const referralPercentage = user.partnerTag?.referralPercentage ? Number(user.partnerTag.referralPercentage) : 0;
+          const referer = await prisma.user.findFirst({
+            where: { id: user.referrerId },
+            include: { partnerTag: { select: { referralPercentage: true } } }
+          });
+          if (!referer) {
+            console.log(`Referer with ID ${user.referrerId} not found.`);
+            return;
+          }
+
+          const referralPercentage = referer.partnerTag?.referralPercentage ? Number(referer.partnerTag.referralPercentage) : 0;
           console.log(`User ${user.id} referred by ${user.referrerId} with referral percentage: ${referralPercentage}%`);
-          
+
           let totalReferral = 0;
           const items = data.line_items || [];
 
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       console.error('Referral processing error:', err);
     }
-    
+
     return NextResponse.json(
       { success: true, message: 'Webhook received' },
       { status: 200 }
