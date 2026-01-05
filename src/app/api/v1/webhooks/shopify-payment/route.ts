@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
         if (user && user.referrerId) {
           // Get referral percentage from user's partner tag
           const referralPercentage = user.partnerTag?.referralPercentage ? Number(user.partnerTag.referralPercentage) : 0;
+          console.log(`User ${user.id} referred by ${user.referrerId} with referral percentage: ${referralPercentage}%`);
           
           let totalReferral = 0;
           const items = data.line_items || [];
