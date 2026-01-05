@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, ArrowRight, Sparkles, Lock, CheckCircle2, Users } from 'lucide-react';
 import { apiRequest } from '@/src/utils/apiRequest.util';
@@ -8,7 +8,7 @@ import AuthInput from '@/src/components/AuthInput';
 import PrimaryButton from '@/src/components/PrimaryButton';
 import TertiaryButton from '@/src/components/TertiaryButton';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isPartnerRegistration = searchParams.get('partnerRegistration') === 'true';
@@ -360,5 +360,31 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 shadow-lg bg-gradient-to-br from-green-500 to-emerald-600 shadow-green-500/30">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-clip-text text-transparent mb-2 bg-gradient-to-r from-green-600 to-emerald-600">
+              Welcome to Mumbies
+            </h1>
+          </div>
+          <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
