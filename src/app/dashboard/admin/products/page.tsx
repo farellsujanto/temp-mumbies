@@ -117,7 +117,7 @@ export default function ProductsPage() {
                 price: formData.price ? parseFloat(formData.price) : null,
                 sku: formData.sku || null,
                 inventoryQuantity: formData.inventoryQuantity ? parseInt(formData.inventoryQuantity) : null,
-                referralPercentage: formData.referralPercentage ? parseFloat(formData.referralPercentage) : 10.0,
+                referralPercentage: formData.referralPercentage ? parseFloat(formData.referralPercentage) : 0,
                 published: formData.published,
                 variants: showVariants ? variants.map((parent, index) => {
                     // Check if this is a standalone variant
@@ -806,7 +806,7 @@ export default function ProductsPage() {
                                     type="number"
                                     value={formData.referralPercentage}
                                     onChange={(e) => setFormData({ ...formData, referralPercentage: e.target.value })}
-                                    placeholder="10.0"
+                                    placeholder="0"
                                     step="0.1"
                                     min="0"
                                     max="100"
@@ -1004,7 +1004,7 @@ export default function ProductsPage() {
                                                             step="0.01"
                                                             value={child.referralPercentage}
                                                             onChange={(e) => updateChildVariant(parentIndex, childIndex, 'referralPercentage', e.target.value)}
-                                                            placeholder="10.00"
+                                                            placeholder="0"
                                                         />
                                                     </div>
                                                 ))}

@@ -110,30 +110,52 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let referralCode = generateReferralCode();
-    let isUnique = false;
-    while (!isUnique) {
-      const existing = await prisma.user.findFirst({
-        where: { referralCode },
-      });
-
-      if (!existing) {
-        isUnique = true;
-      } else {
-        referralCode = generateReferralCode();
+    // Generate unique referral code with retry on constraint violation
+    let createdUser;
+    let userCreated = false;
+    let maxRetries = 5;
+    let retryCount = 0;
+    
+    while (!userCreated && retryCount < maxRetries) {
+      try {
+        const referralCode = generateReferralCode();
+        
+        // Create user with refererId
+        createdUser = await prisma.user.create({
+          data: {
+            email,
+            role: UserRole.CUSTOMER, // Default role
+            referralCode: referralCode,
+            referrerId: referer.id,
+            enabled: true,
+          },
+        });
+        userCreated = true;
+      } catch (error: any) {
+        // If unique constraint violation on referralCode, retry with new code
+        if (error.code === 'P2002' && error.meta?.target?.includes('referralCode')) {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            return NextResponse.json(
+              { success: false, message: 'Failed to generate unique referral code' },
+              { status: 500, headers: corsHeaders }
+            );
+          }
+          // Continue loop to retry
+        } else {
+          // Other error, rethrow
+          throw error;
+        }
       }
     }
-
-    // Create user with refererId
-    const createdUser = await prisma.user.create({
-      data: {
-        email,
-        role: UserRole.CUSTOMER, // Default role
-        referralCode: referralCode,
-        referrerId: referer.id,
-        enabled: true,
-      },
-    });
+    
+    if (!createdUser) {
+      return NextResponse.json(
+        { success: false, message: 'Failed to create user' },
+        { status: 500, headers: corsHeaders }
+      );
+    }
+    
     // Create referral log and increment referer's referred user count
     try {
       await prisma.referralLog.create({ data: { userId: createdUser.id, codeUsed: mrc, refererId: referer.id } });

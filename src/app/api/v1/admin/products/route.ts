@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/src/utils/prismaOrm.util';
 import { ApiResponse } from '@/src/types/apiResponse.type';
+import { withAuth } from '@/src/middleware/auth.middleware';
+import { UserRole } from '@/generated/prisma/client';
 
 // GET - List all products with relations
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request: NextRequest) => {
   try {
     const products = await prisma.product.findMany({
       where: { enabled: true },
@@ -36,10 +38,10 @@ export async function GET(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
 
 // POST - Create product
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const {
@@ -157,10 +159,10 @@ export async function POST(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
 
 // PATCH - Update product
-export async function PATCH(request: NextRequest) {
+export const PATCH = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const { id, variants, ...updateData } = body;
@@ -193,68 +195,147 @@ export async function PATCH(request: NextRequest) {
 
     // Handle variants if provided
     if (variants !== undefined) {
-      // Delete existing variants
-      await prisma.productVariant.deleteMany({
-        where: { productId: id }
+      // Fetch existing variants to compare
+      const existingVariants = await prisma.productVariant.findMany({
+        where: { productId: id },
+        include: { childVariants: true },
       });
 
-      // Create new variants
+      // Track processed variant IDs to know which to delete
+      const processedVariantIds = new Set<number>();
+
+      // Create new variants and update existing ones
       if (variants.length > 0) {
         for (const parentVariant of variants) {
-          // Check if this is a standalone variant
-          if (parentVariant.isStandalone && parentVariant.children && parentVariant.children.length > 0) {
-            const child = parentVariant.children[0];
-            await prisma.productVariant.create({
-              data: {
-                productId: id,
-                parentVariantId: null,
-                title: child.title,
-                sku: child.sku,
-                price: child.price || 0,
-                discountedPrice: child.discountedPrice || null,
-                inventoryQuantity: child.inventoryQuantity || 0,
-                available: child.available ?? true,
-                referralPercentage: child.referralPercentage ?? 0,
-                position: parentVariant.position || 1,
-              }
-            });
-          } else {
-            // Create parent variant
-            const createdParent = await prisma.productVariant.create({
-              data: {
-                productId: id,
-                title: parentVariant.title,
-                parentVariantId: null,
-                price: null,
-                sku: null,
-                inventoryQuantity: 0,
-                available: true,
-                referralPercentage: parentVariant.referralPercentage ?? 0,
-                position: parentVariant.position || 1,
-              }
-            });
+          // Check if this is a standalone variant (no parent, no children)
+          if (parentVariant.isStandalone) {
+            // Find existing standalone variant by SKU or title
+            const existingSku = parentVariant.sku ? 
+              existingVariants.find(v => v.sku === parentVariant.sku && !v.parentVariantId) : null;
+            const existingTitle = existingVariants.find(v => 
+              v.title === parentVariant.title && !v.parentVariantId && !v.sku
+            );
+            const existing = existingSku || existingTitle;
 
-            // Create child variants
+            const variantData = {
+              productId: id,
+              parentVariantId: null,
+              title: parentVariant.title,
+              sku: parentVariant.sku || null,
+              price: parentVariant.price || 0,
+              discountedPrice: parentVariant.discountedPrice || null,
+              inventoryQuantity: parentVariant.inventoryQuantity || 0,
+              available: parentVariant.available ?? true,
+              referralPercentage: parentVariant.referralPercentage ?? (existing?.referralPercentage || 0),
+              position: parentVariant.position || 1,
+            };
+
+            if (existing) {
+              // Update existing variant
+              await prisma.productVariant.update({
+                where: { id: existing.id },
+                data: variantData,
+              });
+              processedVariantIds.add(existing.id);
+            } else {
+              // Create new variant
+              const created = await prisma.productVariant.create({
+                data: variantData,
+              });
+              processedVariantIds.add(created.id);
+            }
+          } else {
+            // Find existing parent variant by title
+            const existingParent = existingVariants.find(v => 
+              v.title === parentVariant.title && !v.parentVariantId && !v.sku
+            );
+
+            let parentVariantId: number;
+            
+            if (existingParent) {
+              // Update existing parent
+              await prisma.productVariant.update({
+                where: { id: existingParent.id },
+                data: {
+                  title: parentVariant.title,
+                  referralPercentage: parentVariant.referralPercentage ?? existingParent.referralPercentage,
+                  position: parentVariant.position || 1,
+                },
+              });
+              parentVariantId = existingParent.id;
+              processedVariantIds.add(existingParent.id);
+            } else {
+              // Create parent variant
+              const createdParent = await prisma.productVariant.create({
+                data: {
+                  productId: id,
+                  title: parentVariant.title,
+                  parentVariantId: null,
+                  price: null,
+                  sku: null,
+                  inventoryQuantity: 0,
+                  available: true,
+                  referralPercentage: parentVariant.referralPercentage ?? 0,
+                  position: parentVariant.position || 1,
+                },
+              });
+              parentVariantId = createdParent.id;
+              processedVariantIds.add(parentVariantId);
+            }
+
+            // Handle child variants
             if (parentVariant.children && parentVariant.children.length > 0) {
               for (const child of parentVariant.children) {
-                await prisma.productVariant.create({
-                  data: {
-                    productId: id,
-                    parentVariantId: createdParent.id,
-                    title: child.title,
-                    sku: child.sku,
-                    price: child.price || 0,
-                    discountedPrice: child.discountedPrice || null,
-                    inventoryQuantity: child.inventoryQuantity || 0,
-                    available: child.available ?? true,
-                    referralPercentage: child.referralPercentage ?? 0,
-                    position: 1,
-                  }
-                });
+                // Find existing child by SKU or title under this parent
+                const existingChildBySku = child.sku ?
+                  existingVariants.find(v => v.sku === child.sku) : null;
+                const existingChildByTitle = existingParent?.childVariants?.find(v => 
+                  v.title === child.title
+                );
+                const existingChild = existingChildBySku || existingChildByTitle;
+
+                const childData = {
+                  productId: id,
+                  parentVariantId: parentVariantId,
+                  title: child.title,
+                  sku: child.sku || null,
+                  price: child.price || 0,
+                  discountedPrice: child.discountedPrice || null,
+                  inventoryQuantity: child.inventoryQuantity || 0,
+                  available: child.available ?? true,
+                  referralPercentage: child.referralPercentage ?? (existingChild?.referralPercentage || 0),
+                  position: 1,
+                };
+
+                if (existingChild) {
+                  // Update existing child
+                  await prisma.productVariant.update({
+                    where: { id: existingChild.id },
+                    data: childData,
+                  });
+                  processedVariantIds.add(existingChild.id);
+                } else {
+                  // Create new child
+                  const created = await prisma.productVariant.create({
+                    data: childData,
+                  });
+                  processedVariantIds.add(created.id);
+                }
               }
             }
           }
         }
+      }
+
+      // Delete variants that weren't processed (removed from the update)
+      const variantsToDelete = existingVariants
+        .filter(v => !processedVariantIds.has(v.id))
+        .map(v => v.id);
+      
+      if (variantsToDelete.length > 0) {
+        await prisma.productVariant.deleteMany({
+          where: { id: { in: variantsToDelete } },
+        });
       }
     }
 
@@ -294,10 +375,10 @@ export async function PATCH(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
 
 // DELETE - Delete product
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -336,4 +417,4 @@ export async function DELETE(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);

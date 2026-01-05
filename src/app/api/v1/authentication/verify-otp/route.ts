@@ -107,31 +107,39 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      // Generate unique referral code
-      let referralCode = generateReferralCode();
-      let isUnique = false;
+      // Generate unique referral code with retry on constraint violation
+      let userCreated = false;
+      let maxRetries = 5;
+      let retryCount = 0;
       
-      while (!isUnique) {
-        const existing = await prisma.user.findFirst({
-          where: { referralCode },
-        });
-        
-        if (!existing) {
-          isUnique = true;
-        } else {
-          referralCode = generateReferralCode();
+      while (!userCreated && retryCount < maxRetries) {
+        try {
+          const referralCode = generateReferralCode();
+          
+          // Create new user
+          user = await prisma.user.create({
+            data: {
+              email: email.toLowerCase(),
+              role: UserRole.CUSTOMER, // Default role
+              referralCode,
+              enabled: true,
+            },
+          });
+          userCreated = true;
+        } catch (error: any) {
+          // If unique constraint violation on referralCode, retry with new code
+          if (error.code === 'P2002' && error.meta?.target?.includes('referralCode')) {
+            retryCount++;
+            if (retryCount >= maxRetries) {
+              throw new Error('Failed to generate unique referral code after multiple attempts');
+            }
+            // Continue loop to retry
+          } else {
+            // Other error, rethrow
+            throw error;
+          }
         }
       }
-
-      // Create new user
-      user = await prisma.user.create({
-        data: {
-          email: email.toLowerCase(),
-          role: UserRole.CUSTOMER, // Default role
-          referralCode,
-          enabled: true,
-        },
-      });
     }
 
     // Invalidate the OTP (successful login)
@@ -148,7 +156,7 @@ export async function POST(request: NextRequest) {
     // Determine redirect URL based on role
     let redirectUrl = '/dashboard/account'; // default
     
-    switch (user.role) {
+    switch (user?.role) {
       case UserRole.ADMIN:
         redirectUrl = '/dashboard/admin';
         break;
@@ -162,9 +170,9 @@ export async function POST(request: NextRequest) {
 
     // Generate JWT token
     const token = await generateToken({
-      userId: user.id,
-      role: user.role,
-      referralCode: user.referralCode,
+      userId: user?.id || -1,
+      role: user?.role || UserRole.CUSTOMER,
+      referralCode: user?.referralCode || '',
     });
 
     // Create response with token in cookie
@@ -173,11 +181,11 @@ export async function POST(request: NextRequest) {
       message: 'Login successful!',
       data: {
         user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          referralCode: user.referralCode,
+          id: user?.id || -1,
+          email: user?.email || '',
+          name: user?.name || '',
+          role: user?.role || UserRole.CUSTOMER,
+          referralCode: user?.referralCode || '',
         },
         redirectUrl,
         token, // Also send in response body for client-side storage

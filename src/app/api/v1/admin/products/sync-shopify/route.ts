@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/src/utils/prismaOrm.util';
 import { ApiResponse } from '@/src/types/apiResponse.type';
+import { withAuth } from '@/src/middleware/auth.middleware';
+import { UserRole } from '@/generated/prisma/client';
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const SHOPIFY_PRODUCTS_JSON_URL = process.env.MUMBIES_SHOPIFY_PRODUCT_JSON_URL;
     const SHOPIFY_ACCESS_TOKEN = process.env.MUMBIES_SHOPIFY_ACCESS_TOKEN;
@@ -128,14 +130,23 @@ export async function POST(request: NextRequest) {
 
         // Sync variants with hierarchical structure using transaction
         if (shopifyProduct.variants && shopifyProduct.variants.length > 0) {
-          const variantOperations = [];
-
-          // Delete existing variants
-          variantOperations.push(
-            tx.productVariant.deleteMany({
-              where: { productId }
-            })
-          );
+          // Fetch existing variants to compare and update
+          const existingVariants = await tx.productVariant.findMany({
+            where: { productId },
+            select: { 
+              id: true, 
+              sku: true, 
+              shopifyVariantId: true, 
+              referralPercentage: true,
+              parentVariantId: true,
+              title: true
+            }
+          });
+          
+          // Create maps for quick lookup
+          const variantBySku = new Map(existingVariants.filter(v => v.sku).map(v => [v.sku!, v]));
+          const variantByShopifyId = new Map(existingVariants.map(v => [v.shopifyVariantId || '', v]));
+          const processedVariantIds = new Set<number>();
 
           // Check if product has multiple option levels
           const hasMultipleOptions = shopifyProduct.options && shopifyProduct.options.length > 1;
@@ -155,117 +166,174 @@ export async function POST(request: NextRequest) {
               variantGroups.get(option1)!.push(shopifyVariant);
             }
 
-            // Create hierarchical variants
+            // Process hierarchical variants
             for (const [option1Value, childVariantData] of variantGroups) {
               // If only 1 variant in this group, treat it as a standalone child variant (not a parent)
               if (childVariantData.length === 1) {
                 const singleVariant = childVariantData[0];
-                variantOperations.push(
-                  tx.productVariant.create({
-                    data: {
-                      productId,
-                      parentVariantId: null,
-                      title: singleVariant.title,
-                      sku: singleVariant.sku || null,
-                      discountedPrice: singleVariant.price ? parseFloat(singleVariant.price) : 0,
-                      price: singleVariant.compare_at_price ? parseFloat(singleVariant.compare_at_price) : null,
-                      available: singleVariant.available ?? true,
-                      inventoryQuantity: singleVariant.inventory_quantity || 0,
-                      weight: singleVariant.grams || null,
-                      requiresShipping: singleVariant.requires_shipping ?? true,
-                      taxable: singleVariant.taxable ?? true,
-                      images: [],
-                      shopifyVariantId: singleVariant.id.toString(),
-                      referralPercentage: 0,
-                      position: singleVariant.position || 1,
-                    }
-                  })
-                );
-              } else {
-                // Create parent variant first, then create children in a nested transaction
-                // We need to do this sequentially within the group to get the parent ID
-                const parentData = {
+                const shopifyVariantId = singleVariant.id.toString();
+                const sku = singleVariant.sku;
+                
+                // Try to find existing variant by SKU or shopifyVariantId
+                const existing = (sku && variantBySku.get(sku)) || variantByShopifyId.get(shopifyVariantId);
+
+                const variantData = {
                   productId,
-                  title: option1Value,
                   parentVariantId: null,
-                  price: null,
-                  discountedPrice: null,
-                  sku: null,
-                  available: true,
-                  inventoryQuantity: 0,
+                  title: singleVariant.title,
+                  sku: sku || null,
+                  discountedPrice: singleVariant.price ? parseFloat(singleVariant.price) : 0,
+                  price: singleVariant.compare_at_price ? parseFloat(singleVariant.compare_at_price) : null,
+                  available: singleVariant.available ?? true,
+                  inventoryQuantity: singleVariant.inventory_quantity || 0,
+                  weight: singleVariant.grams || null,
+                  requiresShipping: singleVariant.requires_shipping ?? true,
+                  taxable: singleVariant.taxable ?? true,
                   images: [],
-                  referralPercentage: 0,
-                  position: option1Values.indexOf(option1Value) + 1 || 1,
+                  shopifyVariantId: shopifyVariantId,
+                  position: singleVariant.position || 1,
                 };
 
-                // We'll handle this after the main transaction
-                // Store the data for later processing
-                if (!shopifyProduct._parentVariants) shopifyProduct._parentVariants = [];
-                shopifyProduct._parentVariants.push({ parentData, childVariantData });
+                if (existing) {
+                  // Update existing variant (preserves referralPercentage)
+                  await tx.productVariant.update({
+                    where: { id: existing.id },
+                    data: variantData,
+                  });
+                  processedVariantIds.add(existing.id);
+                } else {
+                  // Create new variant
+                  const created = await tx.productVariant.create({
+                    data: { ...variantData, referralPercentage: 0 },
+                  });
+                  processedVariantIds.add(created.id);
+                }
+              } else {
+                // Handle parent-child structure
+                // Find or create parent variant
+                const parentTitle = option1Value;
+                const existingParent = existingVariants.find(v => 
+                  v.title === parentTitle && v.parentVariantId === null && !v.sku
+                );
+
+                let parentVariantId: number;
+                if (existingParent) {
+                  parentVariantId = existingParent.id;
+                  processedVariantIds.add(existingParent.id);
+                } else {
+                  const parentVariant = await tx.productVariant.create({
+                    data: {
+                      productId,
+                      title: parentTitle,
+                      parentVariantId: null,
+                      price: null,
+                      discountedPrice: null,
+                      sku: null,
+                      available: true,
+                      inventoryQuantity: 0,
+                      images: [],
+                      referralPercentage: 0,
+                      position: option1Values.indexOf(option1Value) + 1 || 1,
+                    }
+                  });
+                  parentVariantId = parentVariant.id;
+                  processedVariantIds.add(parentVariantId);
+                }
+
+                // Process child variants
+                for (const shopifyVariant of childVariantData) {
+                  const shopifyVariantId = shopifyVariant.id.toString();
+                  const sku = shopifyVariant.sku;
+                  
+                  // Try to find existing child variant
+                  const existing = (sku && variantBySku.get(sku)) || variantByShopifyId.get(shopifyVariantId);
+
+                  const childData = {
+                    productId,
+                    parentVariantId: parentVariantId,
+                    title: shopifyVariant.option2 || shopifyVariant.title,
+                    sku: sku || null,
+                    discountedPrice: shopifyVariant.price ? parseFloat(shopifyVariant.price) : 0,
+                    price: shopifyVariant.compare_at_price ? parseFloat(shopifyVariant.compare_at_price) : null,
+                    available: shopifyVariant.available ?? true,
+                    inventoryQuantity: shopifyVariant.inventory_quantity || 0,
+                    weight: shopifyVariant.grams || null,
+                    requiresShipping: shopifyVariant.requires_shipping ?? true,
+                    taxable: shopifyVariant.taxable ?? true,
+                    images: [],
+                    shopifyVariantId: shopifyVariantId,
+                    position: shopifyVariant.position || 1,
+                  };
+
+                  if (existing) {
+                    // Update existing child variant
+                    await tx.productVariant.update({
+                      where: { id: existing.id },
+                      data: childData,
+                    });
+                    processedVariantIds.add(existing.id);
+                  } else {
+                    // Create new child variant
+                    const created = await tx.productVariant.create({
+                      data: { ...childData, referralPercentage: 0 },
+                    });
+                    processedVariantIds.add(created.id);
+                  }
+                }
               }
             }
           } else {
             // Single-level variants (no parent-child structure)
             for (const shopifyVariant of shopifyProduct.variants) {
-              variantOperations.push(
-                tx.productVariant.create({
-                  data: {
-                    productId,
-                    parentVariantId: null,
-                    title: shopifyVariant.option1 || shopifyVariant.title,
-                    sku: shopifyVariant.sku || null,
-                    discountedPrice: shopifyVariant.price ? parseFloat(shopifyVariant.price) : 0,
-                    price: shopifyVariant.compare_at_price ? parseFloat(shopifyVariant.compare_at_price) : null,
-                    available: shopifyVariant.available ?? true,
-                    inventoryQuantity: shopifyVariant.inventory_quantity || 0,
-                    weight: shopifyVariant.grams || null,
-                    requiresShipping: shopifyVariant.requires_shipping ?? true,
-                    taxable: shopifyVariant.taxable ?? true,
-                    images: [],
-                    shopifyVariantId: shopifyVariant.id.toString(),
-                    referralPercentage: 0,
-                    position: shopifyVariant.position || 1,
-                  }
-                })
-              );
+              const shopifyVariantId = shopifyVariant.id.toString();
+              const sku = shopifyVariant.sku;
+              
+              // Try to find existing variant by SKU or shopifyVariantId
+              const existing = (sku && variantBySku.get(sku)) || variantByShopifyId.get(shopifyVariantId);
+
+              const variantData = {
+                productId,
+                parentVariantId: null,
+                title: shopifyVariant.option1 || shopifyVariant.title,
+                sku: sku || null,
+                discountedPrice: shopifyVariant.price ? parseFloat(shopifyVariant.price) : 0,
+                price: shopifyVariant.compare_at_price ? parseFloat(shopifyVariant.compare_at_price) : null,
+                available: shopifyVariant.available ?? true,
+                inventoryQuantity: shopifyVariant.inventory_quantity || 0,
+                weight: shopifyVariant.grams || null,
+                requiresShipping: shopifyVariant.requires_shipping ?? true,
+                taxable: shopifyVariant.taxable ?? true,
+                images: [],
+                shopifyVariantId: shopifyVariantId,
+                position: shopifyVariant.position || 1,
+              };
+
+              if (existing) {
+                // Update existing variant (preserves referralPercentage)
+                await tx.productVariant.update({
+                  where: { id: existing.id },
+                  data: variantData,
+                });
+                processedVariantIds.add(existing.id);
+              } else {
+                // Create new variant
+                const created = await tx.productVariant.create({
+                  data: { ...variantData, referralPercentage: 0 },
+                });
+                processedVariantIds.add(created.id);
+              }
             }
           }
 
-          // Execute variant operations in transaction
-          await Promise.all(variantOperations);
-
-          // Handle parent-child variants separately (requires sequential creation)
-          if (shopifyProduct._parentVariants && shopifyProduct._parentVariants.length > 0) {
-            for (const { parentData, childVariantData } of shopifyProduct._parentVariants) {
-              const parentVariant = await tx.productVariant.create({
-                data: parentData
-              });
-
-              // Create child variants
-              const childOperations = childVariantData.map((shopifyVariant: any) =>
-                tx.productVariant.create({
-                  data: {
-                    productId,
-                    parentVariantId: parentVariant.id,
-                    title: shopifyVariant.option2 || shopifyVariant.title,
-                    sku: shopifyVariant.sku || null,
-                    discountedPrice: shopifyVariant.price ? parseFloat(shopifyVariant.price) : 0,
-                    price: shopifyVariant.compare_at_price ? parseFloat(shopifyVariant.compare_at_price) : null,
-                    available: shopifyVariant.available ?? true,
-                    inventoryQuantity: shopifyVariant.inventory_quantity || 0,
-                    weight: shopifyVariant.grams || null,
-                    requiresShipping: shopifyVariant.requires_shipping ?? true,
-                    taxable: shopifyVariant.taxable ?? true,
-                    images: [],
-                    shopifyVariantId: shopifyVariant.id.toString(),
-                    referralPercentage: 0,
-                    position: shopifyVariant.position || 1,
-                  }
-                })
-              );
-
-              await Promise.all(childOperations);
-            }
+          // Delete variants that no longer exist in Shopify
+          const variantsToDelete = existingVariants
+            .filter(v => !processedVariantIds.has(v.id))
+            .map(v => v.id);
+          
+          if (variantsToDelete.length > 0) {
+            await tx.productVariant.deleteMany({
+              where: { id: { in: variantsToDelete } }
+            });
           }
         }
 
@@ -313,4 +381,4 @@ export async function POST(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);

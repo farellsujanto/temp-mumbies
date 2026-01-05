@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/src/utils/prismaOrm.util';
 import { ApiResponse } from '@/src/types/apiResponse.type';
+import { withAuth } from '@/src/middleware/auth.middleware';
+import { UserRole } from '@/generated/prisma/client';
 
 // GET - List all tags
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request: NextRequest) => {
   try {
     const tags = await prisma.tag.findMany({
       where: { enabled: true },
@@ -28,10 +30,10 @@ export async function GET(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
 
 // POST - Create tag
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const { name, slug, description } = body;
@@ -74,10 +76,10 @@ export async function POST(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
 
 // PATCH - Update tag
-export async function PATCH(request: NextRequest) {
+export const PATCH = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const { id, name, slug, description, enabled } = body;
@@ -123,10 +125,10 @@ export async function PATCH(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
 
 // DELETE - Delete tag
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -165,4 +167,4 @@ export async function DELETE(request: NextRequest) {
       data: null,
     }, { status: 500 });
   }
-}
+}, [UserRole.ADMIN]);
