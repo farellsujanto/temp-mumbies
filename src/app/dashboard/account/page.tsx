@@ -48,7 +48,7 @@ export default function AccountDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -78,33 +78,41 @@ export default function AccountDashboard() {
             </div>
             <h3 className="text-sm font-medium text-gray-600">Impact Points</h3>
           </div>
-        </div>
+        </div> */}
 
         {/* Quick Actions */}
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
           <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left">
+            <a 
+              href="/partner-application"
+              className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left"
+            >
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+                <Users className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">Track a Meal</h4>
-                <p className="text-sm text-gray-600">Log your sustainable eating</p>
+                <h4 className="font-semibold text-gray-900">Become a Partner</h4>
+                <p className="text-sm text-gray-600">Apply for referral program</p>
               </div>
-            </button>
+            </a>
 
-            <button className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left">
+            <a 
+              href="https://mumbies.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left"
+            >
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 text-blue-600" />
+                <TrendingUp className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">Invite Friends</h4>
-                <p className="text-sm text-gray-600">Share your referral code</p>
+                <h4 className="font-semibold text-gray-900">Shop at Mumbies</h4>
+                <p className="text-sm text-gray-600">Visit mumbies.com to shop</p>
               </div>
-            </button>
+            </a>
 
-            <button className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left">
+            {/* <button className="flex items-center gap-4 p-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all text-left">
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
                 <User className="w-6 h-6 text-purple-600" />
               </div>
@@ -122,7 +130,14 @@ export default function AccountDashboard() {
                 <h4 className="font-semibold text-gray-900">Preferences</h4>
                 <p className="text-sm text-gray-600">Customize your experience</p>
               </div>
-            </button>
+            </button> */}
+          </div>
+
+          {/* Info Banner */}
+          <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-4">
+            <p className="text-sm text-green-800">
+              <strong>Note:</strong> Currently, you can apply for our referral partner program. For shopping, please visit <a href="https://mumbies.com" target="_blank" rel="noopener noreferrer" className="underline font-semibold">mumbies.com</a>
+            </p>
           </div>
         </div>
       </main>

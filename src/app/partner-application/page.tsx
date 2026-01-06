@@ -22,7 +22,9 @@ export default function PartnerApplicationPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
   const [formData, setFormData] = useState({
+    name: '',
     instagramUrl: '',
     tiktokUrl: '',
     facebookUrl: '',
@@ -32,7 +34,28 @@ export default function PartnerApplicationPage() {
 
   useEffect(() => {
     fetchQuestions();
+    fetchUserInfo();
   }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const res = await fetch('/api/v1/authentication/me');
+      const data = await res.json();
+      if (data.success && data.data) {
+        setUserEmail(data.data.email);
+        if (data.data.name) {
+          setFormData(prev => ({ ...prev, name: data.data.name }));
+        }
+      } else {
+        // User not authenticated, redirect to login with partnerRegistration flag
+        router.push('/login?partnerRegistration=true');
+      }
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      // On error, also redirect to login
+      router.push('/login?partnerRegistration=true');
+    }
+  };
 
   const fetchQuestions = async () => {
     setLoading(true);
@@ -57,6 +80,19 @@ export default function PartnerApplicationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate name
+    if (!formData.name.trim()) {
+      alert('Please enter your name');
+      return;
+    }
+
+    // Validate at least one social media URL
+    const hasSocialMedia = formData.instagramUrl || formData.tiktokUrl || formData.facebookUrl || formData.youtubeUrl;
+    if (!hasSocialMedia) {
+      alert('Please provide at least one social media profile');
+      return;
+    }
 
     // Validate required questions
     const missingAnswers = questions.filter(q => q.required && !answers[q.id]?.trim());
@@ -135,10 +171,33 @@ export default function PartnerApplicationPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
-            {/* Social Media Links */}
+            {/* User Information */}
             <div className="space-y-4">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Your Information</h2>
+              
+              <AdminInput
+                type="email"
+                label="Email"
+                value={userEmail}
+                disabled
+                placeholder="Loading..."
+                onChange={(_) => {}}
+              />
+
+              <AdminInput
+                type="text"
+                label="Full Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            {/* Social Media Links */}
+            <div className="space-y-4 border-t border-gray-200 pt-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Social Media Profiles</h2>
-              <p className="text-sm text-gray-600 mb-4">Share your social media profiles (at least one is recommended)</p>
+              <p className="text-sm text-gray-600 mb-4">Share your social media profiles (at least one is required)</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AdminInput

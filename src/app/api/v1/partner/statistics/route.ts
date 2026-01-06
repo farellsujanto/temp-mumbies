@@ -8,7 +8,7 @@ import { maskEmail } from '@/src/utils/maskEmail.util';
 export const GET = withAuth(async (request: NextRequest, user) => {
   try {
     // Get partner data with referred users
-    const partner = await prisma.user.findUnique({
+    const partner = await prisma.user.findFirst({
       where: { id: user.userId },
       select: {
         id: true,

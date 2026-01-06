@@ -19,6 +19,12 @@ enum UserRole {
   PARTNER
 }
 
+enum ApprovalStatus {
+  PENDING
+  DECLINED
+  ACCEPTED
+}
+
 model User {
   id    Int      @id @default(autoincrement())
   name  String?
@@ -46,8 +52,14 @@ model User {
   withdrawableBalance   Decimal @default(0.00) @db.Decimal(10, 2)
   totalReferredUsers    Int     @default(0)
 
+  // Partner relations
+  partnerTagId        Int?
+  partnerTag          PartnerTag?          @relation(fields: [partnerTagId], references: [id])
+  partnerApplications PartnerApplication[]
+
   @@index([referralCode])
   @@index([referrerId])
+  @@index([partnerTagId])
 }
 
 model EmailOtp {
@@ -140,9 +152,6 @@ model Product {
   inventoryQuantity Int?
   available         Boolean  @default(true)
 
-  // Referral percentage for this specific product
-  referralPercentage Float @default(0.0) // Default 0%
-
   // Shopify integration (optional)
   shopifyProductId String? @unique
 
@@ -177,12 +186,10 @@ model ProductVariant {
   // Shopify integration (optional)
   shopifyProductId String? @unique
 
-  title              String
-  sku                String?
-  price              Decimal? @db.Decimal(10, 2) // Nullable for parent variants
-  discountedPrice    Decimal? @db.Decimal(10, 2)
-  // Referral percentage for this specific product
-  referralPercentage Float    @default(0.0) // Default 0%
+  title           String
+  sku             String?
+  price           Decimal? @db.Decimal(10, 2) // Nullable for parent variants
+  discountedPrice Decimal? @db.Decimal(10, 2)
 
   // Stock management (only for leaf variants)
   available         Boolean @default(true)
@@ -239,16 +246,74 @@ model ReferralLog {
 }
 
 model ReferralEarningsLog {
-  id             Int      @id @default(autoincrement())
-  userId         Int // buyer/user who generated the earning
-  user           User     @relation("ReferralEarningUser", fields: [userId], references: [id])
-  refererId      Int // referer who receives the earning
-  referer        User     @relation("ReferralEarningReferer", fields: [refererId], references: [id])
-  shopifyOrderId String?
-  amount         Decimal  @db.Decimal(10, 2)
-  createdAt      DateTime @default(now())
+  id                         Int      @id @default(autoincrement())
+  userId                     Int // buyer/user who generated the earning
+  user                       User     @relation("ReferralEarningUser", fields: [userId], references: [id])
+  refererId                  Int // referer who receives the earning
+  referer                    User     @relation("ReferralEarningReferer", fields: [refererId], references: [id])
+  shopifyOrderId             String?
+  amount                     Decimal  @db.Decimal(10, 2)
+  partnerTagReferralEarnings Decimal? @db.Decimal(10, 2)
+  partnerTagName             String?
+  createdAt                  DateTime @default(now())
 
   @@index([userId])
   @@index([refererId])
   @@index([shopifyOrderId])
+}
+
+model PartnerTag {
+  id                 Int    @id @default(autoincrement())
+  name               String @unique
+  // Referral percentage for partners with this tag
+  referralPercentage Float  @default(0.0) // Default 0%
+
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  enabled   Boolean  @default(true)
+}
+
+model PartnerApplication {
+  id             Int                        @id @default(autoincrement())
+  userId         Int
+  user           User                       @relation(fields: [userId], references: [id])
+  instagramUrl   String?
+  tiktokUrl      String?
+  facebookUrl    String?
+  youtubeUrl     String?
+  approvalStatus ApprovalStatus             @default(PENDING)
+  answers        PartnerApplicationAnswer[]
+  createdAt      DateTime                   @default(now())
+  updatedAt      DateTime                   @updatedAt
+  enabled        Boolean                    @default(true)
+
+  @@index([userId])
+  @@index([approvalStatus])
+}
+
+model PartnerApplicationAnswer {
+  id            Int                @id @default(autoincrement())
+  applicationId Int
+  application   PartnerApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  question      String
+  answer        String             @db.Text
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([applicationId])
+}
+
+model PartnerApplicationQuestion {
+  id          Int      @id @default(autoincrement())
+  question    String   @db.Text
+  placeholder String?  @db.Text
+  required    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  enabled     Boolean  @default(true)
+
+  @@index([order])
+  @@index([enabled])
 }

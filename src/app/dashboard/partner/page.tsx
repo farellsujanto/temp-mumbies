@@ -11,6 +11,18 @@ interface ReferredUser {
   joinedAt: string;
 }
 
+interface ReferralLog {
+  id: number;
+  shopifyOrderId: string | null;
+  amount: number;
+  createdAt: string;
+  user: {
+    id: number;
+    name: string | null;
+    email: string;
+  };
+}
+
 interface PartnerStats {
   referralCode: string;
   referralUrl: string;
@@ -23,11 +35,14 @@ interface PartnerStats {
 export default function PartnerDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState<PartnerStats | null>(null);
+  const [referralLogs, setReferralLogs] = useState<ReferralLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [logsLoading, setLogsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetchPartnerStats();
+    fetchReferralLogs();
   }, []);
 
   const fetchPartnerStats = async () => {
@@ -44,6 +59,23 @@ export default function PartnerDashboard() {
       console.error('Error fetching partner stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReferralLogs = async () => {
+    try {
+      const response = await fetch('/api/v1/partner/referral-logs');
+      const data = await response.json();
+      
+      if (data.success) {
+        setReferralLogs(data.data);
+      } else {
+        console.error('Failed to fetch referral logs:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching referral logs:', error);
+    } finally {
+      setLogsLoading(false);
     }
   };
 
@@ -227,6 +259,62 @@ export default function PartnerDashboard() {
               </div>
               <p className="text-gray-600">No referred users yet</p>
               <p className="text-sm text-gray-500 mt-2">Share your referral link to start earning!</p>
+            </div>
+          )}
+        </div>
+
+        {/* Referral Earnings Log */}
+        <div className="mt-6 bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Referral Earnings History</h3>
+          {logsLoading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          ) : referralLogs && referralLogs.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Customer</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Order ID</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Amount</th>
+                    <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {referralLogs.map((log) => (
+                    <tr key={log.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-sm text-gray-900">
+                        <div>{log.user.name || 'N/A'}</div>
+                        <div className="text-xs text-gray-500 font-mono">{log.user.email}</div>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600 font-mono">
+                        {log.shopifyOrderId || 'N/A'}
+                      </td>
+                      <td className="py-3 px-4 text-sm font-semibold text-green-600">
+                        ${Number(log.amount).toFixed(2)}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-600">
+                        {new Date(log.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-gray-600">No earnings yet</p>
+              <p className="text-sm text-gray-500 mt-2">Start sharing your referral link to earn commissions!</p>
             </div>
           )}
         </div>

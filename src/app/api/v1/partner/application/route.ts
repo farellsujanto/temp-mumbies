@@ -8,8 +8,27 @@ import { UserRole } from '@/generated/prisma/client';
 export const POST = withAuth(async (request: NextRequest, user) => {
   try {
     const body = await request.json();
-    const { instagramUrl, tiktokUrl, facebookUrl, youtubeUrl, answers } = body;
+    const { name, instagramUrl, tiktokUrl, facebookUrl, youtubeUrl, answers } = body;
     const userId = user.userId;
+
+    // Validate name
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return NextResponse.json<ApiResponse>({
+        success: false,
+        message: 'Name is required',
+        data: null,
+      }, { status: 400 });
+    }
+
+    // Validate at least one social media URL
+    const hasSocialMedia = instagramUrl || tiktokUrl || facebookUrl || youtubeUrl;
+    if (!hasSocialMedia) {
+      return NextResponse.json<ApiResponse>({
+        success: false,
+        message: 'At least one social media profile is required',
+        data: null,
+      }, { status: 400 });
+    }
 
     // Check if user already has a pending or accepted application
     const existingApplication = await prisma.partnerApplication.findFirst({
@@ -57,6 +76,12 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       include: {
         answers: true,
       },
+    });
+
+    // Update user's name if provided
+    await prisma.user.update({
+      where: { id: userId },
+      data: { name: name.trim() },
     });
 
     return NextResponse.json<ApiResponse>({

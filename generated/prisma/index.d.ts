@@ -63,6 +63,26 @@ export type ReferralLog = $Result.DefaultSelection<Prisma.$ReferralLogPayload>
  * 
  */
 export type ReferralEarningsLog = $Result.DefaultSelection<Prisma.$ReferralEarningsLogPayload>
+/**
+ * Model PartnerTag
+ * 
+ */
+export type PartnerTag = $Result.DefaultSelection<Prisma.$PartnerTagPayload>
+/**
+ * Model PartnerApplication
+ * 
+ */
+export type PartnerApplication = $Result.DefaultSelection<Prisma.$PartnerApplicationPayload>
+/**
+ * Model PartnerApplicationAnswer
+ * 
+ */
+export type PartnerApplicationAnswer = $Result.DefaultSelection<Prisma.$PartnerApplicationAnswerPayload>
+/**
+ * Model PartnerApplicationQuestion
+ * 
+ */
+export type PartnerApplicationQuestion = $Result.DefaultSelection<Prisma.$PartnerApplicationQuestionPayload>
 
 /**
  * Enums
@@ -76,11 +96,24 @@ export namespace $Enums {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
+
+export const ApprovalStatus: {
+  PENDING: 'PENDING',
+  DECLINED: 'DECLINED',
+  ACCEPTED: 'ACCEPTED'
+};
+
+export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
 
 export const UserRole: typeof $Enums.UserRole
+
+export type ApprovalStatus = $Enums.ApprovalStatus
+
+export const ApprovalStatus: typeof $Enums.ApprovalStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -298,6 +331,46 @@ export class PrismaClient<
     * ```
     */
   get referralEarningsLog(): Prisma.ReferralEarningsLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.partnerTag`: Exposes CRUD operations for the **PartnerTag** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PartnerTags
+    * const partnerTags = await prisma.partnerTag.findMany()
+    * ```
+    */
+  get partnerTag(): Prisma.PartnerTagDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.partnerApplication`: Exposes CRUD operations for the **PartnerApplication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PartnerApplications
+    * const partnerApplications = await prisma.partnerApplication.findMany()
+    * ```
+    */
+  get partnerApplication(): Prisma.PartnerApplicationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.partnerApplicationAnswer`: Exposes CRUD operations for the **PartnerApplicationAnswer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PartnerApplicationAnswers
+    * const partnerApplicationAnswers = await prisma.partnerApplicationAnswer.findMany()
+    * ```
+    */
+  get partnerApplicationAnswer(): Prisma.PartnerApplicationAnswerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.partnerApplicationQuestion`: Exposes CRUD operations for the **PartnerApplicationQuestion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PartnerApplicationQuestions
+    * const partnerApplicationQuestions = await prisma.partnerApplicationQuestion.findMany()
+    * ```
+    */
+  get partnerApplicationQuestion(): Prisma.PartnerApplicationQuestionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -741,7 +814,11 @@ export namespace Prisma {
     ProductVariant: 'ProductVariant',
     Tag: 'Tag',
     ReferralLog: 'ReferralLog',
-    ReferralEarningsLog: 'ReferralEarningsLog'
+    ReferralEarningsLog: 'ReferralEarningsLog',
+    PartnerTag: 'PartnerTag',
+    PartnerApplication: 'PartnerApplication',
+    PartnerApplicationAnswer: 'PartnerApplicationAnswer',
+    PartnerApplicationQuestion: 'PartnerApplicationQuestion'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -757,7 +834,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "emailOtp" | "vendor" | "productType" | "category" | "product" | "productVariant" | "tag" | "referralLog" | "referralEarningsLog"
+      modelProps: "user" | "emailOtp" | "vendor" | "productType" | "category" | "product" | "productVariant" | "tag" | "referralLog" | "referralEarningsLog" | "partnerTag" | "partnerApplication" | "partnerApplicationAnswer" | "partnerApplicationQuestion"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1501,6 +1578,302 @@ export namespace Prisma {
           }
         }
       }
+      PartnerTag: {
+        payload: Prisma.$PartnerTagPayload<ExtArgs>
+        fields: Prisma.PartnerTagFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PartnerTagFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PartnerTagFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>
+          }
+          findFirst: {
+            args: Prisma.PartnerTagFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PartnerTagFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>
+          }
+          findMany: {
+            args: Prisma.PartnerTagFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>[]
+          }
+          create: {
+            args: Prisma.PartnerTagCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>
+          }
+          createMany: {
+            args: Prisma.PartnerTagCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PartnerTagCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>[]
+          }
+          delete: {
+            args: Prisma.PartnerTagDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>
+          }
+          update: {
+            args: Prisma.PartnerTagUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>
+          }
+          deleteMany: {
+            args: Prisma.PartnerTagDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PartnerTagUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PartnerTagUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>[]
+          }
+          upsert: {
+            args: Prisma.PartnerTagUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerTagPayload>
+          }
+          aggregate: {
+            args: Prisma.PartnerTagAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePartnerTag>
+          }
+          groupBy: {
+            args: Prisma.PartnerTagGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PartnerTagGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PartnerTagCountArgs<ExtArgs>
+            result: $Utils.Optional<PartnerTagCountAggregateOutputType> | number
+          }
+        }
+      }
+      PartnerApplication: {
+        payload: Prisma.$PartnerApplicationPayload<ExtArgs>
+        fields: Prisma.PartnerApplicationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PartnerApplicationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PartnerApplicationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>
+          }
+          findFirst: {
+            args: Prisma.PartnerApplicationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PartnerApplicationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>
+          }
+          findMany: {
+            args: Prisma.PartnerApplicationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>[]
+          }
+          create: {
+            args: Prisma.PartnerApplicationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>
+          }
+          createMany: {
+            args: Prisma.PartnerApplicationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PartnerApplicationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>[]
+          }
+          delete: {
+            args: Prisma.PartnerApplicationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>
+          }
+          update: {
+            args: Prisma.PartnerApplicationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>
+          }
+          deleteMany: {
+            args: Prisma.PartnerApplicationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PartnerApplicationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PartnerApplicationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>[]
+          }
+          upsert: {
+            args: Prisma.PartnerApplicationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationPayload>
+          }
+          aggregate: {
+            args: Prisma.PartnerApplicationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePartnerApplication>
+          }
+          groupBy: {
+            args: Prisma.PartnerApplicationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PartnerApplicationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PartnerApplicationCountArgs<ExtArgs>
+            result: $Utils.Optional<PartnerApplicationCountAggregateOutputType> | number
+          }
+        }
+      }
+      PartnerApplicationAnswer: {
+        payload: Prisma.$PartnerApplicationAnswerPayload<ExtArgs>
+        fields: Prisma.PartnerApplicationAnswerFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PartnerApplicationAnswerFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PartnerApplicationAnswerFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>
+          }
+          findFirst: {
+            args: Prisma.PartnerApplicationAnswerFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PartnerApplicationAnswerFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>
+          }
+          findMany: {
+            args: Prisma.PartnerApplicationAnswerFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>[]
+          }
+          create: {
+            args: Prisma.PartnerApplicationAnswerCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>
+          }
+          createMany: {
+            args: Prisma.PartnerApplicationAnswerCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PartnerApplicationAnswerCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>[]
+          }
+          delete: {
+            args: Prisma.PartnerApplicationAnswerDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>
+          }
+          update: {
+            args: Prisma.PartnerApplicationAnswerUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>
+          }
+          deleteMany: {
+            args: Prisma.PartnerApplicationAnswerDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PartnerApplicationAnswerUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PartnerApplicationAnswerUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>[]
+          }
+          upsert: {
+            args: Prisma.PartnerApplicationAnswerUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationAnswerPayload>
+          }
+          aggregate: {
+            args: Prisma.PartnerApplicationAnswerAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePartnerApplicationAnswer>
+          }
+          groupBy: {
+            args: Prisma.PartnerApplicationAnswerGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PartnerApplicationAnswerGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PartnerApplicationAnswerCountArgs<ExtArgs>
+            result: $Utils.Optional<PartnerApplicationAnswerCountAggregateOutputType> | number
+          }
+        }
+      }
+      PartnerApplicationQuestion: {
+        payload: Prisma.$PartnerApplicationQuestionPayload<ExtArgs>
+        fields: Prisma.PartnerApplicationQuestionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PartnerApplicationQuestionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PartnerApplicationQuestionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>
+          }
+          findFirst: {
+            args: Prisma.PartnerApplicationQuestionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PartnerApplicationQuestionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>
+          }
+          findMany: {
+            args: Prisma.PartnerApplicationQuestionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>[]
+          }
+          create: {
+            args: Prisma.PartnerApplicationQuestionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>
+          }
+          createMany: {
+            args: Prisma.PartnerApplicationQuestionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PartnerApplicationQuestionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>[]
+          }
+          delete: {
+            args: Prisma.PartnerApplicationQuestionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>
+          }
+          update: {
+            args: Prisma.PartnerApplicationQuestionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>
+          }
+          deleteMany: {
+            args: Prisma.PartnerApplicationQuestionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PartnerApplicationQuestionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PartnerApplicationQuestionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>[]
+          }
+          upsert: {
+            args: Prisma.PartnerApplicationQuestionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PartnerApplicationQuestionPayload>
+          }
+          aggregate: {
+            args: Prisma.PartnerApplicationQuestionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePartnerApplicationQuestion>
+          }
+          groupBy: {
+            args: Prisma.PartnerApplicationQuestionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PartnerApplicationQuestionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PartnerApplicationQuestionCountArgs<ExtArgs>
+            result: $Utils.Optional<PartnerApplicationQuestionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1619,6 +1992,10 @@ export namespace Prisma {
     tag?: TagOmit
     referralLog?: ReferralLogOmit
     referralEarningsLog?: ReferralEarningsLogOmit
+    partnerTag?: PartnerTagOmit
+    partnerApplication?: PartnerApplicationOmit
+    partnerApplicationAnswer?: PartnerApplicationAnswerOmit
+    partnerApplicationQuestion?: PartnerApplicationQuestionOmit
   }
 
   /* Types for Logging */
@@ -1704,6 +2081,7 @@ export namespace Prisma {
     referralLogsReceived: number
     referralEarningsGenerated: number
     referralEarningsReceived: number
+    partnerApplications: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1712,6 +2090,7 @@ export namespace Prisma {
     referralLogsReceived?: boolean | UserCountOutputTypeCountReferralLogsReceivedArgs
     referralEarningsGenerated?: boolean | UserCountOutputTypeCountReferralEarningsGeneratedArgs
     referralEarningsReceived?: boolean | UserCountOutputTypeCountReferralEarningsReceivedArgs
+    partnerApplications?: boolean | UserCountOutputTypeCountPartnerApplicationsArgs
   }
 
   // Custom InputTypes
@@ -1758,6 +2137,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountReferralEarningsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ReferralEarningsLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPartnerApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerApplicationWhereInput
   }
 
 
@@ -1948,6 +2334,68 @@ export namespace Prisma {
 
 
   /**
+   * Count Type PartnerTagCountOutputType
+   */
+
+  export type PartnerTagCountOutputType = {
+    users: number
+  }
+
+  export type PartnerTagCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | PartnerTagCountOutputTypeCountUsersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PartnerTagCountOutputType without action
+   */
+  export type PartnerTagCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTagCountOutputType
+     */
+    select?: PartnerTagCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PartnerTagCountOutputType without action
+   */
+  export type PartnerTagCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+
+  /**
+   * Count Type PartnerApplicationCountOutputType
+   */
+
+  export type PartnerApplicationCountOutputType = {
+    answers: number
+  }
+
+  export type PartnerApplicationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    answers?: boolean | PartnerApplicationCountOutputTypeCountAnswersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PartnerApplicationCountOutputType without action
+   */
+  export type PartnerApplicationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationCountOutputType
+     */
+    select?: PartnerApplicationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PartnerApplicationCountOutputType without action
+   */
+  export type PartnerApplicationCountOutputTypeCountAnswersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerApplicationAnswerWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -1969,6 +2417,7 @@ export namespace Prisma {
     totalReferralEarnings: Decimal | null
     withdrawableBalance: Decimal | null
     totalReferredUsers: number | null
+    partnerTagId: number | null
   }
 
   export type UserSumAggregateOutputType = {
@@ -1977,6 +2426,7 @@ export namespace Prisma {
     totalReferralEarnings: Decimal | null
     withdrawableBalance: Decimal | null
     totalReferredUsers: number | null
+    partnerTagId: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1992,6 +2442,7 @@ export namespace Prisma {
     totalReferralEarnings: Decimal | null
     withdrawableBalance: Decimal | null
     totalReferredUsers: number | null
+    partnerTagId: number | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2007,6 +2458,7 @@ export namespace Prisma {
     totalReferralEarnings: Decimal | null
     withdrawableBalance: Decimal | null
     totalReferredUsers: number | null
+    partnerTagId: number | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2022,6 +2474,7 @@ export namespace Prisma {
     totalReferralEarnings: number
     withdrawableBalance: number
     totalReferredUsers: number
+    partnerTagId: number
     _all: number
   }
 
@@ -2032,6 +2485,7 @@ export namespace Prisma {
     totalReferralEarnings?: true
     withdrawableBalance?: true
     totalReferredUsers?: true
+    partnerTagId?: true
   }
 
   export type UserSumAggregateInputType = {
@@ -2040,6 +2494,7 @@ export namespace Prisma {
     totalReferralEarnings?: true
     withdrawableBalance?: true
     totalReferredUsers?: true
+    partnerTagId?: true
   }
 
   export type UserMinAggregateInputType = {
@@ -2055,6 +2510,7 @@ export namespace Prisma {
     totalReferralEarnings?: true
     withdrawableBalance?: true
     totalReferredUsers?: true
+    partnerTagId?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2070,6 +2526,7 @@ export namespace Prisma {
     totalReferralEarnings?: true
     withdrawableBalance?: true
     totalReferredUsers?: true
+    partnerTagId?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2085,6 +2542,7 @@ export namespace Prisma {
     totalReferralEarnings?: true
     withdrawableBalance?: true
     totalReferredUsers?: true
+    partnerTagId?: true
     _all?: true
   }
 
@@ -2187,6 +2645,7 @@ export namespace Prisma {
     totalReferralEarnings: Decimal
     withdrawableBalance: Decimal
     totalReferredUsers: number
+    partnerTagId: number | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -2221,12 +2680,15 @@ export namespace Prisma {
     totalReferralEarnings?: boolean
     withdrawableBalance?: boolean
     totalReferredUsers?: boolean
+    partnerTagId?: boolean
     referrer?: boolean | User$referrerArgs<ExtArgs>
     referredUsers?: boolean | User$referredUsersArgs<ExtArgs>
     referralLogsUsed?: boolean | User$referralLogsUsedArgs<ExtArgs>
     referralLogsReceived?: boolean | User$referralLogsReceivedArgs<ExtArgs>
     referralEarningsGenerated?: boolean | User$referralEarningsGeneratedArgs<ExtArgs>
     referralEarningsReceived?: boolean | User$referralEarningsReceivedArgs<ExtArgs>
+    partnerTag?: boolean | User$partnerTagArgs<ExtArgs>
+    partnerApplications?: boolean | User$partnerApplicationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2243,7 +2705,9 @@ export namespace Prisma {
     totalReferralEarnings?: boolean
     withdrawableBalance?: boolean
     totalReferredUsers?: boolean
+    partnerTagId?: boolean
     referrer?: boolean | User$referrerArgs<ExtArgs>
+    partnerTag?: boolean | User$partnerTagArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2259,7 +2723,9 @@ export namespace Prisma {
     totalReferralEarnings?: boolean
     withdrawableBalance?: boolean
     totalReferredUsers?: boolean
+    partnerTagId?: boolean
     referrer?: boolean | User$referrerArgs<ExtArgs>
+    partnerTag?: boolean | User$partnerTagArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -2275,9 +2741,10 @@ export namespace Prisma {
     totalReferralEarnings?: boolean
     withdrawableBalance?: boolean
     totalReferredUsers?: boolean
+    partnerTagId?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "role" | "referralCode" | "referrerId" | "createdAt" | "updatedAt" | "enabled" | "totalReferralEarnings" | "withdrawableBalance" | "totalReferredUsers", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "role" | "referralCode" | "referrerId" | "createdAt" | "updatedAt" | "enabled" | "totalReferralEarnings" | "withdrawableBalance" | "totalReferredUsers" | "partnerTagId", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     referrer?: boolean | User$referrerArgs<ExtArgs>
     referredUsers?: boolean | User$referredUsersArgs<ExtArgs>
@@ -2285,13 +2752,17 @@ export namespace Prisma {
     referralLogsReceived?: boolean | User$referralLogsReceivedArgs<ExtArgs>
     referralEarningsGenerated?: boolean | User$referralEarningsGeneratedArgs<ExtArgs>
     referralEarningsReceived?: boolean | User$referralEarningsReceivedArgs<ExtArgs>
+    partnerTag?: boolean | User$partnerTagArgs<ExtArgs>
+    partnerApplications?: boolean | User$partnerApplicationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     referrer?: boolean | User$referrerArgs<ExtArgs>
+    partnerTag?: boolean | User$partnerTagArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     referrer?: boolean | User$referrerArgs<ExtArgs>
+    partnerTag?: boolean | User$partnerTagArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2303,6 +2774,8 @@ export namespace Prisma {
       referralLogsReceived: Prisma.$ReferralLogPayload<ExtArgs>[]
       referralEarningsGenerated: Prisma.$ReferralEarningsLogPayload<ExtArgs>[]
       referralEarningsReceived: Prisma.$ReferralEarningsLogPayload<ExtArgs>[]
+      partnerTag: Prisma.$PartnerTagPayload<ExtArgs> | null
+      partnerApplications: Prisma.$PartnerApplicationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2317,6 +2790,7 @@ export namespace Prisma {
       totalReferralEarnings: Prisma.Decimal
       withdrawableBalance: Prisma.Decimal
       totalReferredUsers: number
+      partnerTagId: number | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2717,6 +3191,8 @@ export namespace Prisma {
     referralLogsReceived<T extends User$referralLogsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$referralLogsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReferralLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     referralEarningsGenerated<T extends User$referralEarningsGeneratedArgs<ExtArgs> = {}>(args?: Subset<T, User$referralEarningsGeneratedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReferralEarningsLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     referralEarningsReceived<T extends User$referralEarningsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$referralEarningsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReferralEarningsLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    partnerTag<T extends User$partnerTagArgs<ExtArgs> = {}>(args?: Subset<T, User$partnerTagArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    partnerApplications<T extends User$partnerApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$partnerApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2758,6 +3234,7 @@ export namespace Prisma {
     readonly totalReferralEarnings: FieldRef<"User", 'Decimal'>
     readonly withdrawableBalance: FieldRef<"User", 'Decimal'>
     readonly totalReferredUsers: FieldRef<"User", 'Int'>
+    readonly partnerTagId: FieldRef<"User", 'Int'>
   }
     
 
@@ -3290,6 +3767,49 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ReferralEarningsLogScalarFieldEnum | ReferralEarningsLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.partnerTag
+   */
+  export type User$partnerTagArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    where?: PartnerTagWhereInput
+  }
+
+  /**
+   * User.partnerApplications
+   */
+  export type User$partnerApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    where?: PartnerApplicationWhereInput
+    orderBy?: PartnerApplicationOrderByWithRelationInput | PartnerApplicationOrderByWithRelationInput[]
+    cursor?: PartnerApplicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PartnerApplicationScalarFieldEnum | PartnerApplicationScalarFieldEnum[]
   }
 
   /**
@@ -7822,7 +8342,6 @@ export namespace Prisma {
     price: Decimal | null
     discountedPrice: Decimal | null
     inventoryQuantity: number | null
-    referralPercentage: number | null
     categoryId: number | null
     tagId: number | null
   }
@@ -7834,7 +8353,6 @@ export namespace Prisma {
     price: Decimal | null
     discountedPrice: Decimal | null
     inventoryQuantity: number | null
-    referralPercentage: number | null
     categoryId: number | null
     tagId: number | null
   }
@@ -7853,7 +8371,6 @@ export namespace Prisma {
     sku: string | null
     inventoryQuantity: number | null
     available: boolean | null
-    referralPercentage: number | null
     shopifyProductId: string | null
     categoryId: number | null
     tagId: number | null
@@ -7876,7 +8393,6 @@ export namespace Prisma {
     sku: string | null
     inventoryQuantity: number | null
     available: boolean | null
-    referralPercentage: number | null
     shopifyProductId: string | null
     categoryId: number | null
     tagId: number | null
@@ -7899,7 +8415,6 @@ export namespace Prisma {
     sku: number
     inventoryQuantity: number
     available: number
-    referralPercentage: number
     shopifyProductId: number
     images: number
     categoryId: number
@@ -7918,7 +8433,6 @@ export namespace Prisma {
     price?: true
     discountedPrice?: true
     inventoryQuantity?: true
-    referralPercentage?: true
     categoryId?: true
     tagId?: true
   }
@@ -7930,7 +8444,6 @@ export namespace Prisma {
     price?: true
     discountedPrice?: true
     inventoryQuantity?: true
-    referralPercentage?: true
     categoryId?: true
     tagId?: true
   }
@@ -7949,7 +8462,6 @@ export namespace Prisma {
     sku?: true
     inventoryQuantity?: true
     available?: true
-    referralPercentage?: true
     shopifyProductId?: true
     categoryId?: true
     tagId?: true
@@ -7972,7 +8484,6 @@ export namespace Prisma {
     sku?: true
     inventoryQuantity?: true
     available?: true
-    referralPercentage?: true
     shopifyProductId?: true
     categoryId?: true
     tagId?: true
@@ -7995,7 +8506,6 @@ export namespace Prisma {
     sku?: true
     inventoryQuantity?: true
     available?: true
-    referralPercentage?: true
     shopifyProductId?: true
     images?: true
     categoryId?: true
@@ -8106,7 +8616,6 @@ export namespace Prisma {
     sku: string | null
     inventoryQuantity: number | null
     available: boolean
-    referralPercentage: number
     shopifyProductId: string | null
     images: string[]
     categoryId: number | null
@@ -8149,7 +8658,6 @@ export namespace Prisma {
     sku?: boolean
     inventoryQuantity?: boolean
     available?: boolean
-    referralPercentage?: boolean
     shopifyProductId?: boolean
     images?: boolean
     categoryId?: boolean
@@ -8179,7 +8687,6 @@ export namespace Prisma {
     sku?: boolean
     inventoryQuantity?: boolean
     available?: boolean
-    referralPercentage?: boolean
     shopifyProductId?: boolean
     images?: boolean
     categoryId?: boolean
@@ -8207,7 +8714,6 @@ export namespace Prisma {
     sku?: boolean
     inventoryQuantity?: boolean
     available?: boolean
-    referralPercentage?: boolean
     shopifyProductId?: boolean
     images?: boolean
     categoryId?: boolean
@@ -8235,7 +8741,6 @@ export namespace Prisma {
     sku?: boolean
     inventoryQuantity?: boolean
     available?: boolean
-    referralPercentage?: boolean
     shopifyProductId?: boolean
     images?: boolean
     categoryId?: boolean
@@ -8245,7 +8750,7 @@ export namespace Prisma {
     enabled?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "description" | "vendorId" | "productTypeId" | "published" | "publishedAt" | "price" | "discountedPrice" | "sku" | "inventoryQuantity" | "available" | "referralPercentage" | "shopifyProductId" | "images" | "categoryId" | "tagId" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "description" | "vendorId" | "productTypeId" | "published" | "publishedAt" | "price" | "discountedPrice" | "sku" | "inventoryQuantity" | "available" | "shopifyProductId" | "images" | "categoryId" | "tagId" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     vendor?: boolean | Product$vendorArgs<ExtArgs>
     productType?: boolean | Product$productTypeArgs<ExtArgs>
@@ -8290,7 +8795,6 @@ export namespace Prisma {
       sku: string | null
       inventoryQuantity: number | null
       available: boolean
-      referralPercentage: number
       shopifyProductId: string | null
       images: string[]
       categoryId: number | null
@@ -8739,7 +9243,6 @@ export namespace Prisma {
     readonly sku: FieldRef<"Product", 'String'>
     readonly inventoryQuantity: FieldRef<"Product", 'Int'>
     readonly available: FieldRef<"Product", 'Boolean'>
-    readonly referralPercentage: FieldRef<"Product", 'Float'>
     readonly shopifyProductId: FieldRef<"Product", 'String'>
     readonly images: FieldRef<"Product", 'String[]'>
     readonly categoryId: FieldRef<"Product", 'Int'>
@@ -9279,7 +9782,6 @@ export namespace Prisma {
     parentVariantId: number | null
     price: Decimal | null
     discountedPrice: Decimal | null
-    referralPercentage: number | null
     inventoryQuantity: number | null
     weight: number | null
     position: number | null
@@ -9291,7 +9793,6 @@ export namespace Prisma {
     parentVariantId: number | null
     price: Decimal | null
     discountedPrice: Decimal | null
-    referralPercentage: number | null
     inventoryQuantity: number | null
     weight: number | null
     position: number | null
@@ -9306,7 +9807,6 @@ export namespace Prisma {
     sku: string | null
     price: Decimal | null
     discountedPrice: Decimal | null
-    referralPercentage: number | null
     available: boolean | null
     inventoryQuantity: number | null
     weight: number | null
@@ -9328,7 +9828,6 @@ export namespace Prisma {
     sku: string | null
     price: Decimal | null
     discountedPrice: Decimal | null
-    referralPercentage: number | null
     available: boolean | null
     inventoryQuantity: number | null
     weight: number | null
@@ -9350,7 +9849,6 @@ export namespace Prisma {
     sku: number
     price: number
     discountedPrice: number
-    referralPercentage: number
     available: number
     inventoryQuantity: number
     images: number
@@ -9372,7 +9870,6 @@ export namespace Prisma {
     parentVariantId?: true
     price?: true
     discountedPrice?: true
-    referralPercentage?: true
     inventoryQuantity?: true
     weight?: true
     position?: true
@@ -9384,7 +9881,6 @@ export namespace Prisma {
     parentVariantId?: true
     price?: true
     discountedPrice?: true
-    referralPercentage?: true
     inventoryQuantity?: true
     weight?: true
     position?: true
@@ -9399,7 +9895,6 @@ export namespace Prisma {
     sku?: true
     price?: true
     discountedPrice?: true
-    referralPercentage?: true
     available?: true
     inventoryQuantity?: true
     weight?: true
@@ -9421,7 +9916,6 @@ export namespace Prisma {
     sku?: true
     price?: true
     discountedPrice?: true
-    referralPercentage?: true
     available?: true
     inventoryQuantity?: true
     weight?: true
@@ -9443,7 +9937,6 @@ export namespace Prisma {
     sku?: true
     price?: true
     discountedPrice?: true
-    referralPercentage?: true
     available?: true
     inventoryQuantity?: true
     images?: true
@@ -9553,7 +10046,6 @@ export namespace Prisma {
     sku: string | null
     price: Decimal | null
     discountedPrice: Decimal | null
-    referralPercentage: number
     available: boolean
     inventoryQuantity: number
     images: string[]
@@ -9595,7 +10087,6 @@ export namespace Prisma {
     sku?: boolean
     price?: boolean
     discountedPrice?: boolean
-    referralPercentage?: boolean
     available?: boolean
     inventoryQuantity?: boolean
     images?: boolean
@@ -9622,7 +10113,6 @@ export namespace Prisma {
     sku?: boolean
     price?: boolean
     discountedPrice?: boolean
-    referralPercentage?: boolean
     available?: boolean
     inventoryQuantity?: boolean
     images?: boolean
@@ -9647,7 +10137,6 @@ export namespace Prisma {
     sku?: boolean
     price?: boolean
     discountedPrice?: boolean
-    referralPercentage?: boolean
     available?: boolean
     inventoryQuantity?: boolean
     images?: boolean
@@ -9672,7 +10161,6 @@ export namespace Prisma {
     sku?: boolean
     price?: boolean
     discountedPrice?: boolean
-    referralPercentage?: boolean
     available?: boolean
     inventoryQuantity?: boolean
     images?: boolean
@@ -9686,7 +10174,7 @@ export namespace Prisma {
     enabled?: boolean
   }
 
-  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "parentVariantId" | "shopifyProductId" | "title" | "sku" | "price" | "discountedPrice" | "referralPercentage" | "available" | "inventoryQuantity" | "images" | "weight" | "requiresShipping" | "taxable" | "shopifyVariantId" | "position" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["productVariant"]>
+  export type ProductVariantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "productId" | "parentVariantId" | "shopifyProductId" | "title" | "sku" | "price" | "discountedPrice" | "available" | "inventoryQuantity" | "images" | "weight" | "requiresShipping" | "taxable" | "shopifyVariantId" | "position" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["productVariant"]>
   export type ProductVariantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
     parentVariant?: boolean | ProductVariant$parentVariantArgs<ExtArgs>
@@ -9718,7 +10206,6 @@ export namespace Prisma {
       sku: string | null
       price: Prisma.Decimal | null
       discountedPrice: Prisma.Decimal | null
-      referralPercentage: number
       available: boolean
       inventoryQuantity: number
       images: string[]
@@ -10164,7 +10651,6 @@ export namespace Prisma {
     readonly sku: FieldRef<"ProductVariant", 'String'>
     readonly price: FieldRef<"ProductVariant", 'Decimal'>
     readonly discountedPrice: FieldRef<"ProductVariant", 'Decimal'>
-    readonly referralPercentage: FieldRef<"ProductVariant", 'Float'>
     readonly available: FieldRef<"ProductVariant", 'Boolean'>
     readonly inventoryQuantity: FieldRef<"ProductVariant", 'Int'>
     readonly images: FieldRef<"ProductVariant", 'String[]'>
@@ -12888,6 +13374,7 @@ export namespace Prisma {
     userId: number | null
     refererId: number | null
     amount: Decimal | null
+    partnerTagReferralEarnings: Decimal | null
   }
 
   export type ReferralEarningsLogSumAggregateOutputType = {
@@ -12895,6 +13382,7 @@ export namespace Prisma {
     userId: number | null
     refererId: number | null
     amount: Decimal | null
+    partnerTagReferralEarnings: Decimal | null
   }
 
   export type ReferralEarningsLogMinAggregateOutputType = {
@@ -12903,6 +13391,8 @@ export namespace Prisma {
     refererId: number | null
     shopifyOrderId: string | null
     amount: Decimal | null
+    partnerTagReferralEarnings: Decimal | null
+    partnerTagName: string | null
     createdAt: Date | null
   }
 
@@ -12912,6 +13402,8 @@ export namespace Prisma {
     refererId: number | null
     shopifyOrderId: string | null
     amount: Decimal | null
+    partnerTagReferralEarnings: Decimal | null
+    partnerTagName: string | null
     createdAt: Date | null
   }
 
@@ -12921,6 +13413,8 @@ export namespace Prisma {
     refererId: number
     shopifyOrderId: number
     amount: number
+    partnerTagReferralEarnings: number
+    partnerTagName: number
     createdAt: number
     _all: number
   }
@@ -12931,6 +13425,7 @@ export namespace Prisma {
     userId?: true
     refererId?: true
     amount?: true
+    partnerTagReferralEarnings?: true
   }
 
   export type ReferralEarningsLogSumAggregateInputType = {
@@ -12938,6 +13433,7 @@ export namespace Prisma {
     userId?: true
     refererId?: true
     amount?: true
+    partnerTagReferralEarnings?: true
   }
 
   export type ReferralEarningsLogMinAggregateInputType = {
@@ -12946,6 +13442,8 @@ export namespace Prisma {
     refererId?: true
     shopifyOrderId?: true
     amount?: true
+    partnerTagReferralEarnings?: true
+    partnerTagName?: true
     createdAt?: true
   }
 
@@ -12955,6 +13453,8 @@ export namespace Prisma {
     refererId?: true
     shopifyOrderId?: true
     amount?: true
+    partnerTagReferralEarnings?: true
+    partnerTagName?: true
     createdAt?: true
   }
 
@@ -12964,6 +13464,8 @@ export namespace Prisma {
     refererId?: true
     shopifyOrderId?: true
     amount?: true
+    partnerTagReferralEarnings?: true
+    partnerTagName?: true
     createdAt?: true
     _all?: true
   }
@@ -13060,6 +13562,8 @@ export namespace Prisma {
     refererId: number
     shopifyOrderId: string | null
     amount: Decimal
+    partnerTagReferralEarnings: Decimal | null
+    partnerTagName: string | null
     createdAt: Date
     _count: ReferralEarningsLogCountAggregateOutputType | null
     _avg: ReferralEarningsLogAvgAggregateOutputType | null
@@ -13088,6 +13592,8 @@ export namespace Prisma {
     refererId?: boolean
     shopifyOrderId?: boolean
     amount?: boolean
+    partnerTagReferralEarnings?: boolean
+    partnerTagName?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     referer?: boolean | UserDefaultArgs<ExtArgs>
@@ -13099,6 +13605,8 @@ export namespace Prisma {
     refererId?: boolean
     shopifyOrderId?: boolean
     amount?: boolean
+    partnerTagReferralEarnings?: boolean
+    partnerTagName?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     referer?: boolean | UserDefaultArgs<ExtArgs>
@@ -13110,6 +13618,8 @@ export namespace Prisma {
     refererId?: boolean
     shopifyOrderId?: boolean
     amount?: boolean
+    partnerTagReferralEarnings?: boolean
+    partnerTagName?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     referer?: boolean | UserDefaultArgs<ExtArgs>
@@ -13121,10 +13631,12 @@ export namespace Prisma {
     refererId?: boolean
     shopifyOrderId?: boolean
     amount?: boolean
+    partnerTagReferralEarnings?: boolean
+    partnerTagName?: boolean
     createdAt?: boolean
   }
 
-  export type ReferralEarningsLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "refererId" | "shopifyOrderId" | "amount" | "createdAt", ExtArgs["result"]["referralEarningsLog"]>
+  export type ReferralEarningsLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "refererId" | "shopifyOrderId" | "amount" | "partnerTagReferralEarnings" | "partnerTagName" | "createdAt", ExtArgs["result"]["referralEarningsLog"]>
   export type ReferralEarningsLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     referer?: boolean | UserDefaultArgs<ExtArgs>
@@ -13150,6 +13662,8 @@ export namespace Prisma {
       refererId: number
       shopifyOrderId: string | null
       amount: Prisma.Decimal
+      partnerTagReferralEarnings: Prisma.Decimal | null
+      partnerTagName: string | null
       createdAt: Date
     }, ExtArgs["result"]["referralEarningsLog"]>
     composites: {}
@@ -13581,6 +14095,8 @@ export namespace Prisma {
     readonly refererId: FieldRef<"ReferralEarningsLog", 'Int'>
     readonly shopifyOrderId: FieldRef<"ReferralEarningsLog", 'String'>
     readonly amount: FieldRef<"ReferralEarningsLog", 'Decimal'>
+    readonly partnerTagReferralEarnings: FieldRef<"ReferralEarningsLog", 'Decimal'>
+    readonly partnerTagName: FieldRef<"ReferralEarningsLog", 'String'>
     readonly createdAt: FieldRef<"ReferralEarningsLog", 'DateTime'>
   }
     
@@ -13997,6 +14513,4499 @@ export namespace Prisma {
 
 
   /**
+   * Model PartnerTag
+   */
+
+  export type AggregatePartnerTag = {
+    _count: PartnerTagCountAggregateOutputType | null
+    _avg: PartnerTagAvgAggregateOutputType | null
+    _sum: PartnerTagSumAggregateOutputType | null
+    _min: PartnerTagMinAggregateOutputType | null
+    _max: PartnerTagMaxAggregateOutputType | null
+  }
+
+  export type PartnerTagAvgAggregateOutputType = {
+    id: number | null
+    referralPercentage: number | null
+  }
+
+  export type PartnerTagSumAggregateOutputType = {
+    id: number | null
+    referralPercentage: number | null
+  }
+
+  export type PartnerTagMinAggregateOutputType = {
+    id: number | null
+    name: string | null
+    referralPercentage: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    enabled: boolean | null
+  }
+
+  export type PartnerTagMaxAggregateOutputType = {
+    id: number | null
+    name: string | null
+    referralPercentage: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    enabled: boolean | null
+  }
+
+  export type PartnerTagCountAggregateOutputType = {
+    id: number
+    name: number
+    referralPercentage: number
+    createdAt: number
+    updatedAt: number
+    enabled: number
+    _all: number
+  }
+
+
+  export type PartnerTagAvgAggregateInputType = {
+    id?: true
+    referralPercentage?: true
+  }
+
+  export type PartnerTagSumAggregateInputType = {
+    id?: true
+    referralPercentage?: true
+  }
+
+  export type PartnerTagMinAggregateInputType = {
+    id?: true
+    name?: true
+    referralPercentage?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+  }
+
+  export type PartnerTagMaxAggregateInputType = {
+    id?: true
+    name?: true
+    referralPercentage?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+  }
+
+  export type PartnerTagCountAggregateInputType = {
+    id?: true
+    name?: true
+    referralPercentage?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+    _all?: true
+  }
+
+  export type PartnerTagAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerTag to aggregate.
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerTags to fetch.
+     */
+    orderBy?: PartnerTagOrderByWithRelationInput | PartnerTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PartnerTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PartnerTags
+    **/
+    _count?: true | PartnerTagCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PartnerTagAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PartnerTagSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PartnerTagMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PartnerTagMaxAggregateInputType
+  }
+
+  export type GetPartnerTagAggregateType<T extends PartnerTagAggregateArgs> = {
+        [P in keyof T & keyof AggregatePartnerTag]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePartnerTag[P]>
+      : GetScalarType<T[P], AggregatePartnerTag[P]>
+  }
+
+
+
+
+  export type PartnerTagGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerTagWhereInput
+    orderBy?: PartnerTagOrderByWithAggregationInput | PartnerTagOrderByWithAggregationInput[]
+    by: PartnerTagScalarFieldEnum[] | PartnerTagScalarFieldEnum
+    having?: PartnerTagScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PartnerTagCountAggregateInputType | true
+    _avg?: PartnerTagAvgAggregateInputType
+    _sum?: PartnerTagSumAggregateInputType
+    _min?: PartnerTagMinAggregateInputType
+    _max?: PartnerTagMaxAggregateInputType
+  }
+
+  export type PartnerTagGroupByOutputType = {
+    id: number
+    name: string
+    referralPercentage: number
+    createdAt: Date
+    updatedAt: Date
+    enabled: boolean
+    _count: PartnerTagCountAggregateOutputType | null
+    _avg: PartnerTagAvgAggregateOutputType | null
+    _sum: PartnerTagSumAggregateOutputType | null
+    _min: PartnerTagMinAggregateOutputType | null
+    _max: PartnerTagMaxAggregateOutputType | null
+  }
+
+  type GetPartnerTagGroupByPayload<T extends PartnerTagGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PartnerTagGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PartnerTagGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PartnerTagGroupByOutputType[P]>
+            : GetScalarType<T[P], PartnerTagGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PartnerTagSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    referralPercentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+    users?: boolean | PartnerTag$usersArgs<ExtArgs>
+    _count?: boolean | PartnerTagCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerTag"]>
+
+  export type PartnerTagSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    referralPercentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }, ExtArgs["result"]["partnerTag"]>
+
+  export type PartnerTagSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    referralPercentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }, ExtArgs["result"]["partnerTag"]>
+
+  export type PartnerTagSelectScalar = {
+    id?: boolean
+    name?: boolean
+    referralPercentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }
+
+  export type PartnerTagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "referralPercentage" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["partnerTag"]>
+  export type PartnerTagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | PartnerTag$usersArgs<ExtArgs>
+    _count?: boolean | PartnerTagCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PartnerTagIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type PartnerTagIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $PartnerTagPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PartnerTag"
+    objects: {
+      users: Prisma.$UserPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      name: string
+      referralPercentage: number
+      createdAt: Date
+      updatedAt: Date
+      enabled: boolean
+    }, ExtArgs["result"]["partnerTag"]>
+    composites: {}
+  }
+
+  type PartnerTagGetPayload<S extends boolean | null | undefined | PartnerTagDefaultArgs> = $Result.GetResult<Prisma.$PartnerTagPayload, S>
+
+  type PartnerTagCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PartnerTagFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PartnerTagCountAggregateInputType | true
+    }
+
+  export interface PartnerTagDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PartnerTag'], meta: { name: 'PartnerTag' } }
+    /**
+     * Find zero or one PartnerTag that matches the filter.
+     * @param {PartnerTagFindUniqueArgs} args - Arguments to find a PartnerTag
+     * @example
+     * // Get one PartnerTag
+     * const partnerTag = await prisma.partnerTag.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PartnerTagFindUniqueArgs>(args: SelectSubset<T, PartnerTagFindUniqueArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PartnerTag that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PartnerTagFindUniqueOrThrowArgs} args - Arguments to find a PartnerTag
+     * @example
+     * // Get one PartnerTag
+     * const partnerTag = await prisma.partnerTag.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PartnerTagFindUniqueOrThrowArgs>(args: SelectSubset<T, PartnerTagFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerTag that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagFindFirstArgs} args - Arguments to find a PartnerTag
+     * @example
+     * // Get one PartnerTag
+     * const partnerTag = await prisma.partnerTag.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PartnerTagFindFirstArgs>(args?: SelectSubset<T, PartnerTagFindFirstArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerTag that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagFindFirstOrThrowArgs} args - Arguments to find a PartnerTag
+     * @example
+     * // Get one PartnerTag
+     * const partnerTag = await prisma.partnerTag.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PartnerTagFindFirstOrThrowArgs>(args?: SelectSubset<T, PartnerTagFindFirstOrThrowArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PartnerTags that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PartnerTags
+     * const partnerTags = await prisma.partnerTag.findMany()
+     * 
+     * // Get first 10 PartnerTags
+     * const partnerTags = await prisma.partnerTag.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const partnerTagWithIdOnly = await prisma.partnerTag.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PartnerTagFindManyArgs>(args?: SelectSubset<T, PartnerTagFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PartnerTag.
+     * @param {PartnerTagCreateArgs} args - Arguments to create a PartnerTag.
+     * @example
+     * // Create one PartnerTag
+     * const PartnerTag = await prisma.partnerTag.create({
+     *   data: {
+     *     // ... data to create a PartnerTag
+     *   }
+     * })
+     * 
+     */
+    create<T extends PartnerTagCreateArgs>(args: SelectSubset<T, PartnerTagCreateArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PartnerTags.
+     * @param {PartnerTagCreateManyArgs} args - Arguments to create many PartnerTags.
+     * @example
+     * // Create many PartnerTags
+     * const partnerTag = await prisma.partnerTag.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PartnerTagCreateManyArgs>(args?: SelectSubset<T, PartnerTagCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PartnerTags and returns the data saved in the database.
+     * @param {PartnerTagCreateManyAndReturnArgs} args - Arguments to create many PartnerTags.
+     * @example
+     * // Create many PartnerTags
+     * const partnerTag = await prisma.partnerTag.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PartnerTags and only return the `id`
+     * const partnerTagWithIdOnly = await prisma.partnerTag.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PartnerTagCreateManyAndReturnArgs>(args?: SelectSubset<T, PartnerTagCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PartnerTag.
+     * @param {PartnerTagDeleteArgs} args - Arguments to delete one PartnerTag.
+     * @example
+     * // Delete one PartnerTag
+     * const PartnerTag = await prisma.partnerTag.delete({
+     *   where: {
+     *     // ... filter to delete one PartnerTag
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PartnerTagDeleteArgs>(args: SelectSubset<T, PartnerTagDeleteArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PartnerTag.
+     * @param {PartnerTagUpdateArgs} args - Arguments to update one PartnerTag.
+     * @example
+     * // Update one PartnerTag
+     * const partnerTag = await prisma.partnerTag.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PartnerTagUpdateArgs>(args: SelectSubset<T, PartnerTagUpdateArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PartnerTags.
+     * @param {PartnerTagDeleteManyArgs} args - Arguments to filter PartnerTags to delete.
+     * @example
+     * // Delete a few PartnerTags
+     * const { count } = await prisma.partnerTag.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PartnerTagDeleteManyArgs>(args?: SelectSubset<T, PartnerTagDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerTags.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PartnerTags
+     * const partnerTag = await prisma.partnerTag.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PartnerTagUpdateManyArgs>(args: SelectSubset<T, PartnerTagUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerTags and returns the data updated in the database.
+     * @param {PartnerTagUpdateManyAndReturnArgs} args - Arguments to update many PartnerTags.
+     * @example
+     * // Update many PartnerTags
+     * const partnerTag = await prisma.partnerTag.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PartnerTags and only return the `id`
+     * const partnerTagWithIdOnly = await prisma.partnerTag.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PartnerTagUpdateManyAndReturnArgs>(args: SelectSubset<T, PartnerTagUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PartnerTag.
+     * @param {PartnerTagUpsertArgs} args - Arguments to update or create a PartnerTag.
+     * @example
+     * // Update or create a PartnerTag
+     * const partnerTag = await prisma.partnerTag.upsert({
+     *   create: {
+     *     // ... data to create a PartnerTag
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PartnerTag we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PartnerTagUpsertArgs>(args: SelectSubset<T, PartnerTagUpsertArgs<ExtArgs>>): Prisma__PartnerTagClient<$Result.GetResult<Prisma.$PartnerTagPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PartnerTags.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagCountArgs} args - Arguments to filter PartnerTags to count.
+     * @example
+     * // Count the number of PartnerTags
+     * const count = await prisma.partnerTag.count({
+     *   where: {
+     *     // ... the filter for the PartnerTags we want to count
+     *   }
+     * })
+    **/
+    count<T extends PartnerTagCountArgs>(
+      args?: Subset<T, PartnerTagCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PartnerTagCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PartnerTag.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PartnerTagAggregateArgs>(args: Subset<T, PartnerTagAggregateArgs>): Prisma.PrismaPromise<GetPartnerTagAggregateType<T>>
+
+    /**
+     * Group by PartnerTag.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerTagGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PartnerTagGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PartnerTagGroupByArgs['orderBy'] }
+        : { orderBy?: PartnerTagGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PartnerTagGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPartnerTagGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PartnerTag model
+   */
+  readonly fields: PartnerTagFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PartnerTag.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PartnerTagClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    users<T extends PartnerTag$usersArgs<ExtArgs> = {}>(args?: Subset<T, PartnerTag$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PartnerTag model
+   */
+  interface PartnerTagFieldRefs {
+    readonly id: FieldRef<"PartnerTag", 'Int'>
+    readonly name: FieldRef<"PartnerTag", 'String'>
+    readonly referralPercentage: FieldRef<"PartnerTag", 'Float'>
+    readonly createdAt: FieldRef<"PartnerTag", 'DateTime'>
+    readonly updatedAt: FieldRef<"PartnerTag", 'DateTime'>
+    readonly enabled: FieldRef<"PartnerTag", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PartnerTag findUnique
+   */
+  export type PartnerTagFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerTag to fetch.
+     */
+    where: PartnerTagWhereUniqueInput
+  }
+
+  /**
+   * PartnerTag findUniqueOrThrow
+   */
+  export type PartnerTagFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerTag to fetch.
+     */
+    where: PartnerTagWhereUniqueInput
+  }
+
+  /**
+   * PartnerTag findFirst
+   */
+  export type PartnerTagFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerTag to fetch.
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerTags to fetch.
+     */
+    orderBy?: PartnerTagOrderByWithRelationInput | PartnerTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerTags.
+     */
+    cursor?: PartnerTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerTags.
+     */
+    distinct?: PartnerTagScalarFieldEnum | PartnerTagScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerTag findFirstOrThrow
+   */
+  export type PartnerTagFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerTag to fetch.
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerTags to fetch.
+     */
+    orderBy?: PartnerTagOrderByWithRelationInput | PartnerTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerTags.
+     */
+    cursor?: PartnerTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerTags.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerTags.
+     */
+    distinct?: PartnerTagScalarFieldEnum | PartnerTagScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerTag findMany
+   */
+  export type PartnerTagFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerTags to fetch.
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerTags to fetch.
+     */
+    orderBy?: PartnerTagOrderByWithRelationInput | PartnerTagOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PartnerTags.
+     */
+    cursor?: PartnerTagWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerTags from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerTags.
+     */
+    skip?: number
+    distinct?: PartnerTagScalarFieldEnum | PartnerTagScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerTag create
+   */
+  export type PartnerTagCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PartnerTag.
+     */
+    data: XOR<PartnerTagCreateInput, PartnerTagUncheckedCreateInput>
+  }
+
+  /**
+   * PartnerTag createMany
+   */
+  export type PartnerTagCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PartnerTags.
+     */
+    data: PartnerTagCreateManyInput | PartnerTagCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PartnerTag createManyAndReturn
+   */
+  export type PartnerTagCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * The data used to create many PartnerTags.
+     */
+    data: PartnerTagCreateManyInput | PartnerTagCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PartnerTag update
+   */
+  export type PartnerTagUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PartnerTag.
+     */
+    data: XOR<PartnerTagUpdateInput, PartnerTagUncheckedUpdateInput>
+    /**
+     * Choose, which PartnerTag to update.
+     */
+    where: PartnerTagWhereUniqueInput
+  }
+
+  /**
+   * PartnerTag updateMany
+   */
+  export type PartnerTagUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PartnerTags.
+     */
+    data: XOR<PartnerTagUpdateManyMutationInput, PartnerTagUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerTags to update
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * Limit how many PartnerTags to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerTag updateManyAndReturn
+   */
+  export type PartnerTagUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * The data used to update PartnerTags.
+     */
+    data: XOR<PartnerTagUpdateManyMutationInput, PartnerTagUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerTags to update
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * Limit how many PartnerTags to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerTag upsert
+   */
+  export type PartnerTagUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PartnerTag to update in case it exists.
+     */
+    where: PartnerTagWhereUniqueInput
+    /**
+     * In case the PartnerTag found by the `where` argument doesn't exist, create a new PartnerTag with this data.
+     */
+    create: XOR<PartnerTagCreateInput, PartnerTagUncheckedCreateInput>
+    /**
+     * In case the PartnerTag was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PartnerTagUpdateInput, PartnerTagUncheckedUpdateInput>
+  }
+
+  /**
+   * PartnerTag delete
+   */
+  export type PartnerTagDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+    /**
+     * Filter which PartnerTag to delete.
+     */
+    where: PartnerTagWhereUniqueInput
+  }
+
+  /**
+   * PartnerTag deleteMany
+   */
+  export type PartnerTagDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerTags to delete
+     */
+    where?: PartnerTagWhereInput
+    /**
+     * Limit how many PartnerTags to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerTag.users
+   */
+  export type PartnerTag$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerTag without action
+   */
+  export type PartnerTagDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerTag
+     */
+    select?: PartnerTagSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerTag
+     */
+    omit?: PartnerTagOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerTagInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PartnerApplication
+   */
+
+  export type AggregatePartnerApplication = {
+    _count: PartnerApplicationCountAggregateOutputType | null
+    _avg: PartnerApplicationAvgAggregateOutputType | null
+    _sum: PartnerApplicationSumAggregateOutputType | null
+    _min: PartnerApplicationMinAggregateOutputType | null
+    _max: PartnerApplicationMaxAggregateOutputType | null
+  }
+
+  export type PartnerApplicationAvgAggregateOutputType = {
+    id: number | null
+    userId: number | null
+  }
+
+  export type PartnerApplicationSumAggregateOutputType = {
+    id: number | null
+    userId: number | null
+  }
+
+  export type PartnerApplicationMinAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    instagramUrl: string | null
+    tiktokUrl: string | null
+    facebookUrl: string | null
+    youtubeUrl: string | null
+    approvalStatus: $Enums.ApprovalStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    enabled: boolean | null
+  }
+
+  export type PartnerApplicationMaxAggregateOutputType = {
+    id: number | null
+    userId: number | null
+    instagramUrl: string | null
+    tiktokUrl: string | null
+    facebookUrl: string | null
+    youtubeUrl: string | null
+    approvalStatus: $Enums.ApprovalStatus | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    enabled: boolean | null
+  }
+
+  export type PartnerApplicationCountAggregateOutputType = {
+    id: number
+    userId: number
+    instagramUrl: number
+    tiktokUrl: number
+    facebookUrl: number
+    youtubeUrl: number
+    approvalStatus: number
+    createdAt: number
+    updatedAt: number
+    enabled: number
+    _all: number
+  }
+
+
+  export type PartnerApplicationAvgAggregateInputType = {
+    id?: true
+    userId?: true
+  }
+
+  export type PartnerApplicationSumAggregateInputType = {
+    id?: true
+    userId?: true
+  }
+
+  export type PartnerApplicationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    instagramUrl?: true
+    tiktokUrl?: true
+    facebookUrl?: true
+    youtubeUrl?: true
+    approvalStatus?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+  }
+
+  export type PartnerApplicationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    instagramUrl?: true
+    tiktokUrl?: true
+    facebookUrl?: true
+    youtubeUrl?: true
+    approvalStatus?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+  }
+
+  export type PartnerApplicationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    instagramUrl?: true
+    tiktokUrl?: true
+    facebookUrl?: true
+    youtubeUrl?: true
+    approvalStatus?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+    _all?: true
+  }
+
+  export type PartnerApplicationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerApplication to aggregate.
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplications to fetch.
+     */
+    orderBy?: PartnerApplicationOrderByWithRelationInput | PartnerApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PartnerApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PartnerApplications
+    **/
+    _count?: true | PartnerApplicationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PartnerApplicationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PartnerApplicationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PartnerApplicationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PartnerApplicationMaxAggregateInputType
+  }
+
+  export type GetPartnerApplicationAggregateType<T extends PartnerApplicationAggregateArgs> = {
+        [P in keyof T & keyof AggregatePartnerApplication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePartnerApplication[P]>
+      : GetScalarType<T[P], AggregatePartnerApplication[P]>
+  }
+
+
+
+
+  export type PartnerApplicationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerApplicationWhereInput
+    orderBy?: PartnerApplicationOrderByWithAggregationInput | PartnerApplicationOrderByWithAggregationInput[]
+    by: PartnerApplicationScalarFieldEnum[] | PartnerApplicationScalarFieldEnum
+    having?: PartnerApplicationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PartnerApplicationCountAggregateInputType | true
+    _avg?: PartnerApplicationAvgAggregateInputType
+    _sum?: PartnerApplicationSumAggregateInputType
+    _min?: PartnerApplicationMinAggregateInputType
+    _max?: PartnerApplicationMaxAggregateInputType
+  }
+
+  export type PartnerApplicationGroupByOutputType = {
+    id: number
+    userId: number
+    instagramUrl: string | null
+    tiktokUrl: string | null
+    facebookUrl: string | null
+    youtubeUrl: string | null
+    approvalStatus: $Enums.ApprovalStatus
+    createdAt: Date
+    updatedAt: Date
+    enabled: boolean
+    _count: PartnerApplicationCountAggregateOutputType | null
+    _avg: PartnerApplicationAvgAggregateOutputType | null
+    _sum: PartnerApplicationSumAggregateOutputType | null
+    _min: PartnerApplicationMinAggregateOutputType | null
+    _max: PartnerApplicationMaxAggregateOutputType | null
+  }
+
+  type GetPartnerApplicationGroupByPayload<T extends PartnerApplicationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PartnerApplicationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PartnerApplicationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PartnerApplicationGroupByOutputType[P]>
+            : GetScalarType<T[P], PartnerApplicationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PartnerApplicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    instagramUrl?: boolean
+    tiktokUrl?: boolean
+    facebookUrl?: boolean
+    youtubeUrl?: boolean
+    approvalStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    answers?: boolean | PartnerApplication$answersArgs<ExtArgs>
+    _count?: boolean | PartnerApplicationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerApplication"]>
+
+  export type PartnerApplicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    instagramUrl?: boolean
+    tiktokUrl?: boolean
+    facebookUrl?: boolean
+    youtubeUrl?: boolean
+    approvalStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerApplication"]>
+
+  export type PartnerApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    instagramUrl?: boolean
+    tiktokUrl?: boolean
+    facebookUrl?: boolean
+    youtubeUrl?: boolean
+    approvalStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerApplication"]>
+
+  export type PartnerApplicationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    instagramUrl?: boolean
+    tiktokUrl?: boolean
+    facebookUrl?: boolean
+    youtubeUrl?: boolean
+    approvalStatus?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "instagramUrl" | "tiktokUrl" | "facebookUrl" | "youtubeUrl" | "approvalStatus" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["partnerApplication"]>
+  export type PartnerApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    answers?: boolean | PartnerApplication$answersArgs<ExtArgs>
+    _count?: boolean | PartnerApplicationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PartnerApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PartnerApplicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PartnerApplicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PartnerApplication"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      answers: Prisma.$PartnerApplicationAnswerPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: number
+      instagramUrl: string | null
+      tiktokUrl: string | null
+      facebookUrl: string | null
+      youtubeUrl: string | null
+      approvalStatus: $Enums.ApprovalStatus
+      createdAt: Date
+      updatedAt: Date
+      enabled: boolean
+    }, ExtArgs["result"]["partnerApplication"]>
+    composites: {}
+  }
+
+  type PartnerApplicationGetPayload<S extends boolean | null | undefined | PartnerApplicationDefaultArgs> = $Result.GetResult<Prisma.$PartnerApplicationPayload, S>
+
+  type PartnerApplicationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PartnerApplicationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PartnerApplicationCountAggregateInputType | true
+    }
+
+  export interface PartnerApplicationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PartnerApplication'], meta: { name: 'PartnerApplication' } }
+    /**
+     * Find zero or one PartnerApplication that matches the filter.
+     * @param {PartnerApplicationFindUniqueArgs} args - Arguments to find a PartnerApplication
+     * @example
+     * // Get one PartnerApplication
+     * const partnerApplication = await prisma.partnerApplication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PartnerApplicationFindUniqueArgs>(args: SelectSubset<T, PartnerApplicationFindUniqueArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PartnerApplication that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PartnerApplicationFindUniqueOrThrowArgs} args - Arguments to find a PartnerApplication
+     * @example
+     * // Get one PartnerApplication
+     * const partnerApplication = await prisma.partnerApplication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PartnerApplicationFindUniqueOrThrowArgs>(args: SelectSubset<T, PartnerApplicationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerApplication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationFindFirstArgs} args - Arguments to find a PartnerApplication
+     * @example
+     * // Get one PartnerApplication
+     * const partnerApplication = await prisma.partnerApplication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PartnerApplicationFindFirstArgs>(args?: SelectSubset<T, PartnerApplicationFindFirstArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerApplication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationFindFirstOrThrowArgs} args - Arguments to find a PartnerApplication
+     * @example
+     * // Get one PartnerApplication
+     * const partnerApplication = await prisma.partnerApplication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PartnerApplicationFindFirstOrThrowArgs>(args?: SelectSubset<T, PartnerApplicationFindFirstOrThrowArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PartnerApplications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PartnerApplications
+     * const partnerApplications = await prisma.partnerApplication.findMany()
+     * 
+     * // Get first 10 PartnerApplications
+     * const partnerApplications = await prisma.partnerApplication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const partnerApplicationWithIdOnly = await prisma.partnerApplication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PartnerApplicationFindManyArgs>(args?: SelectSubset<T, PartnerApplicationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PartnerApplication.
+     * @param {PartnerApplicationCreateArgs} args - Arguments to create a PartnerApplication.
+     * @example
+     * // Create one PartnerApplication
+     * const PartnerApplication = await prisma.partnerApplication.create({
+     *   data: {
+     *     // ... data to create a PartnerApplication
+     *   }
+     * })
+     * 
+     */
+    create<T extends PartnerApplicationCreateArgs>(args: SelectSubset<T, PartnerApplicationCreateArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PartnerApplications.
+     * @param {PartnerApplicationCreateManyArgs} args - Arguments to create many PartnerApplications.
+     * @example
+     * // Create many PartnerApplications
+     * const partnerApplication = await prisma.partnerApplication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PartnerApplicationCreateManyArgs>(args?: SelectSubset<T, PartnerApplicationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PartnerApplications and returns the data saved in the database.
+     * @param {PartnerApplicationCreateManyAndReturnArgs} args - Arguments to create many PartnerApplications.
+     * @example
+     * // Create many PartnerApplications
+     * const partnerApplication = await prisma.partnerApplication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PartnerApplications and only return the `id`
+     * const partnerApplicationWithIdOnly = await prisma.partnerApplication.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PartnerApplicationCreateManyAndReturnArgs>(args?: SelectSubset<T, PartnerApplicationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PartnerApplication.
+     * @param {PartnerApplicationDeleteArgs} args - Arguments to delete one PartnerApplication.
+     * @example
+     * // Delete one PartnerApplication
+     * const PartnerApplication = await prisma.partnerApplication.delete({
+     *   where: {
+     *     // ... filter to delete one PartnerApplication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PartnerApplicationDeleteArgs>(args: SelectSubset<T, PartnerApplicationDeleteArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PartnerApplication.
+     * @param {PartnerApplicationUpdateArgs} args - Arguments to update one PartnerApplication.
+     * @example
+     * // Update one PartnerApplication
+     * const partnerApplication = await prisma.partnerApplication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PartnerApplicationUpdateArgs>(args: SelectSubset<T, PartnerApplicationUpdateArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PartnerApplications.
+     * @param {PartnerApplicationDeleteManyArgs} args - Arguments to filter PartnerApplications to delete.
+     * @example
+     * // Delete a few PartnerApplications
+     * const { count } = await prisma.partnerApplication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PartnerApplicationDeleteManyArgs>(args?: SelectSubset<T, PartnerApplicationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerApplications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PartnerApplications
+     * const partnerApplication = await prisma.partnerApplication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PartnerApplicationUpdateManyArgs>(args: SelectSubset<T, PartnerApplicationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerApplications and returns the data updated in the database.
+     * @param {PartnerApplicationUpdateManyAndReturnArgs} args - Arguments to update many PartnerApplications.
+     * @example
+     * // Update many PartnerApplications
+     * const partnerApplication = await prisma.partnerApplication.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PartnerApplications and only return the `id`
+     * const partnerApplicationWithIdOnly = await prisma.partnerApplication.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PartnerApplicationUpdateManyAndReturnArgs>(args: SelectSubset<T, PartnerApplicationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PartnerApplication.
+     * @param {PartnerApplicationUpsertArgs} args - Arguments to update or create a PartnerApplication.
+     * @example
+     * // Update or create a PartnerApplication
+     * const partnerApplication = await prisma.partnerApplication.upsert({
+     *   create: {
+     *     // ... data to create a PartnerApplication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PartnerApplication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PartnerApplicationUpsertArgs>(args: SelectSubset<T, PartnerApplicationUpsertArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PartnerApplications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationCountArgs} args - Arguments to filter PartnerApplications to count.
+     * @example
+     * // Count the number of PartnerApplications
+     * const count = await prisma.partnerApplication.count({
+     *   where: {
+     *     // ... the filter for the PartnerApplications we want to count
+     *   }
+     * })
+    **/
+    count<T extends PartnerApplicationCountArgs>(
+      args?: Subset<T, PartnerApplicationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PartnerApplicationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PartnerApplication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PartnerApplicationAggregateArgs>(args: Subset<T, PartnerApplicationAggregateArgs>): Prisma.PrismaPromise<GetPartnerApplicationAggregateType<T>>
+
+    /**
+     * Group by PartnerApplication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PartnerApplicationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PartnerApplicationGroupByArgs['orderBy'] }
+        : { orderBy?: PartnerApplicationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PartnerApplicationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPartnerApplicationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PartnerApplication model
+   */
+  readonly fields: PartnerApplicationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PartnerApplication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PartnerApplicationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    answers<T extends PartnerApplication$answersArgs<ExtArgs> = {}>(args?: Subset<T, PartnerApplication$answersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PartnerApplication model
+   */
+  interface PartnerApplicationFieldRefs {
+    readonly id: FieldRef<"PartnerApplication", 'Int'>
+    readonly userId: FieldRef<"PartnerApplication", 'Int'>
+    readonly instagramUrl: FieldRef<"PartnerApplication", 'String'>
+    readonly tiktokUrl: FieldRef<"PartnerApplication", 'String'>
+    readonly facebookUrl: FieldRef<"PartnerApplication", 'String'>
+    readonly youtubeUrl: FieldRef<"PartnerApplication", 'String'>
+    readonly approvalStatus: FieldRef<"PartnerApplication", 'ApprovalStatus'>
+    readonly createdAt: FieldRef<"PartnerApplication", 'DateTime'>
+    readonly updatedAt: FieldRef<"PartnerApplication", 'DateTime'>
+    readonly enabled: FieldRef<"PartnerApplication", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PartnerApplication findUnique
+   */
+  export type PartnerApplicationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplication to fetch.
+     */
+    where: PartnerApplicationWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplication findUniqueOrThrow
+   */
+  export type PartnerApplicationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplication to fetch.
+     */
+    where: PartnerApplicationWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplication findFirst
+   */
+  export type PartnerApplicationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplication to fetch.
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplications to fetch.
+     */
+    orderBy?: PartnerApplicationOrderByWithRelationInput | PartnerApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerApplications.
+     */
+    cursor?: PartnerApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerApplications.
+     */
+    distinct?: PartnerApplicationScalarFieldEnum | PartnerApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplication findFirstOrThrow
+   */
+  export type PartnerApplicationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplication to fetch.
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplications to fetch.
+     */
+    orderBy?: PartnerApplicationOrderByWithRelationInput | PartnerApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerApplications.
+     */
+    cursor?: PartnerApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerApplications.
+     */
+    distinct?: PartnerApplicationScalarFieldEnum | PartnerApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplication findMany
+   */
+  export type PartnerApplicationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplications to fetch.
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplications to fetch.
+     */
+    orderBy?: PartnerApplicationOrderByWithRelationInput | PartnerApplicationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PartnerApplications.
+     */
+    cursor?: PartnerApplicationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplications.
+     */
+    skip?: number
+    distinct?: PartnerApplicationScalarFieldEnum | PartnerApplicationScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplication create
+   */
+  export type PartnerApplicationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PartnerApplication.
+     */
+    data: XOR<PartnerApplicationCreateInput, PartnerApplicationUncheckedCreateInput>
+  }
+
+  /**
+   * PartnerApplication createMany
+   */
+  export type PartnerApplicationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PartnerApplications.
+     */
+    data: PartnerApplicationCreateManyInput | PartnerApplicationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PartnerApplication createManyAndReturn
+   */
+  export type PartnerApplicationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * The data used to create many PartnerApplications.
+     */
+    data: PartnerApplicationCreateManyInput | PartnerApplicationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PartnerApplication update
+   */
+  export type PartnerApplicationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PartnerApplication.
+     */
+    data: XOR<PartnerApplicationUpdateInput, PartnerApplicationUncheckedUpdateInput>
+    /**
+     * Choose, which PartnerApplication to update.
+     */
+    where: PartnerApplicationWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplication updateMany
+   */
+  export type PartnerApplicationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PartnerApplications.
+     */
+    data: XOR<PartnerApplicationUpdateManyMutationInput, PartnerApplicationUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerApplications to update
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * Limit how many PartnerApplications to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplication updateManyAndReturn
+   */
+  export type PartnerApplicationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * The data used to update PartnerApplications.
+     */
+    data: XOR<PartnerApplicationUpdateManyMutationInput, PartnerApplicationUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerApplications to update
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * Limit how many PartnerApplications to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PartnerApplication upsert
+   */
+  export type PartnerApplicationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PartnerApplication to update in case it exists.
+     */
+    where: PartnerApplicationWhereUniqueInput
+    /**
+     * In case the PartnerApplication found by the `where` argument doesn't exist, create a new PartnerApplication with this data.
+     */
+    create: XOR<PartnerApplicationCreateInput, PartnerApplicationUncheckedCreateInput>
+    /**
+     * In case the PartnerApplication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PartnerApplicationUpdateInput, PartnerApplicationUncheckedUpdateInput>
+  }
+
+  /**
+   * PartnerApplication delete
+   */
+  export type PartnerApplicationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+    /**
+     * Filter which PartnerApplication to delete.
+     */
+    where: PartnerApplicationWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplication deleteMany
+   */
+  export type PartnerApplicationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerApplications to delete
+     */
+    where?: PartnerApplicationWhereInput
+    /**
+     * Limit how many PartnerApplications to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplication.answers
+   */
+  export type PartnerApplication$answersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    where?: PartnerApplicationAnswerWhereInput
+    orderBy?: PartnerApplicationAnswerOrderByWithRelationInput | PartnerApplicationAnswerOrderByWithRelationInput[]
+    cursor?: PartnerApplicationAnswerWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PartnerApplicationAnswerScalarFieldEnum | PartnerApplicationAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplication without action
+   */
+  export type PartnerApplicationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplication
+     */
+    select?: PartnerApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplication
+     */
+    omit?: PartnerApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PartnerApplicationAnswer
+   */
+
+  export type AggregatePartnerApplicationAnswer = {
+    _count: PartnerApplicationAnswerCountAggregateOutputType | null
+    _avg: PartnerApplicationAnswerAvgAggregateOutputType | null
+    _sum: PartnerApplicationAnswerSumAggregateOutputType | null
+    _min: PartnerApplicationAnswerMinAggregateOutputType | null
+    _max: PartnerApplicationAnswerMaxAggregateOutputType | null
+  }
+
+  export type PartnerApplicationAnswerAvgAggregateOutputType = {
+    id: number | null
+    applicationId: number | null
+  }
+
+  export type PartnerApplicationAnswerSumAggregateOutputType = {
+    id: number | null
+    applicationId: number | null
+  }
+
+  export type PartnerApplicationAnswerMinAggregateOutputType = {
+    id: number | null
+    applicationId: number | null
+    question: string | null
+    answer: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PartnerApplicationAnswerMaxAggregateOutputType = {
+    id: number | null
+    applicationId: number | null
+    question: string | null
+    answer: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PartnerApplicationAnswerCountAggregateOutputType = {
+    id: number
+    applicationId: number
+    question: number
+    answer: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PartnerApplicationAnswerAvgAggregateInputType = {
+    id?: true
+    applicationId?: true
+  }
+
+  export type PartnerApplicationAnswerSumAggregateInputType = {
+    id?: true
+    applicationId?: true
+  }
+
+  export type PartnerApplicationAnswerMinAggregateInputType = {
+    id?: true
+    applicationId?: true
+    question?: true
+    answer?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PartnerApplicationAnswerMaxAggregateInputType = {
+    id?: true
+    applicationId?: true
+    question?: true
+    answer?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PartnerApplicationAnswerCountAggregateInputType = {
+    id?: true
+    applicationId?: true
+    question?: true
+    answer?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PartnerApplicationAnswerAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerApplicationAnswer to aggregate.
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationAnswers to fetch.
+     */
+    orderBy?: PartnerApplicationAnswerOrderByWithRelationInput | PartnerApplicationAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PartnerApplicationAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationAnswers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PartnerApplicationAnswers
+    **/
+    _count?: true | PartnerApplicationAnswerCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PartnerApplicationAnswerAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PartnerApplicationAnswerSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PartnerApplicationAnswerMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PartnerApplicationAnswerMaxAggregateInputType
+  }
+
+  export type GetPartnerApplicationAnswerAggregateType<T extends PartnerApplicationAnswerAggregateArgs> = {
+        [P in keyof T & keyof AggregatePartnerApplicationAnswer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePartnerApplicationAnswer[P]>
+      : GetScalarType<T[P], AggregatePartnerApplicationAnswer[P]>
+  }
+
+
+
+
+  export type PartnerApplicationAnswerGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerApplicationAnswerWhereInput
+    orderBy?: PartnerApplicationAnswerOrderByWithAggregationInput | PartnerApplicationAnswerOrderByWithAggregationInput[]
+    by: PartnerApplicationAnswerScalarFieldEnum[] | PartnerApplicationAnswerScalarFieldEnum
+    having?: PartnerApplicationAnswerScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PartnerApplicationAnswerCountAggregateInputType | true
+    _avg?: PartnerApplicationAnswerAvgAggregateInputType
+    _sum?: PartnerApplicationAnswerSumAggregateInputType
+    _min?: PartnerApplicationAnswerMinAggregateInputType
+    _max?: PartnerApplicationAnswerMaxAggregateInputType
+  }
+
+  export type PartnerApplicationAnswerGroupByOutputType = {
+    id: number
+    applicationId: number
+    question: string
+    answer: string
+    createdAt: Date
+    updatedAt: Date
+    _count: PartnerApplicationAnswerCountAggregateOutputType | null
+    _avg: PartnerApplicationAnswerAvgAggregateOutputType | null
+    _sum: PartnerApplicationAnswerSumAggregateOutputType | null
+    _min: PartnerApplicationAnswerMinAggregateOutputType | null
+    _max: PartnerApplicationAnswerMaxAggregateOutputType | null
+  }
+
+  type GetPartnerApplicationAnswerGroupByPayload<T extends PartnerApplicationAnswerGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PartnerApplicationAnswerGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PartnerApplicationAnswerGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PartnerApplicationAnswerGroupByOutputType[P]>
+            : GetScalarType<T[P], PartnerApplicationAnswerGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PartnerApplicationAnswerSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    question?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    application?: boolean | PartnerApplicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerApplicationAnswer"]>
+
+  export type PartnerApplicationAnswerSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    question?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    application?: boolean | PartnerApplicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerApplicationAnswer"]>
+
+  export type PartnerApplicationAnswerSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    applicationId?: boolean
+    question?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    application?: boolean | PartnerApplicationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["partnerApplicationAnswer"]>
+
+  export type PartnerApplicationAnswerSelectScalar = {
+    id?: boolean
+    applicationId?: boolean
+    question?: boolean
+    answer?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PartnerApplicationAnswerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "question" | "answer" | "createdAt" | "updatedAt", ExtArgs["result"]["partnerApplicationAnswer"]>
+  export type PartnerApplicationAnswerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    application?: boolean | PartnerApplicationDefaultArgs<ExtArgs>
+  }
+  export type PartnerApplicationAnswerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    application?: boolean | PartnerApplicationDefaultArgs<ExtArgs>
+  }
+  export type PartnerApplicationAnswerIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    application?: boolean | PartnerApplicationDefaultArgs<ExtArgs>
+  }
+
+  export type $PartnerApplicationAnswerPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PartnerApplicationAnswer"
+    objects: {
+      application: Prisma.$PartnerApplicationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      applicationId: number
+      question: string
+      answer: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["partnerApplicationAnswer"]>
+    composites: {}
+  }
+
+  type PartnerApplicationAnswerGetPayload<S extends boolean | null | undefined | PartnerApplicationAnswerDefaultArgs> = $Result.GetResult<Prisma.$PartnerApplicationAnswerPayload, S>
+
+  type PartnerApplicationAnswerCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PartnerApplicationAnswerFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PartnerApplicationAnswerCountAggregateInputType | true
+    }
+
+  export interface PartnerApplicationAnswerDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PartnerApplicationAnswer'], meta: { name: 'PartnerApplicationAnswer' } }
+    /**
+     * Find zero or one PartnerApplicationAnswer that matches the filter.
+     * @param {PartnerApplicationAnswerFindUniqueArgs} args - Arguments to find a PartnerApplicationAnswer
+     * @example
+     * // Get one PartnerApplicationAnswer
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PartnerApplicationAnswerFindUniqueArgs>(args: SelectSubset<T, PartnerApplicationAnswerFindUniqueArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PartnerApplicationAnswer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PartnerApplicationAnswerFindUniqueOrThrowArgs} args - Arguments to find a PartnerApplicationAnswer
+     * @example
+     * // Get one PartnerApplicationAnswer
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PartnerApplicationAnswerFindUniqueOrThrowArgs>(args: SelectSubset<T, PartnerApplicationAnswerFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerApplicationAnswer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerFindFirstArgs} args - Arguments to find a PartnerApplicationAnswer
+     * @example
+     * // Get one PartnerApplicationAnswer
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PartnerApplicationAnswerFindFirstArgs>(args?: SelectSubset<T, PartnerApplicationAnswerFindFirstArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerApplicationAnswer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerFindFirstOrThrowArgs} args - Arguments to find a PartnerApplicationAnswer
+     * @example
+     * // Get one PartnerApplicationAnswer
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PartnerApplicationAnswerFindFirstOrThrowArgs>(args?: SelectSubset<T, PartnerApplicationAnswerFindFirstOrThrowArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PartnerApplicationAnswers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PartnerApplicationAnswers
+     * const partnerApplicationAnswers = await prisma.partnerApplicationAnswer.findMany()
+     * 
+     * // Get first 10 PartnerApplicationAnswers
+     * const partnerApplicationAnswers = await prisma.partnerApplicationAnswer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const partnerApplicationAnswerWithIdOnly = await prisma.partnerApplicationAnswer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PartnerApplicationAnswerFindManyArgs>(args?: SelectSubset<T, PartnerApplicationAnswerFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PartnerApplicationAnswer.
+     * @param {PartnerApplicationAnswerCreateArgs} args - Arguments to create a PartnerApplicationAnswer.
+     * @example
+     * // Create one PartnerApplicationAnswer
+     * const PartnerApplicationAnswer = await prisma.partnerApplicationAnswer.create({
+     *   data: {
+     *     // ... data to create a PartnerApplicationAnswer
+     *   }
+     * })
+     * 
+     */
+    create<T extends PartnerApplicationAnswerCreateArgs>(args: SelectSubset<T, PartnerApplicationAnswerCreateArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PartnerApplicationAnswers.
+     * @param {PartnerApplicationAnswerCreateManyArgs} args - Arguments to create many PartnerApplicationAnswers.
+     * @example
+     * // Create many PartnerApplicationAnswers
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PartnerApplicationAnswerCreateManyArgs>(args?: SelectSubset<T, PartnerApplicationAnswerCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PartnerApplicationAnswers and returns the data saved in the database.
+     * @param {PartnerApplicationAnswerCreateManyAndReturnArgs} args - Arguments to create many PartnerApplicationAnswers.
+     * @example
+     * // Create many PartnerApplicationAnswers
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PartnerApplicationAnswers and only return the `id`
+     * const partnerApplicationAnswerWithIdOnly = await prisma.partnerApplicationAnswer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PartnerApplicationAnswerCreateManyAndReturnArgs>(args?: SelectSubset<T, PartnerApplicationAnswerCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PartnerApplicationAnswer.
+     * @param {PartnerApplicationAnswerDeleteArgs} args - Arguments to delete one PartnerApplicationAnswer.
+     * @example
+     * // Delete one PartnerApplicationAnswer
+     * const PartnerApplicationAnswer = await prisma.partnerApplicationAnswer.delete({
+     *   where: {
+     *     // ... filter to delete one PartnerApplicationAnswer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PartnerApplicationAnswerDeleteArgs>(args: SelectSubset<T, PartnerApplicationAnswerDeleteArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PartnerApplicationAnswer.
+     * @param {PartnerApplicationAnswerUpdateArgs} args - Arguments to update one PartnerApplicationAnswer.
+     * @example
+     * // Update one PartnerApplicationAnswer
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PartnerApplicationAnswerUpdateArgs>(args: SelectSubset<T, PartnerApplicationAnswerUpdateArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PartnerApplicationAnswers.
+     * @param {PartnerApplicationAnswerDeleteManyArgs} args - Arguments to filter PartnerApplicationAnswers to delete.
+     * @example
+     * // Delete a few PartnerApplicationAnswers
+     * const { count } = await prisma.partnerApplicationAnswer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PartnerApplicationAnswerDeleteManyArgs>(args?: SelectSubset<T, PartnerApplicationAnswerDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerApplicationAnswers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PartnerApplicationAnswers
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PartnerApplicationAnswerUpdateManyArgs>(args: SelectSubset<T, PartnerApplicationAnswerUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerApplicationAnswers and returns the data updated in the database.
+     * @param {PartnerApplicationAnswerUpdateManyAndReturnArgs} args - Arguments to update many PartnerApplicationAnswers.
+     * @example
+     * // Update many PartnerApplicationAnswers
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PartnerApplicationAnswers and only return the `id`
+     * const partnerApplicationAnswerWithIdOnly = await prisma.partnerApplicationAnswer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PartnerApplicationAnswerUpdateManyAndReturnArgs>(args: SelectSubset<T, PartnerApplicationAnswerUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PartnerApplicationAnswer.
+     * @param {PartnerApplicationAnswerUpsertArgs} args - Arguments to update or create a PartnerApplicationAnswer.
+     * @example
+     * // Update or create a PartnerApplicationAnswer
+     * const partnerApplicationAnswer = await prisma.partnerApplicationAnswer.upsert({
+     *   create: {
+     *     // ... data to create a PartnerApplicationAnswer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PartnerApplicationAnswer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PartnerApplicationAnswerUpsertArgs>(args: SelectSubset<T, PartnerApplicationAnswerUpsertArgs<ExtArgs>>): Prisma__PartnerApplicationAnswerClient<$Result.GetResult<Prisma.$PartnerApplicationAnswerPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PartnerApplicationAnswers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerCountArgs} args - Arguments to filter PartnerApplicationAnswers to count.
+     * @example
+     * // Count the number of PartnerApplicationAnswers
+     * const count = await prisma.partnerApplicationAnswer.count({
+     *   where: {
+     *     // ... the filter for the PartnerApplicationAnswers we want to count
+     *   }
+     * })
+    **/
+    count<T extends PartnerApplicationAnswerCountArgs>(
+      args?: Subset<T, PartnerApplicationAnswerCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PartnerApplicationAnswerCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PartnerApplicationAnswer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PartnerApplicationAnswerAggregateArgs>(args: Subset<T, PartnerApplicationAnswerAggregateArgs>): Prisma.PrismaPromise<GetPartnerApplicationAnswerAggregateType<T>>
+
+    /**
+     * Group by PartnerApplicationAnswer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationAnswerGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PartnerApplicationAnswerGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PartnerApplicationAnswerGroupByArgs['orderBy'] }
+        : { orderBy?: PartnerApplicationAnswerGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PartnerApplicationAnswerGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPartnerApplicationAnswerGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PartnerApplicationAnswer model
+   */
+  readonly fields: PartnerApplicationAnswerFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PartnerApplicationAnswer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PartnerApplicationAnswerClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    application<T extends PartnerApplicationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PartnerApplicationDefaultArgs<ExtArgs>>): Prisma__PartnerApplicationClient<$Result.GetResult<Prisma.$PartnerApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PartnerApplicationAnswer model
+   */
+  interface PartnerApplicationAnswerFieldRefs {
+    readonly id: FieldRef<"PartnerApplicationAnswer", 'Int'>
+    readonly applicationId: FieldRef<"PartnerApplicationAnswer", 'Int'>
+    readonly question: FieldRef<"PartnerApplicationAnswer", 'String'>
+    readonly answer: FieldRef<"PartnerApplicationAnswer", 'String'>
+    readonly createdAt: FieldRef<"PartnerApplicationAnswer", 'DateTime'>
+    readonly updatedAt: FieldRef<"PartnerApplicationAnswer", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PartnerApplicationAnswer findUnique
+   */
+  export type PartnerApplicationAnswerFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationAnswer to fetch.
+     */
+    where: PartnerApplicationAnswerWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationAnswer findUniqueOrThrow
+   */
+  export type PartnerApplicationAnswerFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationAnswer to fetch.
+     */
+    where: PartnerApplicationAnswerWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationAnswer findFirst
+   */
+  export type PartnerApplicationAnswerFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationAnswer to fetch.
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationAnswers to fetch.
+     */
+    orderBy?: PartnerApplicationAnswerOrderByWithRelationInput | PartnerApplicationAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerApplicationAnswers.
+     */
+    cursor?: PartnerApplicationAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationAnswers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerApplicationAnswers.
+     */
+    distinct?: PartnerApplicationAnswerScalarFieldEnum | PartnerApplicationAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplicationAnswer findFirstOrThrow
+   */
+  export type PartnerApplicationAnswerFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationAnswer to fetch.
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationAnswers to fetch.
+     */
+    orderBy?: PartnerApplicationAnswerOrderByWithRelationInput | PartnerApplicationAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerApplicationAnswers.
+     */
+    cursor?: PartnerApplicationAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationAnswers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerApplicationAnswers.
+     */
+    distinct?: PartnerApplicationAnswerScalarFieldEnum | PartnerApplicationAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplicationAnswer findMany
+   */
+  export type PartnerApplicationAnswerFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationAnswers to fetch.
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationAnswers to fetch.
+     */
+    orderBy?: PartnerApplicationAnswerOrderByWithRelationInput | PartnerApplicationAnswerOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PartnerApplicationAnswers.
+     */
+    cursor?: PartnerApplicationAnswerWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationAnswers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationAnswers.
+     */
+    skip?: number
+    distinct?: PartnerApplicationAnswerScalarFieldEnum | PartnerApplicationAnswerScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplicationAnswer create
+   */
+  export type PartnerApplicationAnswerCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PartnerApplicationAnswer.
+     */
+    data: XOR<PartnerApplicationAnswerCreateInput, PartnerApplicationAnswerUncheckedCreateInput>
+  }
+
+  /**
+   * PartnerApplicationAnswer createMany
+   */
+  export type PartnerApplicationAnswerCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PartnerApplicationAnswers.
+     */
+    data: PartnerApplicationAnswerCreateManyInput | PartnerApplicationAnswerCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PartnerApplicationAnswer createManyAndReturn
+   */
+  export type PartnerApplicationAnswerCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * The data used to create many PartnerApplicationAnswers.
+     */
+    data: PartnerApplicationAnswerCreateManyInput | PartnerApplicationAnswerCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PartnerApplicationAnswer update
+   */
+  export type PartnerApplicationAnswerUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PartnerApplicationAnswer.
+     */
+    data: XOR<PartnerApplicationAnswerUpdateInput, PartnerApplicationAnswerUncheckedUpdateInput>
+    /**
+     * Choose, which PartnerApplicationAnswer to update.
+     */
+    where: PartnerApplicationAnswerWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationAnswer updateMany
+   */
+  export type PartnerApplicationAnswerUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PartnerApplicationAnswers.
+     */
+    data: XOR<PartnerApplicationAnswerUpdateManyMutationInput, PartnerApplicationAnswerUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerApplicationAnswers to update
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * Limit how many PartnerApplicationAnswers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplicationAnswer updateManyAndReturn
+   */
+  export type PartnerApplicationAnswerUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * The data used to update PartnerApplicationAnswers.
+     */
+    data: XOR<PartnerApplicationAnswerUpdateManyMutationInput, PartnerApplicationAnswerUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerApplicationAnswers to update
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * Limit how many PartnerApplicationAnswers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PartnerApplicationAnswer upsert
+   */
+  export type PartnerApplicationAnswerUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PartnerApplicationAnswer to update in case it exists.
+     */
+    where: PartnerApplicationAnswerWhereUniqueInput
+    /**
+     * In case the PartnerApplicationAnswer found by the `where` argument doesn't exist, create a new PartnerApplicationAnswer with this data.
+     */
+    create: XOR<PartnerApplicationAnswerCreateInput, PartnerApplicationAnswerUncheckedCreateInput>
+    /**
+     * In case the PartnerApplicationAnswer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PartnerApplicationAnswerUpdateInput, PartnerApplicationAnswerUncheckedUpdateInput>
+  }
+
+  /**
+   * PartnerApplicationAnswer delete
+   */
+  export type PartnerApplicationAnswerDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+    /**
+     * Filter which PartnerApplicationAnswer to delete.
+     */
+    where: PartnerApplicationAnswerWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationAnswer deleteMany
+   */
+  export type PartnerApplicationAnswerDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerApplicationAnswers to delete
+     */
+    where?: PartnerApplicationAnswerWhereInput
+    /**
+     * Limit how many PartnerApplicationAnswers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplicationAnswer without action
+   */
+  export type PartnerApplicationAnswerDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationAnswer
+     */
+    select?: PartnerApplicationAnswerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationAnswer
+     */
+    omit?: PartnerApplicationAnswerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PartnerApplicationAnswerInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PartnerApplicationQuestion
+   */
+
+  export type AggregatePartnerApplicationQuestion = {
+    _count: PartnerApplicationQuestionCountAggregateOutputType | null
+    _avg: PartnerApplicationQuestionAvgAggregateOutputType | null
+    _sum: PartnerApplicationQuestionSumAggregateOutputType | null
+    _min: PartnerApplicationQuestionMinAggregateOutputType | null
+    _max: PartnerApplicationQuestionMaxAggregateOutputType | null
+  }
+
+  export type PartnerApplicationQuestionAvgAggregateOutputType = {
+    id: number | null
+    order: number | null
+  }
+
+  export type PartnerApplicationQuestionSumAggregateOutputType = {
+    id: number | null
+    order: number | null
+  }
+
+  export type PartnerApplicationQuestionMinAggregateOutputType = {
+    id: number | null
+    question: string | null
+    placeholder: string | null
+    required: boolean | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    enabled: boolean | null
+  }
+
+  export type PartnerApplicationQuestionMaxAggregateOutputType = {
+    id: number | null
+    question: string | null
+    placeholder: string | null
+    required: boolean | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    enabled: boolean | null
+  }
+
+  export type PartnerApplicationQuestionCountAggregateOutputType = {
+    id: number
+    question: number
+    placeholder: number
+    required: number
+    order: number
+    createdAt: number
+    updatedAt: number
+    enabled: number
+    _all: number
+  }
+
+
+  export type PartnerApplicationQuestionAvgAggregateInputType = {
+    id?: true
+    order?: true
+  }
+
+  export type PartnerApplicationQuestionSumAggregateInputType = {
+    id?: true
+    order?: true
+  }
+
+  export type PartnerApplicationQuestionMinAggregateInputType = {
+    id?: true
+    question?: true
+    placeholder?: true
+    required?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+  }
+
+  export type PartnerApplicationQuestionMaxAggregateInputType = {
+    id?: true
+    question?: true
+    placeholder?: true
+    required?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+  }
+
+  export type PartnerApplicationQuestionCountAggregateInputType = {
+    id?: true
+    question?: true
+    placeholder?: true
+    required?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    enabled?: true
+    _all?: true
+  }
+
+  export type PartnerApplicationQuestionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerApplicationQuestion to aggregate.
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationQuestions to fetch.
+     */
+    orderBy?: PartnerApplicationQuestionOrderByWithRelationInput | PartnerApplicationQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PartnerApplicationQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationQuestions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PartnerApplicationQuestions
+    **/
+    _count?: true | PartnerApplicationQuestionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PartnerApplicationQuestionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PartnerApplicationQuestionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PartnerApplicationQuestionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PartnerApplicationQuestionMaxAggregateInputType
+  }
+
+  export type GetPartnerApplicationQuestionAggregateType<T extends PartnerApplicationQuestionAggregateArgs> = {
+        [P in keyof T & keyof AggregatePartnerApplicationQuestion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePartnerApplicationQuestion[P]>
+      : GetScalarType<T[P], AggregatePartnerApplicationQuestion[P]>
+  }
+
+
+
+
+  export type PartnerApplicationQuestionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PartnerApplicationQuestionWhereInput
+    orderBy?: PartnerApplicationQuestionOrderByWithAggregationInput | PartnerApplicationQuestionOrderByWithAggregationInput[]
+    by: PartnerApplicationQuestionScalarFieldEnum[] | PartnerApplicationQuestionScalarFieldEnum
+    having?: PartnerApplicationQuestionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PartnerApplicationQuestionCountAggregateInputType | true
+    _avg?: PartnerApplicationQuestionAvgAggregateInputType
+    _sum?: PartnerApplicationQuestionSumAggregateInputType
+    _min?: PartnerApplicationQuestionMinAggregateInputType
+    _max?: PartnerApplicationQuestionMaxAggregateInputType
+  }
+
+  export type PartnerApplicationQuestionGroupByOutputType = {
+    id: number
+    question: string
+    placeholder: string | null
+    required: boolean
+    order: number
+    createdAt: Date
+    updatedAt: Date
+    enabled: boolean
+    _count: PartnerApplicationQuestionCountAggregateOutputType | null
+    _avg: PartnerApplicationQuestionAvgAggregateOutputType | null
+    _sum: PartnerApplicationQuestionSumAggregateOutputType | null
+    _min: PartnerApplicationQuestionMinAggregateOutputType | null
+    _max: PartnerApplicationQuestionMaxAggregateOutputType | null
+  }
+
+  type GetPartnerApplicationQuestionGroupByPayload<T extends PartnerApplicationQuestionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PartnerApplicationQuestionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PartnerApplicationQuestionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PartnerApplicationQuestionGroupByOutputType[P]>
+            : GetScalarType<T[P], PartnerApplicationQuestionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PartnerApplicationQuestionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    question?: boolean
+    placeholder?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }, ExtArgs["result"]["partnerApplicationQuestion"]>
+
+  export type PartnerApplicationQuestionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    question?: boolean
+    placeholder?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }, ExtArgs["result"]["partnerApplicationQuestion"]>
+
+  export type PartnerApplicationQuestionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    question?: boolean
+    placeholder?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }, ExtArgs["result"]["partnerApplicationQuestion"]>
+
+  export type PartnerApplicationQuestionSelectScalar = {
+    id?: boolean
+    question?: boolean
+    placeholder?: boolean
+    required?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationQuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "question" | "placeholder" | "required" | "order" | "createdAt" | "updatedAt" | "enabled", ExtArgs["result"]["partnerApplicationQuestion"]>
+
+  export type $PartnerApplicationQuestionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PartnerApplicationQuestion"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      question: string
+      placeholder: string | null
+      required: boolean
+      order: number
+      createdAt: Date
+      updatedAt: Date
+      enabled: boolean
+    }, ExtArgs["result"]["partnerApplicationQuestion"]>
+    composites: {}
+  }
+
+  type PartnerApplicationQuestionGetPayload<S extends boolean | null | undefined | PartnerApplicationQuestionDefaultArgs> = $Result.GetResult<Prisma.$PartnerApplicationQuestionPayload, S>
+
+  type PartnerApplicationQuestionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PartnerApplicationQuestionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PartnerApplicationQuestionCountAggregateInputType | true
+    }
+
+  export interface PartnerApplicationQuestionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PartnerApplicationQuestion'], meta: { name: 'PartnerApplicationQuestion' } }
+    /**
+     * Find zero or one PartnerApplicationQuestion that matches the filter.
+     * @param {PartnerApplicationQuestionFindUniqueArgs} args - Arguments to find a PartnerApplicationQuestion
+     * @example
+     * // Get one PartnerApplicationQuestion
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PartnerApplicationQuestionFindUniqueArgs>(args: SelectSubset<T, PartnerApplicationQuestionFindUniqueArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PartnerApplicationQuestion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PartnerApplicationQuestionFindUniqueOrThrowArgs} args - Arguments to find a PartnerApplicationQuestion
+     * @example
+     * // Get one PartnerApplicationQuestion
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PartnerApplicationQuestionFindUniqueOrThrowArgs>(args: SelectSubset<T, PartnerApplicationQuestionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerApplicationQuestion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionFindFirstArgs} args - Arguments to find a PartnerApplicationQuestion
+     * @example
+     * // Get one PartnerApplicationQuestion
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PartnerApplicationQuestionFindFirstArgs>(args?: SelectSubset<T, PartnerApplicationQuestionFindFirstArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PartnerApplicationQuestion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionFindFirstOrThrowArgs} args - Arguments to find a PartnerApplicationQuestion
+     * @example
+     * // Get one PartnerApplicationQuestion
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PartnerApplicationQuestionFindFirstOrThrowArgs>(args?: SelectSubset<T, PartnerApplicationQuestionFindFirstOrThrowArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PartnerApplicationQuestions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PartnerApplicationQuestions
+     * const partnerApplicationQuestions = await prisma.partnerApplicationQuestion.findMany()
+     * 
+     * // Get first 10 PartnerApplicationQuestions
+     * const partnerApplicationQuestions = await prisma.partnerApplicationQuestion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const partnerApplicationQuestionWithIdOnly = await prisma.partnerApplicationQuestion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PartnerApplicationQuestionFindManyArgs>(args?: SelectSubset<T, PartnerApplicationQuestionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PartnerApplicationQuestion.
+     * @param {PartnerApplicationQuestionCreateArgs} args - Arguments to create a PartnerApplicationQuestion.
+     * @example
+     * // Create one PartnerApplicationQuestion
+     * const PartnerApplicationQuestion = await prisma.partnerApplicationQuestion.create({
+     *   data: {
+     *     // ... data to create a PartnerApplicationQuestion
+     *   }
+     * })
+     * 
+     */
+    create<T extends PartnerApplicationQuestionCreateArgs>(args: SelectSubset<T, PartnerApplicationQuestionCreateArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PartnerApplicationQuestions.
+     * @param {PartnerApplicationQuestionCreateManyArgs} args - Arguments to create many PartnerApplicationQuestions.
+     * @example
+     * // Create many PartnerApplicationQuestions
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PartnerApplicationQuestionCreateManyArgs>(args?: SelectSubset<T, PartnerApplicationQuestionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PartnerApplicationQuestions and returns the data saved in the database.
+     * @param {PartnerApplicationQuestionCreateManyAndReturnArgs} args - Arguments to create many PartnerApplicationQuestions.
+     * @example
+     * // Create many PartnerApplicationQuestions
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PartnerApplicationQuestions and only return the `id`
+     * const partnerApplicationQuestionWithIdOnly = await prisma.partnerApplicationQuestion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PartnerApplicationQuestionCreateManyAndReturnArgs>(args?: SelectSubset<T, PartnerApplicationQuestionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PartnerApplicationQuestion.
+     * @param {PartnerApplicationQuestionDeleteArgs} args - Arguments to delete one PartnerApplicationQuestion.
+     * @example
+     * // Delete one PartnerApplicationQuestion
+     * const PartnerApplicationQuestion = await prisma.partnerApplicationQuestion.delete({
+     *   where: {
+     *     // ... filter to delete one PartnerApplicationQuestion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PartnerApplicationQuestionDeleteArgs>(args: SelectSubset<T, PartnerApplicationQuestionDeleteArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PartnerApplicationQuestion.
+     * @param {PartnerApplicationQuestionUpdateArgs} args - Arguments to update one PartnerApplicationQuestion.
+     * @example
+     * // Update one PartnerApplicationQuestion
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PartnerApplicationQuestionUpdateArgs>(args: SelectSubset<T, PartnerApplicationQuestionUpdateArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PartnerApplicationQuestions.
+     * @param {PartnerApplicationQuestionDeleteManyArgs} args - Arguments to filter PartnerApplicationQuestions to delete.
+     * @example
+     * // Delete a few PartnerApplicationQuestions
+     * const { count } = await prisma.partnerApplicationQuestion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PartnerApplicationQuestionDeleteManyArgs>(args?: SelectSubset<T, PartnerApplicationQuestionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerApplicationQuestions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PartnerApplicationQuestions
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PartnerApplicationQuestionUpdateManyArgs>(args: SelectSubset<T, PartnerApplicationQuestionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PartnerApplicationQuestions and returns the data updated in the database.
+     * @param {PartnerApplicationQuestionUpdateManyAndReturnArgs} args - Arguments to update many PartnerApplicationQuestions.
+     * @example
+     * // Update many PartnerApplicationQuestions
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PartnerApplicationQuestions and only return the `id`
+     * const partnerApplicationQuestionWithIdOnly = await prisma.partnerApplicationQuestion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PartnerApplicationQuestionUpdateManyAndReturnArgs>(args: SelectSubset<T, PartnerApplicationQuestionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PartnerApplicationQuestion.
+     * @param {PartnerApplicationQuestionUpsertArgs} args - Arguments to update or create a PartnerApplicationQuestion.
+     * @example
+     * // Update or create a PartnerApplicationQuestion
+     * const partnerApplicationQuestion = await prisma.partnerApplicationQuestion.upsert({
+     *   create: {
+     *     // ... data to create a PartnerApplicationQuestion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PartnerApplicationQuestion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PartnerApplicationQuestionUpsertArgs>(args: SelectSubset<T, PartnerApplicationQuestionUpsertArgs<ExtArgs>>): Prisma__PartnerApplicationQuestionClient<$Result.GetResult<Prisma.$PartnerApplicationQuestionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PartnerApplicationQuestions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionCountArgs} args - Arguments to filter PartnerApplicationQuestions to count.
+     * @example
+     * // Count the number of PartnerApplicationQuestions
+     * const count = await prisma.partnerApplicationQuestion.count({
+     *   where: {
+     *     // ... the filter for the PartnerApplicationQuestions we want to count
+     *   }
+     * })
+    **/
+    count<T extends PartnerApplicationQuestionCountArgs>(
+      args?: Subset<T, PartnerApplicationQuestionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PartnerApplicationQuestionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PartnerApplicationQuestion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PartnerApplicationQuestionAggregateArgs>(args: Subset<T, PartnerApplicationQuestionAggregateArgs>): Prisma.PrismaPromise<GetPartnerApplicationQuestionAggregateType<T>>
+
+    /**
+     * Group by PartnerApplicationQuestion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PartnerApplicationQuestionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PartnerApplicationQuestionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PartnerApplicationQuestionGroupByArgs['orderBy'] }
+        : { orderBy?: PartnerApplicationQuestionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PartnerApplicationQuestionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPartnerApplicationQuestionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PartnerApplicationQuestion model
+   */
+  readonly fields: PartnerApplicationQuestionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PartnerApplicationQuestion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PartnerApplicationQuestionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PartnerApplicationQuestion model
+   */
+  interface PartnerApplicationQuestionFieldRefs {
+    readonly id: FieldRef<"PartnerApplicationQuestion", 'Int'>
+    readonly question: FieldRef<"PartnerApplicationQuestion", 'String'>
+    readonly placeholder: FieldRef<"PartnerApplicationQuestion", 'String'>
+    readonly required: FieldRef<"PartnerApplicationQuestion", 'Boolean'>
+    readonly order: FieldRef<"PartnerApplicationQuestion", 'Int'>
+    readonly createdAt: FieldRef<"PartnerApplicationQuestion", 'DateTime'>
+    readonly updatedAt: FieldRef<"PartnerApplicationQuestion", 'DateTime'>
+    readonly enabled: FieldRef<"PartnerApplicationQuestion", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PartnerApplicationQuestion findUnique
+   */
+  export type PartnerApplicationQuestionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationQuestion to fetch.
+     */
+    where: PartnerApplicationQuestionWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationQuestion findUniqueOrThrow
+   */
+  export type PartnerApplicationQuestionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationQuestion to fetch.
+     */
+    where: PartnerApplicationQuestionWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationQuestion findFirst
+   */
+  export type PartnerApplicationQuestionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationQuestion to fetch.
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationQuestions to fetch.
+     */
+    orderBy?: PartnerApplicationQuestionOrderByWithRelationInput | PartnerApplicationQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerApplicationQuestions.
+     */
+    cursor?: PartnerApplicationQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationQuestions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerApplicationQuestions.
+     */
+    distinct?: PartnerApplicationQuestionScalarFieldEnum | PartnerApplicationQuestionScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplicationQuestion findFirstOrThrow
+   */
+  export type PartnerApplicationQuestionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationQuestion to fetch.
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationQuestions to fetch.
+     */
+    orderBy?: PartnerApplicationQuestionOrderByWithRelationInput | PartnerApplicationQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PartnerApplicationQuestions.
+     */
+    cursor?: PartnerApplicationQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationQuestions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PartnerApplicationQuestions.
+     */
+    distinct?: PartnerApplicationQuestionScalarFieldEnum | PartnerApplicationQuestionScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplicationQuestion findMany
+   */
+  export type PartnerApplicationQuestionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * Filter, which PartnerApplicationQuestions to fetch.
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PartnerApplicationQuestions to fetch.
+     */
+    orderBy?: PartnerApplicationQuestionOrderByWithRelationInput | PartnerApplicationQuestionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PartnerApplicationQuestions.
+     */
+    cursor?: PartnerApplicationQuestionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PartnerApplicationQuestions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PartnerApplicationQuestions.
+     */
+    skip?: number
+    distinct?: PartnerApplicationQuestionScalarFieldEnum | PartnerApplicationQuestionScalarFieldEnum[]
+  }
+
+  /**
+   * PartnerApplicationQuestion create
+   */
+  export type PartnerApplicationQuestionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a PartnerApplicationQuestion.
+     */
+    data: XOR<PartnerApplicationQuestionCreateInput, PartnerApplicationQuestionUncheckedCreateInput>
+  }
+
+  /**
+   * PartnerApplicationQuestion createMany
+   */
+  export type PartnerApplicationQuestionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PartnerApplicationQuestions.
+     */
+    data: PartnerApplicationQuestionCreateManyInput | PartnerApplicationQuestionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PartnerApplicationQuestion createManyAndReturn
+   */
+  export type PartnerApplicationQuestionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * The data used to create many PartnerApplicationQuestions.
+     */
+    data: PartnerApplicationQuestionCreateManyInput | PartnerApplicationQuestionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PartnerApplicationQuestion update
+   */
+  export type PartnerApplicationQuestionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a PartnerApplicationQuestion.
+     */
+    data: XOR<PartnerApplicationQuestionUpdateInput, PartnerApplicationQuestionUncheckedUpdateInput>
+    /**
+     * Choose, which PartnerApplicationQuestion to update.
+     */
+    where: PartnerApplicationQuestionWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationQuestion updateMany
+   */
+  export type PartnerApplicationQuestionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PartnerApplicationQuestions.
+     */
+    data: XOR<PartnerApplicationQuestionUpdateManyMutationInput, PartnerApplicationQuestionUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerApplicationQuestions to update
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * Limit how many PartnerApplicationQuestions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplicationQuestion updateManyAndReturn
+   */
+  export type PartnerApplicationQuestionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * The data used to update PartnerApplicationQuestions.
+     */
+    data: XOR<PartnerApplicationQuestionUpdateManyMutationInput, PartnerApplicationQuestionUncheckedUpdateManyInput>
+    /**
+     * Filter which PartnerApplicationQuestions to update
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * Limit how many PartnerApplicationQuestions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplicationQuestion upsert
+   */
+  export type PartnerApplicationQuestionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the PartnerApplicationQuestion to update in case it exists.
+     */
+    where: PartnerApplicationQuestionWhereUniqueInput
+    /**
+     * In case the PartnerApplicationQuestion found by the `where` argument doesn't exist, create a new PartnerApplicationQuestion with this data.
+     */
+    create: XOR<PartnerApplicationQuestionCreateInput, PartnerApplicationQuestionUncheckedCreateInput>
+    /**
+     * In case the PartnerApplicationQuestion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PartnerApplicationQuestionUpdateInput, PartnerApplicationQuestionUncheckedUpdateInput>
+  }
+
+  /**
+   * PartnerApplicationQuestion delete
+   */
+  export type PartnerApplicationQuestionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+    /**
+     * Filter which PartnerApplicationQuestion to delete.
+     */
+    where: PartnerApplicationQuestionWhereUniqueInput
+  }
+
+  /**
+   * PartnerApplicationQuestion deleteMany
+   */
+  export type PartnerApplicationQuestionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PartnerApplicationQuestions to delete
+     */
+    where?: PartnerApplicationQuestionWhereInput
+    /**
+     * Limit how many PartnerApplicationQuestions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PartnerApplicationQuestion without action
+   */
+  export type PartnerApplicationQuestionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PartnerApplicationQuestion
+     */
+    select?: PartnerApplicationQuestionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PartnerApplicationQuestion
+     */
+    omit?: PartnerApplicationQuestionOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -14022,7 +19031,8 @@ export namespace Prisma {
     enabled: 'enabled',
     totalReferralEarnings: 'totalReferralEarnings',
     withdrawableBalance: 'withdrawableBalance',
-    totalReferredUsers: 'totalReferredUsers'
+    totalReferredUsers: 'totalReferredUsers',
+    partnerTagId: 'partnerTagId'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -14097,7 +19107,6 @@ export namespace Prisma {
     sku: 'sku',
     inventoryQuantity: 'inventoryQuantity',
     available: 'available',
-    referralPercentage: 'referralPercentage',
     shopifyProductId: 'shopifyProductId',
     images: 'images',
     categoryId: 'categoryId',
@@ -14119,7 +19128,6 @@ export namespace Prisma {
     sku: 'sku',
     price: 'price',
     discountedPrice: 'discountedPrice',
-    referralPercentage: 'referralPercentage',
     available: 'available',
     inventoryQuantity: 'inventoryQuantity',
     images: 'images',
@@ -14166,10 +19174,66 @@ export namespace Prisma {
     refererId: 'refererId',
     shopifyOrderId: 'shopifyOrderId',
     amount: 'amount',
+    partnerTagReferralEarnings: 'partnerTagReferralEarnings',
+    partnerTagName: 'partnerTagName',
     createdAt: 'createdAt'
   };
 
   export type ReferralEarningsLogScalarFieldEnum = (typeof ReferralEarningsLogScalarFieldEnum)[keyof typeof ReferralEarningsLogScalarFieldEnum]
+
+
+  export const PartnerTagScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    referralPercentage: 'referralPercentage',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    enabled: 'enabled'
+  };
+
+  export type PartnerTagScalarFieldEnum = (typeof PartnerTagScalarFieldEnum)[keyof typeof PartnerTagScalarFieldEnum]
+
+
+  export const PartnerApplicationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    instagramUrl: 'instagramUrl',
+    tiktokUrl: 'tiktokUrl',
+    facebookUrl: 'facebookUrl',
+    youtubeUrl: 'youtubeUrl',
+    approvalStatus: 'approvalStatus',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    enabled: 'enabled'
+  };
+
+  export type PartnerApplicationScalarFieldEnum = (typeof PartnerApplicationScalarFieldEnum)[keyof typeof PartnerApplicationScalarFieldEnum]
+
+
+  export const PartnerApplicationAnswerScalarFieldEnum: {
+    id: 'id',
+    applicationId: 'applicationId',
+    question: 'question',
+    answer: 'answer',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PartnerApplicationAnswerScalarFieldEnum = (typeof PartnerApplicationAnswerScalarFieldEnum)[keyof typeof PartnerApplicationAnswerScalarFieldEnum]
+
+
+  export const PartnerApplicationQuestionScalarFieldEnum: {
+    id: 'id',
+    question: 'question',
+    placeholder: 'placeholder',
+    required: 'required',
+    order: 'order',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    enabled: 'enabled'
+  };
+
+  export type PartnerApplicationQuestionScalarFieldEnum = (typeof PartnerApplicationQuestionScalarFieldEnum)[keyof typeof PartnerApplicationQuestionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -14290,6 +19354,20 @@ export namespace Prisma {
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
+
+
+  /**
+   * Reference to a field of type 'ApprovalStatus'
+   */
+  export type EnumApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ApprovalStatus[]'
+   */
+  export type ListEnumApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -14311,12 +19389,15 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFilter<"User"> | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFilter<"User"> | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFilter<"User"> | number
+    partnerTagId?: IntNullableFilter<"User"> | number | null
     referrer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     referredUsers?: UserListRelationFilter
     referralLogsUsed?: ReferralLogListRelationFilter
     referralLogsReceived?: ReferralLogListRelationFilter
     referralEarningsGenerated?: ReferralEarningsLogListRelationFilter
     referralEarningsReceived?: ReferralEarningsLogListRelationFilter
+    partnerTag?: XOR<PartnerTagNullableScalarRelationFilter, PartnerTagWhereInput> | null
+    partnerApplications?: PartnerApplicationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -14332,12 +19413,15 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrderInput | SortOrder
     referrer?: UserOrderByWithRelationInput
     referredUsers?: UserOrderByRelationAggregateInput
     referralLogsUsed?: ReferralLogOrderByRelationAggregateInput
     referralLogsReceived?: ReferralLogOrderByRelationAggregateInput
     referralEarningsGenerated?: ReferralEarningsLogOrderByRelationAggregateInput
     referralEarningsReceived?: ReferralEarningsLogOrderByRelationAggregateInput
+    partnerTag?: PartnerTagOrderByWithRelationInput
+    partnerApplications?: PartnerApplicationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -14356,12 +19440,15 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFilter<"User"> | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFilter<"User"> | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFilter<"User"> | number
+    partnerTagId?: IntNullableFilter<"User"> | number | null
     referrer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     referredUsers?: UserListRelationFilter
     referralLogsUsed?: ReferralLogListRelationFilter
     referralLogsReceived?: ReferralLogListRelationFilter
     referralEarningsGenerated?: ReferralEarningsLogListRelationFilter
     referralEarningsReceived?: ReferralEarningsLogListRelationFilter
+    partnerTag?: XOR<PartnerTagNullableScalarRelationFilter, PartnerTagWhereInput> | null
+    partnerApplications?: PartnerApplicationListRelationFilter
   }, "id" | "email" | "referralCode">
 
   export type UserOrderByWithAggregationInput = {
@@ -14377,6 +19464,7 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -14400,6 +19488,7 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalWithAggregatesFilter<"User"> | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalWithAggregatesFilter<"User"> | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntWithAggregatesFilter<"User"> | number
+    partnerTagId?: IntNullableWithAggregatesFilter<"User"> | number | null
   }
 
   export type EmailOtpWhereInput = {
@@ -14699,7 +19788,6 @@ export namespace Prisma {
     sku?: StringNullableFilter<"Product"> | string | null
     inventoryQuantity?: IntNullableFilter<"Product"> | number | null
     available?: BoolFilter<"Product"> | boolean
-    referralPercentage?: FloatFilter<"Product"> | number
     shopifyProductId?: StringNullableFilter<"Product"> | string | null
     images?: StringNullableListFilter<"Product">
     categoryId?: IntNullableFilter<"Product"> | number | null
@@ -14728,7 +19816,6 @@ export namespace Prisma {
     sku?: SortOrderInput | SortOrder
     inventoryQuantity?: SortOrderInput | SortOrder
     available?: SortOrder
-    referralPercentage?: SortOrder
     shopifyProductId?: SortOrderInput | SortOrder
     images?: SortOrder
     categoryId?: SortOrderInput | SortOrder
@@ -14761,7 +19848,6 @@ export namespace Prisma {
     sku?: StringNullableFilter<"Product"> | string | null
     inventoryQuantity?: IntNullableFilter<"Product"> | number | null
     available?: BoolFilter<"Product"> | boolean
-    referralPercentage?: FloatFilter<"Product"> | number
     images?: StringNullableListFilter<"Product">
     categoryId?: IntNullableFilter<"Product"> | number | null
     tagId?: IntNullableFilter<"Product"> | number | null
@@ -14789,7 +19875,6 @@ export namespace Prisma {
     sku?: SortOrderInput | SortOrder
     inventoryQuantity?: SortOrderInput | SortOrder
     available?: SortOrder
-    referralPercentage?: SortOrder
     shopifyProductId?: SortOrderInput | SortOrder
     images?: SortOrder
     categoryId?: SortOrderInput | SortOrder
@@ -14821,7 +19906,6 @@ export namespace Prisma {
     sku?: StringNullableWithAggregatesFilter<"Product"> | string | null
     inventoryQuantity?: IntNullableWithAggregatesFilter<"Product"> | number | null
     available?: BoolWithAggregatesFilter<"Product"> | boolean
-    referralPercentage?: FloatWithAggregatesFilter<"Product"> | number
     shopifyProductId?: StringNullableWithAggregatesFilter<"Product"> | string | null
     images?: StringNullableListFilter<"Product">
     categoryId?: IntNullableWithAggregatesFilter<"Product"> | number | null
@@ -14843,7 +19927,6 @@ export namespace Prisma {
     sku?: StringNullableFilter<"ProductVariant"> | string | null
     price?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFilter<"ProductVariant"> | number
     available?: BoolFilter<"ProductVariant"> | boolean
     inventoryQuantity?: IntFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
@@ -14869,7 +19952,6 @@ export namespace Prisma {
     sku?: SortOrderInput | SortOrder
     price?: SortOrderInput | SortOrder
     discountedPrice?: SortOrderInput | SortOrder
-    referralPercentage?: SortOrder
     available?: SortOrder
     inventoryQuantity?: SortOrder
     images?: SortOrder
@@ -14899,7 +19981,6 @@ export namespace Prisma {
     sku?: StringNullableFilter<"ProductVariant"> | string | null
     price?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFilter<"ProductVariant"> | number
     available?: BoolFilter<"ProductVariant"> | boolean
     inventoryQuantity?: IntFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
@@ -14924,7 +20005,6 @@ export namespace Prisma {
     sku?: SortOrderInput | SortOrder
     price?: SortOrderInput | SortOrder
     discountedPrice?: SortOrderInput | SortOrder
-    referralPercentage?: SortOrder
     available?: SortOrder
     inventoryQuantity?: SortOrder
     images?: SortOrder
@@ -14955,7 +20035,6 @@ export namespace Prisma {
     sku?: StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
     price?: DecimalNullableWithAggregatesFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: DecimalNullableWithAggregatesFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatWithAggregatesFilter<"ProductVariant"> | number
     available?: BoolWithAggregatesFilter<"ProductVariant"> | boolean
     inventoryQuantity?: IntWithAggregatesFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
@@ -15105,6 +20184,8 @@ export namespace Prisma {
     refererId?: IntFilter<"ReferralEarningsLog"> | number
     shopifyOrderId?: StringNullableFilter<"ReferralEarningsLog"> | string | null
     amount?: DecimalFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: DecimalNullableFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: StringNullableFilter<"ReferralEarningsLog"> | string | null
     createdAt?: DateTimeFilter<"ReferralEarningsLog"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     referer?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -15116,6 +20197,8 @@ export namespace Prisma {
     refererId?: SortOrder
     shopifyOrderId?: SortOrderInput | SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrderInput | SortOrder
+    partnerTagName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
     referer?: UserOrderByWithRelationInput
@@ -15130,6 +20213,8 @@ export namespace Prisma {
     refererId?: IntFilter<"ReferralEarningsLog"> | number
     shopifyOrderId?: StringNullableFilter<"ReferralEarningsLog"> | string | null
     amount?: DecimalFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: DecimalNullableFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: StringNullableFilter<"ReferralEarningsLog"> | string | null
     createdAt?: DateTimeFilter<"ReferralEarningsLog"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     referer?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -15141,6 +20226,8 @@ export namespace Prisma {
     refererId?: SortOrder
     shopifyOrderId?: SortOrderInput | SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrderInput | SortOrder
+    partnerTagName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: ReferralEarningsLogCountOrderByAggregateInput
     _avg?: ReferralEarningsLogAvgOrderByAggregateInput
@@ -15158,7 +20245,287 @@ export namespace Prisma {
     refererId?: IntWithAggregatesFilter<"ReferralEarningsLog"> | number
     shopifyOrderId?: StringNullableWithAggregatesFilter<"ReferralEarningsLog"> | string | null
     amount?: DecimalWithAggregatesFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: DecimalNullableWithAggregatesFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: StringNullableWithAggregatesFilter<"ReferralEarningsLog"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ReferralEarningsLog"> | Date | string
+  }
+
+  export type PartnerTagWhereInput = {
+    AND?: PartnerTagWhereInput | PartnerTagWhereInput[]
+    OR?: PartnerTagWhereInput[]
+    NOT?: PartnerTagWhereInput | PartnerTagWhereInput[]
+    id?: IntFilter<"PartnerTag"> | number
+    name?: StringFilter<"PartnerTag"> | string
+    referralPercentage?: FloatFilter<"PartnerTag"> | number
+    createdAt?: DateTimeFilter<"PartnerTag"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerTag"> | Date | string
+    enabled?: BoolFilter<"PartnerTag"> | boolean
+    users?: UserListRelationFilter
+  }
+
+  export type PartnerTagOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    referralPercentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+    users?: UserOrderByRelationAggregateInput
+  }
+
+  export type PartnerTagWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    name?: string
+    AND?: PartnerTagWhereInput | PartnerTagWhereInput[]
+    OR?: PartnerTagWhereInput[]
+    NOT?: PartnerTagWhereInput | PartnerTagWhereInput[]
+    referralPercentage?: FloatFilter<"PartnerTag"> | number
+    createdAt?: DateTimeFilter<"PartnerTag"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerTag"> | Date | string
+    enabled?: BoolFilter<"PartnerTag"> | boolean
+    users?: UserListRelationFilter
+  }, "id" | "name">
+
+  export type PartnerTagOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    referralPercentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+    _count?: PartnerTagCountOrderByAggregateInput
+    _avg?: PartnerTagAvgOrderByAggregateInput
+    _max?: PartnerTagMaxOrderByAggregateInput
+    _min?: PartnerTagMinOrderByAggregateInput
+    _sum?: PartnerTagSumOrderByAggregateInput
+  }
+
+  export type PartnerTagScalarWhereWithAggregatesInput = {
+    AND?: PartnerTagScalarWhereWithAggregatesInput | PartnerTagScalarWhereWithAggregatesInput[]
+    OR?: PartnerTagScalarWhereWithAggregatesInput[]
+    NOT?: PartnerTagScalarWhereWithAggregatesInput | PartnerTagScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PartnerTag"> | number
+    name?: StringWithAggregatesFilter<"PartnerTag"> | string
+    referralPercentage?: FloatWithAggregatesFilter<"PartnerTag"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"PartnerTag"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PartnerTag"> | Date | string
+    enabled?: BoolWithAggregatesFilter<"PartnerTag"> | boolean
+  }
+
+  export type PartnerApplicationWhereInput = {
+    AND?: PartnerApplicationWhereInput | PartnerApplicationWhereInput[]
+    OR?: PartnerApplicationWhereInput[]
+    NOT?: PartnerApplicationWhereInput | PartnerApplicationWhereInput[]
+    id?: IntFilter<"PartnerApplication"> | number
+    userId?: IntFilter<"PartnerApplication"> | number
+    instagramUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    tiktokUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    facebookUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    youtubeUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    approvalStatus?: EnumApprovalStatusFilter<"PartnerApplication"> | $Enums.ApprovalStatus
+    createdAt?: DateTimeFilter<"PartnerApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplication"> | Date | string
+    enabled?: BoolFilter<"PartnerApplication"> | boolean
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    answers?: PartnerApplicationAnswerListRelationFilter
+  }
+
+  export type PartnerApplicationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    instagramUrl?: SortOrderInput | SortOrder
+    tiktokUrl?: SortOrderInput | SortOrder
+    facebookUrl?: SortOrderInput | SortOrder
+    youtubeUrl?: SortOrderInput | SortOrder
+    approvalStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+    user?: UserOrderByWithRelationInput
+    answers?: PartnerApplicationAnswerOrderByRelationAggregateInput
+  }
+
+  export type PartnerApplicationWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PartnerApplicationWhereInput | PartnerApplicationWhereInput[]
+    OR?: PartnerApplicationWhereInput[]
+    NOT?: PartnerApplicationWhereInput | PartnerApplicationWhereInput[]
+    userId?: IntFilter<"PartnerApplication"> | number
+    instagramUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    tiktokUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    facebookUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    youtubeUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    approvalStatus?: EnumApprovalStatusFilter<"PartnerApplication"> | $Enums.ApprovalStatus
+    createdAt?: DateTimeFilter<"PartnerApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplication"> | Date | string
+    enabled?: BoolFilter<"PartnerApplication"> | boolean
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    answers?: PartnerApplicationAnswerListRelationFilter
+  }, "id">
+
+  export type PartnerApplicationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    instagramUrl?: SortOrderInput | SortOrder
+    tiktokUrl?: SortOrderInput | SortOrder
+    facebookUrl?: SortOrderInput | SortOrder
+    youtubeUrl?: SortOrderInput | SortOrder
+    approvalStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+    _count?: PartnerApplicationCountOrderByAggregateInput
+    _avg?: PartnerApplicationAvgOrderByAggregateInput
+    _max?: PartnerApplicationMaxOrderByAggregateInput
+    _min?: PartnerApplicationMinOrderByAggregateInput
+    _sum?: PartnerApplicationSumOrderByAggregateInput
+  }
+
+  export type PartnerApplicationScalarWhereWithAggregatesInput = {
+    AND?: PartnerApplicationScalarWhereWithAggregatesInput | PartnerApplicationScalarWhereWithAggregatesInput[]
+    OR?: PartnerApplicationScalarWhereWithAggregatesInput[]
+    NOT?: PartnerApplicationScalarWhereWithAggregatesInput | PartnerApplicationScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PartnerApplication"> | number
+    userId?: IntWithAggregatesFilter<"PartnerApplication"> | number
+    instagramUrl?: StringNullableWithAggregatesFilter<"PartnerApplication"> | string | null
+    tiktokUrl?: StringNullableWithAggregatesFilter<"PartnerApplication"> | string | null
+    facebookUrl?: StringNullableWithAggregatesFilter<"PartnerApplication"> | string | null
+    youtubeUrl?: StringNullableWithAggregatesFilter<"PartnerApplication"> | string | null
+    approvalStatus?: EnumApprovalStatusWithAggregatesFilter<"PartnerApplication"> | $Enums.ApprovalStatus
+    createdAt?: DateTimeWithAggregatesFilter<"PartnerApplication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PartnerApplication"> | Date | string
+    enabled?: BoolWithAggregatesFilter<"PartnerApplication"> | boolean
+  }
+
+  export type PartnerApplicationAnswerWhereInput = {
+    AND?: PartnerApplicationAnswerWhereInput | PartnerApplicationAnswerWhereInput[]
+    OR?: PartnerApplicationAnswerWhereInput[]
+    NOT?: PartnerApplicationAnswerWhereInput | PartnerApplicationAnswerWhereInput[]
+    id?: IntFilter<"PartnerApplicationAnswer"> | number
+    applicationId?: IntFilter<"PartnerApplicationAnswer"> | number
+    question?: StringFilter<"PartnerApplicationAnswer"> | string
+    answer?: StringFilter<"PartnerApplicationAnswer"> | string
+    createdAt?: DateTimeFilter<"PartnerApplicationAnswer"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplicationAnswer"> | Date | string
+    application?: XOR<PartnerApplicationScalarRelationFilter, PartnerApplicationWhereInput>
+  }
+
+  export type PartnerApplicationAnswerOrderByWithRelationInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    application?: PartnerApplicationOrderByWithRelationInput
+  }
+
+  export type PartnerApplicationAnswerWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PartnerApplicationAnswerWhereInput | PartnerApplicationAnswerWhereInput[]
+    OR?: PartnerApplicationAnswerWhereInput[]
+    NOT?: PartnerApplicationAnswerWhereInput | PartnerApplicationAnswerWhereInput[]
+    applicationId?: IntFilter<"PartnerApplicationAnswer"> | number
+    question?: StringFilter<"PartnerApplicationAnswer"> | string
+    answer?: StringFilter<"PartnerApplicationAnswer"> | string
+    createdAt?: DateTimeFilter<"PartnerApplicationAnswer"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplicationAnswer"> | Date | string
+    application?: XOR<PartnerApplicationScalarRelationFilter, PartnerApplicationWhereInput>
+  }, "id">
+
+  export type PartnerApplicationAnswerOrderByWithAggregationInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PartnerApplicationAnswerCountOrderByAggregateInput
+    _avg?: PartnerApplicationAnswerAvgOrderByAggregateInput
+    _max?: PartnerApplicationAnswerMaxOrderByAggregateInput
+    _min?: PartnerApplicationAnswerMinOrderByAggregateInput
+    _sum?: PartnerApplicationAnswerSumOrderByAggregateInput
+  }
+
+  export type PartnerApplicationAnswerScalarWhereWithAggregatesInput = {
+    AND?: PartnerApplicationAnswerScalarWhereWithAggregatesInput | PartnerApplicationAnswerScalarWhereWithAggregatesInput[]
+    OR?: PartnerApplicationAnswerScalarWhereWithAggregatesInput[]
+    NOT?: PartnerApplicationAnswerScalarWhereWithAggregatesInput | PartnerApplicationAnswerScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PartnerApplicationAnswer"> | number
+    applicationId?: IntWithAggregatesFilter<"PartnerApplicationAnswer"> | number
+    question?: StringWithAggregatesFilter<"PartnerApplicationAnswer"> | string
+    answer?: StringWithAggregatesFilter<"PartnerApplicationAnswer"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"PartnerApplicationAnswer"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PartnerApplicationAnswer"> | Date | string
+  }
+
+  export type PartnerApplicationQuestionWhereInput = {
+    AND?: PartnerApplicationQuestionWhereInput | PartnerApplicationQuestionWhereInput[]
+    OR?: PartnerApplicationQuestionWhereInput[]
+    NOT?: PartnerApplicationQuestionWhereInput | PartnerApplicationQuestionWhereInput[]
+    id?: IntFilter<"PartnerApplicationQuestion"> | number
+    question?: StringFilter<"PartnerApplicationQuestion"> | string
+    placeholder?: StringNullableFilter<"PartnerApplicationQuestion"> | string | null
+    required?: BoolFilter<"PartnerApplicationQuestion"> | boolean
+    order?: IntFilter<"PartnerApplicationQuestion"> | number
+    createdAt?: DateTimeFilter<"PartnerApplicationQuestion"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplicationQuestion"> | Date | string
+    enabled?: BoolFilter<"PartnerApplicationQuestion"> | boolean
+  }
+
+  export type PartnerApplicationQuestionOrderByWithRelationInput = {
+    id?: SortOrder
+    question?: SortOrder
+    placeholder?: SortOrderInput | SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationQuestionWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: PartnerApplicationQuestionWhereInput | PartnerApplicationQuestionWhereInput[]
+    OR?: PartnerApplicationQuestionWhereInput[]
+    NOT?: PartnerApplicationQuestionWhereInput | PartnerApplicationQuestionWhereInput[]
+    question?: StringFilter<"PartnerApplicationQuestion"> | string
+    placeholder?: StringNullableFilter<"PartnerApplicationQuestion"> | string | null
+    required?: BoolFilter<"PartnerApplicationQuestion"> | boolean
+    order?: IntFilter<"PartnerApplicationQuestion"> | number
+    createdAt?: DateTimeFilter<"PartnerApplicationQuestion"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplicationQuestion"> | Date | string
+    enabled?: BoolFilter<"PartnerApplicationQuestion"> | boolean
+  }, "id">
+
+  export type PartnerApplicationQuestionOrderByWithAggregationInput = {
+    id?: SortOrder
+    question?: SortOrder
+    placeholder?: SortOrderInput | SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+    _count?: PartnerApplicationQuestionCountOrderByAggregateInput
+    _avg?: PartnerApplicationQuestionAvgOrderByAggregateInput
+    _max?: PartnerApplicationQuestionMaxOrderByAggregateInput
+    _min?: PartnerApplicationQuestionMinOrderByAggregateInput
+    _sum?: PartnerApplicationQuestionSumOrderByAggregateInput
+  }
+
+  export type PartnerApplicationQuestionScalarWhereWithAggregatesInput = {
+    AND?: PartnerApplicationQuestionScalarWhereWithAggregatesInput | PartnerApplicationQuestionScalarWhereWithAggregatesInput[]
+    OR?: PartnerApplicationQuestionScalarWhereWithAggregatesInput[]
+    NOT?: PartnerApplicationQuestionScalarWhereWithAggregatesInput | PartnerApplicationQuestionScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"PartnerApplicationQuestion"> | number
+    question?: StringWithAggregatesFilter<"PartnerApplicationQuestion"> | string
+    placeholder?: StringNullableWithAggregatesFilter<"PartnerApplicationQuestion"> | string | null
+    required?: BoolWithAggregatesFilter<"PartnerApplicationQuestion"> | boolean
+    order?: IntWithAggregatesFilter<"PartnerApplicationQuestion"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"PartnerApplicationQuestion"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PartnerApplicationQuestion"> | Date | string
+    enabled?: BoolWithAggregatesFilter<"PartnerApplicationQuestion"> | boolean
   }
 
   export type UserCreateInput = {
@@ -15178,6 +20545,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -15193,11 +20562,13 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
     referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -15217,6 +20588,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -15232,11 +20605,13 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
     referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -15252,6 +20627,7 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -15280,6 +20656,7 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type EmailOtpCreateInput = {
@@ -15594,7 +20971,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     createdAt?: Date | string
@@ -15621,7 +20997,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -15643,7 +21018,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15670,7 +21044,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -15695,7 +21068,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -15716,7 +21088,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15738,7 +21109,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -15754,7 +21124,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -15780,7 +21149,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -15801,7 +21169,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -15827,7 +21194,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -15851,7 +21217,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -15871,7 +21236,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -15894,7 +21258,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -16033,6 +21396,8 @@ export namespace Prisma {
   export type ReferralEarningsLogCreateInput = {
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutReferralEarningsGeneratedInput
     referer: UserCreateNestedOneWithoutReferralEarningsReceivedInput
@@ -16044,12 +21409,16 @@ export namespace Prisma {
     refererId: number
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
   }
 
   export type ReferralEarningsLogUpdateInput = {
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutReferralEarningsGeneratedNestedInput
     referer?: UserUpdateOneRequiredWithoutReferralEarningsReceivedNestedInput
@@ -16061,6 +21430,8 @@ export namespace Prisma {
     refererId?: IntFieldUpdateOperationsInput | number
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16070,12 +21441,16 @@ export namespace Prisma {
     refererId: number
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
   }
 
   export type ReferralEarningsLogUpdateManyMutationInput = {
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16085,7 +21460,297 @@ export namespace Prisma {
     refererId?: IntFieldUpdateOperationsInput | number
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerTagCreateInput = {
+    name: string
+    referralPercentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    users?: UserCreateNestedManyWithoutPartnerTagInput
+  }
+
+  export type PartnerTagUncheckedCreateInput = {
+    id?: number
+    name: string
+    referralPercentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    users?: UserUncheckedCreateNestedManyWithoutPartnerTagInput
+  }
+
+  export type PartnerTagUpdateInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    referralPercentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    users?: UserUpdateManyWithoutPartnerTagNestedInput
+  }
+
+  export type PartnerTagUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    referralPercentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    users?: UserUncheckedUpdateManyWithoutPartnerTagNestedInput
+  }
+
+  export type PartnerTagCreateManyInput = {
+    id?: number
+    name: string
+    referralPercentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerTagUpdateManyMutationInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    referralPercentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerTagUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    referralPercentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationCreateInput = {
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    user: UserCreateNestedOneWithoutPartnerApplicationsInput
+    answers?: PartnerApplicationAnswerCreateNestedManyWithoutApplicationInput
+  }
+
+  export type PartnerApplicationUncheckedCreateInput = {
+    id?: number
+    userId: number
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    answers?: PartnerApplicationAnswerUncheckedCreateNestedManyWithoutApplicationInput
+  }
+
+  export type PartnerApplicationUpdateInput = {
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    user?: UserUpdateOneRequiredWithoutPartnerApplicationsNestedInput
+    answers?: PartnerApplicationAnswerUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type PartnerApplicationUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    answers?: PartnerApplicationAnswerUncheckedUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type PartnerApplicationCreateManyInput = {
+    id?: number
+    userId: number
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationUpdateManyMutationInput = {
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationAnswerCreateInput = {
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    application: PartnerApplicationCreateNestedOneWithoutAnswersInput
+  }
+
+  export type PartnerApplicationAnswerUncheckedCreateInput = {
+    id?: number
+    applicationId: number
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PartnerApplicationAnswerUpdateInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    application?: PartnerApplicationUpdateOneRequiredWithoutAnswersNestedInput
+  }
+
+  export type PartnerApplicationAnswerUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    applicationId?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerApplicationAnswerCreateManyInput = {
+    id?: number
+    applicationId: number
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PartnerApplicationAnswerUpdateManyMutationInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerApplicationAnswerUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    applicationId?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerApplicationQuestionCreateInput = {
+    question: string
+    placeholder?: string | null
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationQuestionUncheckedCreateInput = {
+    id?: number
+    question: string
+    placeholder?: string | null
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationQuestionUpdateInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationQuestionUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationQuestionCreateManyInput = {
+    id?: number
+    question: string
+    placeholder?: string | null
+    required?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationQuestionUpdateManyMutationInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationQuestionUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    required?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -16197,6 +21862,17 @@ export namespace Prisma {
     none?: ReferralEarningsLogWhereInput
   }
 
+  export type PartnerTagNullableScalarRelationFilter = {
+    is?: PartnerTagWhereInput | null
+    isNot?: PartnerTagWhereInput | null
+  }
+
+  export type PartnerApplicationListRelationFilter = {
+    every?: PartnerApplicationWhereInput
+    some?: PartnerApplicationWhereInput
+    none?: PartnerApplicationWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -16214,6 +21890,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type PartnerApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -16227,6 +21907,7 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -16235,6 +21916,7 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -16250,6 +21932,7 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -16265,6 +21948,7 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -16273,6 +21957,7 @@ export namespace Prisma {
     totalReferralEarnings?: SortOrder
     withdrawableBalance?: SortOrder
     totalReferredUsers?: SortOrder
+    partnerTagId?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -16602,17 +22287,6 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type StringNullableListFilter<$PrismaModel = never> = {
     equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     has?: string | StringFieldRefInput<$PrismaModel> | null
@@ -16665,7 +22339,6 @@ export namespace Prisma {
     sku?: SortOrder
     inventoryQuantity?: SortOrder
     available?: SortOrder
-    referralPercentage?: SortOrder
     shopifyProductId?: SortOrder
     images?: SortOrder
     categoryId?: SortOrder
@@ -16682,7 +22355,6 @@ export namespace Prisma {
     price?: SortOrder
     discountedPrice?: SortOrder
     inventoryQuantity?: SortOrder
-    referralPercentage?: SortOrder
     categoryId?: SortOrder
     tagId?: SortOrder
   }
@@ -16701,7 +22373,6 @@ export namespace Prisma {
     sku?: SortOrder
     inventoryQuantity?: SortOrder
     available?: SortOrder
-    referralPercentage?: SortOrder
     shopifyProductId?: SortOrder
     categoryId?: SortOrder
     tagId?: SortOrder
@@ -16724,7 +22395,6 @@ export namespace Prisma {
     sku?: SortOrder
     inventoryQuantity?: SortOrder
     available?: SortOrder
-    referralPercentage?: SortOrder
     shopifyProductId?: SortOrder
     categoryId?: SortOrder
     tagId?: SortOrder
@@ -16740,7 +22410,6 @@ export namespace Prisma {
     price?: SortOrder
     discountedPrice?: SortOrder
     inventoryQuantity?: SortOrder
-    referralPercentage?: SortOrder
     categoryId?: SortOrder
     tagId?: SortOrder
   }
@@ -16759,22 +22428,6 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type ProductScalarRelationFilter = {
@@ -16796,7 +22449,6 @@ export namespace Prisma {
     sku?: SortOrder
     price?: SortOrder
     discountedPrice?: SortOrder
-    referralPercentage?: SortOrder
     available?: SortOrder
     inventoryQuantity?: SortOrder
     images?: SortOrder
@@ -16816,7 +22468,6 @@ export namespace Prisma {
     parentVariantId?: SortOrder
     price?: SortOrder
     discountedPrice?: SortOrder
-    referralPercentage?: SortOrder
     inventoryQuantity?: SortOrder
     weight?: SortOrder
     position?: SortOrder
@@ -16831,7 +22482,6 @@ export namespace Prisma {
     sku?: SortOrder
     price?: SortOrder
     discountedPrice?: SortOrder
-    referralPercentage?: SortOrder
     available?: SortOrder
     inventoryQuantity?: SortOrder
     weight?: SortOrder
@@ -16853,7 +22503,6 @@ export namespace Prisma {
     sku?: SortOrder
     price?: SortOrder
     discountedPrice?: SortOrder
-    referralPercentage?: SortOrder
     available?: SortOrder
     inventoryQuantity?: SortOrder
     weight?: SortOrder
@@ -16872,7 +22521,6 @@ export namespace Prisma {
     parentVariantId?: SortOrder
     price?: SortOrder
     discountedPrice?: SortOrder
-    referralPercentage?: SortOrder
     inventoryQuantity?: SortOrder
     weight?: SortOrder
     position?: SortOrder
@@ -16963,6 +22611,8 @@ export namespace Prisma {
     refererId?: SortOrder
     shopifyOrderId?: SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrder
+    partnerTagName?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16971,6 +22621,7 @@ export namespace Prisma {
     userId?: SortOrder
     refererId?: SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrder
   }
 
   export type ReferralEarningsLogMaxOrderByAggregateInput = {
@@ -16979,6 +22630,8 @@ export namespace Prisma {
     refererId?: SortOrder
     shopifyOrderId?: SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrder
+    partnerTagName?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16988,6 +22641,8 @@ export namespace Prisma {
     refererId?: SortOrder
     shopifyOrderId?: SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrder
+    partnerTagName?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16996,6 +22651,232 @@ export namespace Prisma {
     userId?: SortOrder
     refererId?: SortOrder
     amount?: SortOrder
+    partnerTagReferralEarnings?: SortOrder
+  }
+
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type PartnerTagCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    referralPercentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerTagAvgOrderByAggregateInput = {
+    id?: SortOrder
+    referralPercentage?: SortOrder
+  }
+
+  export type PartnerTagMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    referralPercentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerTagMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    referralPercentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerTagSumOrderByAggregateInput = {
+    id?: SortOrder
+    referralPercentage?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type EnumApprovalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusFilter<$PrismaModel> | $Enums.ApprovalStatus
+  }
+
+  export type PartnerApplicationAnswerListRelationFilter = {
+    every?: PartnerApplicationAnswerWhereInput
+    some?: PartnerApplicationAnswerWhereInput
+    none?: PartnerApplicationAnswerWhereInput
+  }
+
+  export type PartnerApplicationAnswerOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PartnerApplicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    instagramUrl?: SortOrder
+    tiktokUrl?: SortOrder
+    facebookUrl?: SortOrder
+    youtubeUrl?: SortOrder
+    approvalStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationAvgOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type PartnerApplicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    instagramUrl?: SortOrder
+    tiktokUrl?: SortOrder
+    facebookUrl?: SortOrder
+    youtubeUrl?: SortOrder
+    approvalStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    instagramUrl?: SortOrder
+    tiktokUrl?: SortOrder
+    facebookUrl?: SortOrder
+    youtubeUrl?: SortOrder
+    approvalStatus?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationSumOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type EnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApprovalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumApprovalStatusFilter<$PrismaModel>
+    _max?: NestedEnumApprovalStatusFilter<$PrismaModel>
+  }
+
+  export type PartnerApplicationScalarRelationFilter = {
+    is?: PartnerApplicationWhereInput
+    isNot?: PartnerApplicationWhereInput
+  }
+
+  export type PartnerApplicationAnswerCountOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PartnerApplicationAnswerAvgOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+  }
+
+  export type PartnerApplicationAnswerMaxOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PartnerApplicationAnswerMinOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+    question?: SortOrder
+    answer?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PartnerApplicationAnswerSumOrderByAggregateInput = {
+    id?: SortOrder
+    applicationId?: SortOrder
+  }
+
+  export type PartnerApplicationQuestionCountOrderByAggregateInput = {
+    id?: SortOrder
+    question?: SortOrder
+    placeholder?: SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationQuestionAvgOrderByAggregateInput = {
+    id?: SortOrder
+    order?: SortOrder
+  }
+
+  export type PartnerApplicationQuestionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    question?: SortOrder
+    placeholder?: SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationQuestionMinOrderByAggregateInput = {
+    id?: SortOrder
+    question?: SortOrder
+    placeholder?: SortOrder
+    required?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    enabled?: SortOrder
+  }
+
+  export type PartnerApplicationQuestionSumOrderByAggregateInput = {
+    id?: SortOrder
+    order?: SortOrder
   }
 
   export type UserCreateNestedOneWithoutReferredUsersInput = {
@@ -17039,6 +22920,19 @@ export namespace Prisma {
     connect?: ReferralEarningsLogWhereUniqueInput | ReferralEarningsLogWhereUniqueInput[]
   }
 
+  export type PartnerTagCreateNestedOneWithoutUsersInput = {
+    create?: XOR<PartnerTagCreateWithoutUsersInput, PartnerTagUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: PartnerTagCreateOrConnectWithoutUsersInput
+    connect?: PartnerTagWhereUniqueInput
+  }
+
+  export type PartnerApplicationCreateNestedManyWithoutUserInput = {
+    create?: XOR<PartnerApplicationCreateWithoutUserInput, PartnerApplicationUncheckedCreateWithoutUserInput> | PartnerApplicationCreateWithoutUserInput[] | PartnerApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PartnerApplicationCreateOrConnectWithoutUserInput | PartnerApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: PartnerApplicationCreateManyUserInputEnvelope
+    connect?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutReferrerInput = {
     create?: XOR<UserCreateWithoutReferrerInput, UserUncheckedCreateWithoutReferrerInput> | UserCreateWithoutReferrerInput[] | UserUncheckedCreateWithoutReferrerInput[]
     connectOrCreate?: UserCreateOrConnectWithoutReferrerInput | UserCreateOrConnectWithoutReferrerInput[]
@@ -17072,6 +22966,13 @@ export namespace Prisma {
     connectOrCreate?: ReferralEarningsLogCreateOrConnectWithoutRefererInput | ReferralEarningsLogCreateOrConnectWithoutRefererInput[]
     createMany?: ReferralEarningsLogCreateManyRefererInputEnvelope
     connect?: ReferralEarningsLogWhereUniqueInput | ReferralEarningsLogWhereUniqueInput[]
+  }
+
+  export type PartnerApplicationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<PartnerApplicationCreateWithoutUserInput, PartnerApplicationUncheckedCreateWithoutUserInput> | PartnerApplicationCreateWithoutUserInput[] | PartnerApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PartnerApplicationCreateOrConnectWithoutUserInput | PartnerApplicationCreateOrConnectWithoutUserInput[]
+    createMany?: PartnerApplicationCreateManyUserInputEnvelope
+    connect?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -17190,6 +23091,30 @@ export namespace Prisma {
     deleteMany?: ReferralEarningsLogScalarWhereInput | ReferralEarningsLogScalarWhereInput[]
   }
 
+  export type PartnerTagUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<PartnerTagCreateWithoutUsersInput, PartnerTagUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: PartnerTagCreateOrConnectWithoutUsersInput
+    upsert?: PartnerTagUpsertWithoutUsersInput
+    disconnect?: PartnerTagWhereInput | boolean
+    delete?: PartnerTagWhereInput | boolean
+    connect?: PartnerTagWhereUniqueInput
+    update?: XOR<XOR<PartnerTagUpdateToOneWithWhereWithoutUsersInput, PartnerTagUpdateWithoutUsersInput>, PartnerTagUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type PartnerApplicationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PartnerApplicationCreateWithoutUserInput, PartnerApplicationUncheckedCreateWithoutUserInput> | PartnerApplicationCreateWithoutUserInput[] | PartnerApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PartnerApplicationCreateOrConnectWithoutUserInput | PartnerApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: PartnerApplicationUpsertWithWhereUniqueWithoutUserInput | PartnerApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PartnerApplicationCreateManyUserInputEnvelope
+    set?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    disconnect?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    delete?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    connect?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    update?: PartnerApplicationUpdateWithWhereUniqueWithoutUserInput | PartnerApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PartnerApplicationUpdateManyWithWhereWithoutUserInput | PartnerApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PartnerApplicationScalarWhereInput | PartnerApplicationScalarWhereInput[]
+  }
+
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
@@ -17266,6 +23191,20 @@ export namespace Prisma {
     update?: ReferralEarningsLogUpdateWithWhereUniqueWithoutRefererInput | ReferralEarningsLogUpdateWithWhereUniqueWithoutRefererInput[]
     updateMany?: ReferralEarningsLogUpdateManyWithWhereWithoutRefererInput | ReferralEarningsLogUpdateManyWithWhereWithoutRefererInput[]
     deleteMany?: ReferralEarningsLogScalarWhereInput | ReferralEarningsLogScalarWhereInput[]
+  }
+
+  export type PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<PartnerApplicationCreateWithoutUserInput, PartnerApplicationUncheckedCreateWithoutUserInput> | PartnerApplicationCreateWithoutUserInput[] | PartnerApplicationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: PartnerApplicationCreateOrConnectWithoutUserInput | PartnerApplicationCreateOrConnectWithoutUserInput[]
+    upsert?: PartnerApplicationUpsertWithWhereUniqueWithoutUserInput | PartnerApplicationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: PartnerApplicationCreateManyUserInputEnvelope
+    set?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    disconnect?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    delete?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    connect?: PartnerApplicationWhereUniqueInput | PartnerApplicationWhereUniqueInput[]
+    update?: PartnerApplicationUpdateWithWhereUniqueWithoutUserInput | PartnerApplicationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: PartnerApplicationUpdateManyWithWhereWithoutUserInput | PartnerApplicationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: PartnerApplicationScalarWhereInput | PartnerApplicationScalarWhereInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -17446,14 +23385,6 @@ export namespace Prisma {
     decrement?: Decimal | DecimalJsLike | number | string
     multiply?: Decimal | DecimalJsLike | number | string
     divide?: Decimal | DecimalJsLike | number | string
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ProductUpdateimagesInput = {
@@ -17706,6 +23637,130 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutReferralEarningsReceivedInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReferralEarningsReceivedInput, UserUpdateWithoutReferralEarningsReceivedInput>, UserUncheckedUpdateWithoutReferralEarningsReceivedInput>
+  }
+
+  export type UserCreateNestedManyWithoutPartnerTagInput = {
+    create?: XOR<UserCreateWithoutPartnerTagInput, UserUncheckedCreateWithoutPartnerTagInput> | UserCreateWithoutPartnerTagInput[] | UserUncheckedCreateWithoutPartnerTagInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutPartnerTagInput | UserCreateOrConnectWithoutPartnerTagInput[]
+    createMany?: UserCreateManyPartnerTagInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutPartnerTagInput = {
+    create?: XOR<UserCreateWithoutPartnerTagInput, UserUncheckedCreateWithoutPartnerTagInput> | UserCreateWithoutPartnerTagInput[] | UserUncheckedCreateWithoutPartnerTagInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutPartnerTagInput | UserCreateOrConnectWithoutPartnerTagInput[]
+    createMany?: UserCreateManyPartnerTagInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateManyWithoutPartnerTagNestedInput = {
+    create?: XOR<UserCreateWithoutPartnerTagInput, UserUncheckedCreateWithoutPartnerTagInput> | UserCreateWithoutPartnerTagInput[] | UserUncheckedCreateWithoutPartnerTagInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutPartnerTagInput | UserCreateOrConnectWithoutPartnerTagInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutPartnerTagInput | UserUpsertWithWhereUniqueWithoutPartnerTagInput[]
+    createMany?: UserCreateManyPartnerTagInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutPartnerTagInput | UserUpdateWithWhereUniqueWithoutPartnerTagInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutPartnerTagInput | UserUpdateManyWithWhereWithoutPartnerTagInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutPartnerTagNestedInput = {
+    create?: XOR<UserCreateWithoutPartnerTagInput, UserUncheckedCreateWithoutPartnerTagInput> | UserCreateWithoutPartnerTagInput[] | UserUncheckedCreateWithoutPartnerTagInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutPartnerTagInput | UserCreateOrConnectWithoutPartnerTagInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutPartnerTagInput | UserUpsertWithWhereUniqueWithoutPartnerTagInput[]
+    createMany?: UserCreateManyPartnerTagInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutPartnerTagInput | UserUpdateWithWhereUniqueWithoutPartnerTagInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutPartnerTagInput | UserUpdateManyWithWhereWithoutPartnerTagInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutPartnerApplicationsInput = {
+    create?: XOR<UserCreateWithoutPartnerApplicationsInput, UserUncheckedCreateWithoutPartnerApplicationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPartnerApplicationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type PartnerApplicationAnswerCreateNestedManyWithoutApplicationInput = {
+    create?: XOR<PartnerApplicationAnswerCreateWithoutApplicationInput, PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput> | PartnerApplicationAnswerCreateWithoutApplicationInput[] | PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput[]
+    connectOrCreate?: PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput | PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput[]
+    createMany?: PartnerApplicationAnswerCreateManyApplicationInputEnvelope
+    connect?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+  }
+
+  export type PartnerApplicationAnswerUncheckedCreateNestedManyWithoutApplicationInput = {
+    create?: XOR<PartnerApplicationAnswerCreateWithoutApplicationInput, PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput> | PartnerApplicationAnswerCreateWithoutApplicationInput[] | PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput[]
+    connectOrCreate?: PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput | PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput[]
+    createMany?: PartnerApplicationAnswerCreateManyApplicationInputEnvelope
+    connect?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+  }
+
+  export type EnumApprovalStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ApprovalStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutPartnerApplicationsNestedInput = {
+    create?: XOR<UserCreateWithoutPartnerApplicationsInput, UserUncheckedCreateWithoutPartnerApplicationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPartnerApplicationsInput
+    upsert?: UserUpsertWithoutPartnerApplicationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPartnerApplicationsInput, UserUpdateWithoutPartnerApplicationsInput>, UserUncheckedUpdateWithoutPartnerApplicationsInput>
+  }
+
+  export type PartnerApplicationAnswerUpdateManyWithoutApplicationNestedInput = {
+    create?: XOR<PartnerApplicationAnswerCreateWithoutApplicationInput, PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput> | PartnerApplicationAnswerCreateWithoutApplicationInput[] | PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput[]
+    connectOrCreate?: PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput | PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput[]
+    upsert?: PartnerApplicationAnswerUpsertWithWhereUniqueWithoutApplicationInput | PartnerApplicationAnswerUpsertWithWhereUniqueWithoutApplicationInput[]
+    createMany?: PartnerApplicationAnswerCreateManyApplicationInputEnvelope
+    set?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    disconnect?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    delete?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    connect?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    update?: PartnerApplicationAnswerUpdateWithWhereUniqueWithoutApplicationInput | PartnerApplicationAnswerUpdateWithWhereUniqueWithoutApplicationInput[]
+    updateMany?: PartnerApplicationAnswerUpdateManyWithWhereWithoutApplicationInput | PartnerApplicationAnswerUpdateManyWithWhereWithoutApplicationInput[]
+    deleteMany?: PartnerApplicationAnswerScalarWhereInput | PartnerApplicationAnswerScalarWhereInput[]
+  }
+
+  export type PartnerApplicationAnswerUncheckedUpdateManyWithoutApplicationNestedInput = {
+    create?: XOR<PartnerApplicationAnswerCreateWithoutApplicationInput, PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput> | PartnerApplicationAnswerCreateWithoutApplicationInput[] | PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput[]
+    connectOrCreate?: PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput | PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput[]
+    upsert?: PartnerApplicationAnswerUpsertWithWhereUniqueWithoutApplicationInput | PartnerApplicationAnswerUpsertWithWhereUniqueWithoutApplicationInput[]
+    createMany?: PartnerApplicationAnswerCreateManyApplicationInputEnvelope
+    set?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    disconnect?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    delete?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    connect?: PartnerApplicationAnswerWhereUniqueInput | PartnerApplicationAnswerWhereUniqueInput[]
+    update?: PartnerApplicationAnswerUpdateWithWhereUniqueWithoutApplicationInput | PartnerApplicationAnswerUpdateWithWhereUniqueWithoutApplicationInput[]
+    updateMany?: PartnerApplicationAnswerUpdateManyWithWhereWithoutApplicationInput | PartnerApplicationAnswerUpdateManyWithWhereWithoutApplicationInput[]
+    deleteMany?: PartnerApplicationAnswerScalarWhereInput | PartnerApplicationAnswerScalarWhereInput[]
+  }
+
+  export type PartnerApplicationCreateNestedOneWithoutAnswersInput = {
+    create?: XOR<PartnerApplicationCreateWithoutAnswersInput, PartnerApplicationUncheckedCreateWithoutAnswersInput>
+    connectOrCreate?: PartnerApplicationCreateOrConnectWithoutAnswersInput
+    connect?: PartnerApplicationWhereUniqueInput
+  }
+
+  export type PartnerApplicationUpdateOneRequiredWithoutAnswersNestedInput = {
+    create?: XOR<PartnerApplicationCreateWithoutAnswersInput, PartnerApplicationUncheckedCreateWithoutAnswersInput>
+    connectOrCreate?: PartnerApplicationCreateOrConnectWithoutAnswersInput
+    upsert?: PartnerApplicationUpsertWithoutAnswersInput
+    connect?: PartnerApplicationWhereUniqueInput
+    update?: XOR<XOR<PartnerApplicationUpdateToOneWithWhereWithoutAnswersInput, PartnerApplicationUpdateWithoutAnswersInput>, PartnerApplicationUncheckedUpdateWithoutAnswersInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -17996,6 +24051,23 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedEnumApprovalStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusFilter<$PrismaModel> | $Enums.ApprovalStatus
+  }
+
+  export type NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ApprovalStatus[] | ListEnumApprovalStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApprovalStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumApprovalStatusFilter<$PrismaModel>
+    _max?: NestedEnumApprovalStatusFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutReferredUsersInput = {
     name?: string | null
     email: string
@@ -18012,6 +24084,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReferredUsersInput = {
@@ -18027,10 +24101,12 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReferredUsersInput = {
@@ -18054,6 +24130,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReferrerInput = {
@@ -18068,11 +24146,13 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
     referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReferrerInput = {
@@ -18134,6 +24214,8 @@ export namespace Prisma {
   export type ReferralEarningsLogCreateWithoutUserInput = {
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
     referer: UserCreateNestedOneWithoutReferralEarningsReceivedInput
   }
@@ -18143,6 +24225,8 @@ export namespace Prisma {
     refererId: number
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
   }
 
@@ -18159,6 +24243,8 @@ export namespace Prisma {
   export type ReferralEarningsLogCreateWithoutRefererInput = {
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutReferralEarningsGeneratedInput
   }
@@ -18168,6 +24254,8 @@ export namespace Prisma {
     userId: number
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
   }
 
@@ -18178,6 +24266,63 @@ export namespace Prisma {
 
   export type ReferralEarningsLogCreateManyRefererInputEnvelope = {
     data: ReferralEarningsLogCreateManyRefererInput | ReferralEarningsLogCreateManyRefererInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PartnerTagCreateWithoutUsersInput = {
+    name: string
+    referralPercentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerTagUncheckedCreateWithoutUsersInput = {
+    id?: number
+    name: string
+    referralPercentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerTagCreateOrConnectWithoutUsersInput = {
+    where: PartnerTagWhereUniqueInput
+    create: XOR<PartnerTagCreateWithoutUsersInput, PartnerTagUncheckedCreateWithoutUsersInput>
+  }
+
+  export type PartnerApplicationCreateWithoutUserInput = {
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    answers?: PartnerApplicationAnswerCreateNestedManyWithoutApplicationInput
+  }
+
+  export type PartnerApplicationUncheckedCreateWithoutUserInput = {
+    id?: number
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    answers?: PartnerApplicationAnswerUncheckedCreateNestedManyWithoutApplicationInput
+  }
+
+  export type PartnerApplicationCreateOrConnectWithoutUserInput = {
+    where: PartnerApplicationWhereUniqueInput
+    create: XOR<PartnerApplicationCreateWithoutUserInput, PartnerApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type PartnerApplicationCreateManyUserInputEnvelope = {
+    data: PartnerApplicationCreateManyUserInput | PartnerApplicationCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -18208,6 +24353,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferredUsersInput = {
@@ -18223,10 +24370,12 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutReferrerInput = {
@@ -18261,6 +24410,7 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFilter<"User"> | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFilter<"User"> | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFilter<"User"> | number
+    partnerTagId?: IntNullableFilter<"User"> | number | null
   }
 
   export type ReferralLogUpsertWithWhereUniqueWithoutUserInput = {
@@ -18331,6 +24481,8 @@ export namespace Prisma {
     refererId?: IntFilter<"ReferralEarningsLog"> | number
     shopifyOrderId?: StringNullableFilter<"ReferralEarningsLog"> | string | null
     amount?: DecimalFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: DecimalNullableFilter<"ReferralEarningsLog"> | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: StringNullableFilter<"ReferralEarningsLog"> | string | null
     createdAt?: DateTimeFilter<"ReferralEarningsLog"> | Date | string
   }
 
@@ -18350,6 +24502,66 @@ export namespace Prisma {
     data: XOR<ReferralEarningsLogUpdateManyMutationInput, ReferralEarningsLogUncheckedUpdateManyWithoutRefererInput>
   }
 
+  export type PartnerTagUpsertWithoutUsersInput = {
+    update: XOR<PartnerTagUpdateWithoutUsersInput, PartnerTagUncheckedUpdateWithoutUsersInput>
+    create: XOR<PartnerTagCreateWithoutUsersInput, PartnerTagUncheckedCreateWithoutUsersInput>
+    where?: PartnerTagWhereInput
+  }
+
+  export type PartnerTagUpdateToOneWithWhereWithoutUsersInput = {
+    where?: PartnerTagWhereInput
+    data: XOR<PartnerTagUpdateWithoutUsersInput, PartnerTagUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type PartnerTagUpdateWithoutUsersInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    referralPercentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerTagUncheckedUpdateWithoutUsersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    referralPercentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type PartnerApplicationUpsertWithWhereUniqueWithoutUserInput = {
+    where: PartnerApplicationWhereUniqueInput
+    update: XOR<PartnerApplicationUpdateWithoutUserInput, PartnerApplicationUncheckedUpdateWithoutUserInput>
+    create: XOR<PartnerApplicationCreateWithoutUserInput, PartnerApplicationUncheckedCreateWithoutUserInput>
+  }
+
+  export type PartnerApplicationUpdateWithWhereUniqueWithoutUserInput = {
+    where: PartnerApplicationWhereUniqueInput
+    data: XOR<PartnerApplicationUpdateWithoutUserInput, PartnerApplicationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PartnerApplicationUpdateManyWithWhereWithoutUserInput = {
+    where: PartnerApplicationScalarWhereInput
+    data: XOR<PartnerApplicationUpdateManyMutationInput, PartnerApplicationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type PartnerApplicationScalarWhereInput = {
+    AND?: PartnerApplicationScalarWhereInput | PartnerApplicationScalarWhereInput[]
+    OR?: PartnerApplicationScalarWhereInput[]
+    NOT?: PartnerApplicationScalarWhereInput | PartnerApplicationScalarWhereInput[]
+    id?: IntFilter<"PartnerApplication"> | number
+    userId?: IntFilter<"PartnerApplication"> | number
+    instagramUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    tiktokUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    facebookUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    youtubeUrl?: StringNullableFilter<"PartnerApplication"> | string | null
+    approvalStatus?: EnumApprovalStatusFilter<"PartnerApplication"> | $Enums.ApprovalStatus
+    createdAt?: DateTimeFilter<"PartnerApplication"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplication"> | Date | string
+    enabled?: BoolFilter<"PartnerApplication"> | boolean
+  }
+
   export type ProductCreateWithoutVendorInput = {
     title: string
     slug: string
@@ -18361,7 +24573,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     createdAt?: Date | string
@@ -18386,7 +24597,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -18440,7 +24650,6 @@ export namespace Prisma {
     sku?: StringNullableFilter<"Product"> | string | null
     inventoryQuantity?: IntNullableFilter<"Product"> | number | null
     available?: BoolFilter<"Product"> | boolean
-    referralPercentage?: FloatFilter<"Product"> | number
     shopifyProductId?: StringNullableFilter<"Product"> | string | null
     images?: StringNullableListFilter<"Product">
     categoryId?: IntNullableFilter<"Product"> | number | null
@@ -18461,7 +24670,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     createdAt?: Date | string
@@ -18486,7 +24694,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -18534,7 +24741,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     createdAt?: Date | string
@@ -18560,7 +24766,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     tagId?: number | null
@@ -18650,7 +24855,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -18674,7 +24878,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -18835,7 +25038,6 @@ export namespace Prisma {
     sku?: StringNullableFilter<"ProductVariant"> | string | null
     price?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: DecimalNullableFilter<"ProductVariant"> | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFilter<"ProductVariant"> | number
     available?: BoolFilter<"ProductVariant"> | boolean
     inventoryQuantity?: IntFilter<"ProductVariant"> | number
     images?: StringNullableListFilter<"ProductVariant">
@@ -18920,7 +25122,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     createdAt?: Date | string
@@ -18946,7 +25147,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -18967,7 +25167,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -18992,7 +25191,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -19017,7 +25215,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -19041,7 +25238,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -19088,7 +25284,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19114,7 +25309,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -19141,7 +25335,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -19166,7 +25359,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -19207,7 +25399,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     createdAt?: Date | string
@@ -19233,7 +25424,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -19285,6 +25475,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReferralLogsUsedInput = {
@@ -19300,10 +25492,12 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
     referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReferralLogsUsedInput = {
@@ -19327,6 +25521,8 @@ export namespace Prisma {
     referralLogsUsed?: ReferralLogCreateNestedManyWithoutUserInput
     referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReferralLogsReceivedInput = {
@@ -19342,10 +25538,12 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
     referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReferralLogsReceivedInput = {
@@ -19380,6 +25578,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferralLogsUsedInput = {
@@ -19395,10 +25595,12 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
     referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutReferralLogsReceivedInput = {
@@ -19428,6 +25630,8 @@ export namespace Prisma {
     referralLogsUsed?: ReferralLogUpdateManyWithoutUserNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferralLogsReceivedInput = {
@@ -19443,10 +25647,12 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
     referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutReferralEarningsGeneratedInput = {
@@ -19465,6 +25671,8 @@ export namespace Prisma {
     referralLogsUsed?: ReferralLogCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
     referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReferralEarningsGeneratedInput = {
@@ -19480,10 +25688,12 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
     referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReferralEarningsGeneratedInput = {
@@ -19507,6 +25717,8 @@ export namespace Prisma {
     referralLogsUsed?: ReferralLogCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReferralEarningsReceivedInput = {
@@ -19522,10 +25734,12 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
     referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
     referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
     referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReferralEarningsReceivedInput = {
@@ -19560,6 +25774,8 @@ export namespace Prisma {
     referralLogsUsed?: ReferralLogUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
     referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferralEarningsGeneratedInput = {
@@ -19575,10 +25791,12 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
     referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutReferralEarningsReceivedInput = {
@@ -19608,6 +25826,8 @@ export namespace Prisma {
     referralLogsUsed?: ReferralLogUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferralEarningsReceivedInput = {
@@ -19623,10 +25843,296 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
     referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutPartnerTagInput = {
+    name?: string | null
+    email: string
+    role?: $Enums.UserRole
+    referralCode: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    totalReferralEarnings?: Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: number
+    referrer?: UserCreateNestedOneWithoutReferredUsersInput
+    referredUsers?: UserCreateNestedManyWithoutReferrerInput
+    referralLogsUsed?: ReferralLogCreateNestedManyWithoutUserInput
+    referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
+    referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
+    referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPartnerTagInput = {
+    id?: number
+    name?: string | null
+    email: string
+    role?: $Enums.UserRole
+    referralCode: string
+    referrerId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    totalReferralEarnings?: Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: number
+    referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
+    referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
+    referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
+    referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
+    referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+    partnerApplications?: PartnerApplicationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPartnerTagInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPartnerTagInput, UserUncheckedCreateWithoutPartnerTagInput>
+  }
+
+  export type UserCreateManyPartnerTagInputEnvelope = {
+    data: UserCreateManyPartnerTagInput | UserCreateManyPartnerTagInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutPartnerTagInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutPartnerTagInput, UserUncheckedUpdateWithoutPartnerTagInput>
+    create: XOR<UserCreateWithoutPartnerTagInput, UserUncheckedCreateWithoutPartnerTagInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutPartnerTagInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutPartnerTagInput, UserUncheckedUpdateWithoutPartnerTagInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutPartnerTagInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutPartnerTagInput>
+  }
+
+  export type UserCreateWithoutPartnerApplicationsInput = {
+    name?: string | null
+    email: string
+    role?: $Enums.UserRole
+    referralCode: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    totalReferralEarnings?: Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: number
+    referrer?: UserCreateNestedOneWithoutReferredUsersInput
+    referredUsers?: UserCreateNestedManyWithoutReferrerInput
+    referralLogsUsed?: ReferralLogCreateNestedManyWithoutUserInput
+    referralLogsReceived?: ReferralLogCreateNestedManyWithoutRefererInput
+    referralEarningsGenerated?: ReferralEarningsLogCreateNestedManyWithoutUserInput
+    referralEarningsReceived?: ReferralEarningsLogCreateNestedManyWithoutRefererInput
+    partnerTag?: PartnerTagCreateNestedOneWithoutUsersInput
+  }
+
+  export type UserUncheckedCreateWithoutPartnerApplicationsInput = {
+    id?: number
+    name?: string | null
+    email: string
+    role?: $Enums.UserRole
+    referralCode: string
+    referrerId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    totalReferralEarnings?: Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: number
+    partnerTagId?: number | null
+    referredUsers?: UserUncheckedCreateNestedManyWithoutReferrerInput
+    referralLogsUsed?: ReferralLogUncheckedCreateNestedManyWithoutUserInput
+    referralLogsReceived?: ReferralLogUncheckedCreateNestedManyWithoutRefererInput
+    referralEarningsGenerated?: ReferralEarningsLogUncheckedCreateNestedManyWithoutUserInput
+    referralEarningsReceived?: ReferralEarningsLogUncheckedCreateNestedManyWithoutRefererInput
+  }
+
+  export type UserCreateOrConnectWithoutPartnerApplicationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPartnerApplicationsInput, UserUncheckedCreateWithoutPartnerApplicationsInput>
+  }
+
+  export type PartnerApplicationAnswerCreateWithoutApplicationInput = {
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput = {
+    id?: number
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PartnerApplicationAnswerCreateOrConnectWithoutApplicationInput = {
+    where: PartnerApplicationAnswerWhereUniqueInput
+    create: XOR<PartnerApplicationAnswerCreateWithoutApplicationInput, PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput>
+  }
+
+  export type PartnerApplicationAnswerCreateManyApplicationInputEnvelope = {
+    data: PartnerApplicationAnswerCreateManyApplicationInput | PartnerApplicationAnswerCreateManyApplicationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutPartnerApplicationsInput = {
+    update: XOR<UserUpdateWithoutPartnerApplicationsInput, UserUncheckedUpdateWithoutPartnerApplicationsInput>
+    create: XOR<UserCreateWithoutPartnerApplicationsInput, UserUncheckedCreateWithoutPartnerApplicationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPartnerApplicationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPartnerApplicationsInput, UserUncheckedUpdateWithoutPartnerApplicationsInput>
+  }
+
+  export type UserUpdateWithoutPartnerApplicationsInput = {
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    referralCode?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    referrer?: UserUpdateOneWithoutReferredUsersNestedInput
+    referredUsers?: UserUpdateManyWithoutReferrerNestedInput
+    referralLogsUsed?: ReferralLogUpdateManyWithoutUserNestedInput
+    referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
+    referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
+    referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPartnerApplicationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    referralCode?: StringFieldUpdateOperationsInput | string
+    referrerId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
+    referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
+    referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
+    referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
+    referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
+    referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+  }
+
+  export type PartnerApplicationAnswerUpsertWithWhereUniqueWithoutApplicationInput = {
+    where: PartnerApplicationAnswerWhereUniqueInput
+    update: XOR<PartnerApplicationAnswerUpdateWithoutApplicationInput, PartnerApplicationAnswerUncheckedUpdateWithoutApplicationInput>
+    create: XOR<PartnerApplicationAnswerCreateWithoutApplicationInput, PartnerApplicationAnswerUncheckedCreateWithoutApplicationInput>
+  }
+
+  export type PartnerApplicationAnswerUpdateWithWhereUniqueWithoutApplicationInput = {
+    where: PartnerApplicationAnswerWhereUniqueInput
+    data: XOR<PartnerApplicationAnswerUpdateWithoutApplicationInput, PartnerApplicationAnswerUncheckedUpdateWithoutApplicationInput>
+  }
+
+  export type PartnerApplicationAnswerUpdateManyWithWhereWithoutApplicationInput = {
+    where: PartnerApplicationAnswerScalarWhereInput
+    data: XOR<PartnerApplicationAnswerUpdateManyMutationInput, PartnerApplicationAnswerUncheckedUpdateManyWithoutApplicationInput>
+  }
+
+  export type PartnerApplicationAnswerScalarWhereInput = {
+    AND?: PartnerApplicationAnswerScalarWhereInput | PartnerApplicationAnswerScalarWhereInput[]
+    OR?: PartnerApplicationAnswerScalarWhereInput[]
+    NOT?: PartnerApplicationAnswerScalarWhereInput | PartnerApplicationAnswerScalarWhereInput[]
+    id?: IntFilter<"PartnerApplicationAnswer"> | number
+    applicationId?: IntFilter<"PartnerApplicationAnswer"> | number
+    question?: StringFilter<"PartnerApplicationAnswer"> | string
+    answer?: StringFilter<"PartnerApplicationAnswer"> | string
+    createdAt?: DateTimeFilter<"PartnerApplicationAnswer"> | Date | string
+    updatedAt?: DateTimeFilter<"PartnerApplicationAnswer"> | Date | string
+  }
+
+  export type PartnerApplicationCreateWithoutAnswersInput = {
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    user: UserCreateNestedOneWithoutPartnerApplicationsInput
+  }
+
+  export type PartnerApplicationUncheckedCreateWithoutAnswersInput = {
+    id?: number
+    userId: number
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+  }
+
+  export type PartnerApplicationCreateOrConnectWithoutAnswersInput = {
+    where: PartnerApplicationWhereUniqueInput
+    create: XOR<PartnerApplicationCreateWithoutAnswersInput, PartnerApplicationUncheckedCreateWithoutAnswersInput>
+  }
+
+  export type PartnerApplicationUpsertWithoutAnswersInput = {
+    update: XOR<PartnerApplicationUpdateWithoutAnswersInput, PartnerApplicationUncheckedUpdateWithoutAnswersInput>
+    create: XOR<PartnerApplicationCreateWithoutAnswersInput, PartnerApplicationUncheckedCreateWithoutAnswersInput>
+    where?: PartnerApplicationWhereInput
+  }
+
+  export type PartnerApplicationUpdateToOneWithWhereWithoutAnswersInput = {
+    where?: PartnerApplicationWhereInput
+    data: XOR<PartnerApplicationUpdateWithoutAnswersInput, PartnerApplicationUncheckedUpdateWithoutAnswersInput>
+  }
+
+  export type PartnerApplicationUpdateWithoutAnswersInput = {
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    user?: UserUpdateOneRequiredWithoutPartnerApplicationsNestedInput
+  }
+
+  export type PartnerApplicationUncheckedUpdateWithoutAnswersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: IntFieldUpdateOperationsInput | number
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserCreateManyReferrerInput = {
@@ -19641,6 +26147,7 @@ export namespace Prisma {
     totalReferralEarnings?: Decimal | DecimalJsLike | number | string
     withdrawableBalance?: Decimal | DecimalJsLike | number | string
     totalReferredUsers?: number
+    partnerTagId?: number | null
   }
 
   export type ReferralLogCreateManyUserInput = {
@@ -19662,6 +26169,8 @@ export namespace Prisma {
     refererId: number
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
   }
 
@@ -19670,7 +26179,21 @@ export namespace Prisma {
     userId: number
     shopifyOrderId?: string | null
     amount: Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: string | null
     createdAt?: Date | string
+  }
+
+  export type PartnerApplicationCreateManyUserInput = {
+    id?: number
+    instagramUrl?: string | null
+    tiktokUrl?: string | null
+    facebookUrl?: string | null
+    youtubeUrl?: string | null
+    approvalStatus?: $Enums.ApprovalStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
   }
 
   export type UserUpdateWithoutReferrerInput = {
@@ -19689,6 +26212,8 @@ export namespace Prisma {
     referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerTag?: PartnerTagUpdateOneWithoutUsersNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferrerInput = {
@@ -19703,11 +26228,13 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
     referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
     referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
     referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
     referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
     referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutReferrerInput = {
@@ -19722,6 +26249,7 @@ export namespace Prisma {
     totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    partnerTagId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type ReferralLogUpdateWithoutUserInput = {
@@ -19767,6 +26295,8 @@ export namespace Prisma {
   export type ReferralEarningsLogUpdateWithoutUserInput = {
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     referer?: UserUpdateOneRequiredWithoutReferralEarningsReceivedNestedInput
   }
@@ -19776,6 +26306,8 @@ export namespace Prisma {
     refererId?: IntFieldUpdateOperationsInput | number
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -19784,12 +26316,16 @@ export namespace Prisma {
     refererId?: IntFieldUpdateOperationsInput | number
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReferralEarningsLogUpdateWithoutRefererInput = {
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutReferralEarningsGeneratedNestedInput
   }
@@ -19799,6 +26335,8 @@ export namespace Prisma {
     userId?: IntFieldUpdateOperationsInput | number
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -19807,7 +26345,46 @@ export namespace Prisma {
     userId?: IntFieldUpdateOperationsInput | number
     shopifyOrderId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    partnerTagReferralEarnings?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    partnerTagName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerApplicationUpdateWithoutUserInput = {
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    answers?: PartnerApplicationAnswerUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type PartnerApplicationUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    answers?: PartnerApplicationAnswerUncheckedUpdateManyWithoutApplicationNestedInput
+  }
+
+  export type PartnerApplicationUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    instagramUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    tiktokUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    facebookUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type ProductCreateManyVendorInput = {
@@ -19823,7 +26400,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -19844,7 +26420,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19869,7 +26444,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -19893,7 +26467,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -19916,7 +26489,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -19937,7 +26509,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19962,7 +26533,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -19986,7 +26556,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20010,7 +26579,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     tagId?: number | null
@@ -20030,7 +26598,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20056,7 +26623,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     tagId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20080,7 +26646,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     tagId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20097,7 +26662,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -20117,7 +26681,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -20141,7 +26704,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -20164,7 +26726,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -20186,7 +26747,6 @@ export namespace Prisma {
     sku?: string | null
     price?: Decimal | DecimalJsLike | number | string | null
     discountedPrice?: Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: number
     available?: boolean
     inventoryQuantity?: number
     images?: ProductVariantCreateimagesInput | string[]
@@ -20206,7 +26766,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -20230,7 +26789,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -20253,7 +26811,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     price?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     discountedPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     available?: BoolFieldUpdateOperationsInput | boolean
     inventoryQuantity?: IntFieldUpdateOperationsInput | number
     images?: ProductVariantUpdateimagesInput | string[]
@@ -20281,7 +26838,6 @@ export namespace Prisma {
     sku?: string | null
     inventoryQuantity?: number | null
     available?: boolean
-    referralPercentage?: number
     shopifyProductId?: string | null
     images?: ProductCreateimagesInput | string[]
     categoryId?: number | null
@@ -20301,7 +26857,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20327,7 +26882,6 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -20351,13 +26905,114 @@ export namespace Prisma {
     sku?: NullableStringFieldUpdateOperationsInput | string | null
     inventoryQuantity?: NullableIntFieldUpdateOperationsInput | number | null
     available?: BoolFieldUpdateOperationsInput | boolean
-    referralPercentage?: FloatFieldUpdateOperationsInput | number
     shopifyProductId?: NullableStringFieldUpdateOperationsInput | string | null
     images?: ProductUpdateimagesInput | string[]
     categoryId?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     enabled?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type UserCreateManyPartnerTagInput = {
+    id?: number
+    name?: string | null
+    email: string
+    role?: $Enums.UserRole
+    referralCode: string
+    referrerId?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    enabled?: boolean
+    totalReferralEarnings?: Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: number
+  }
+
+  export type UserUpdateWithoutPartnerTagInput = {
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    referralCode?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    referrer?: UserUpdateOneWithoutReferredUsersNestedInput
+    referredUsers?: UserUpdateManyWithoutReferrerNestedInput
+    referralLogsUsed?: ReferralLogUpdateManyWithoutUserNestedInput
+    referralLogsReceived?: ReferralLogUpdateManyWithoutRefererNestedInput
+    referralEarningsGenerated?: ReferralEarningsLogUpdateManyWithoutUserNestedInput
+    referralEarningsReceived?: ReferralEarningsLogUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPartnerTagInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    referralCode?: StringFieldUpdateOperationsInput | string
+    referrerId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: IntFieldUpdateOperationsInput | number
+    referredUsers?: UserUncheckedUpdateManyWithoutReferrerNestedInput
+    referralLogsUsed?: ReferralLogUncheckedUpdateManyWithoutUserNestedInput
+    referralLogsReceived?: ReferralLogUncheckedUpdateManyWithoutRefererNestedInput
+    referralEarningsGenerated?: ReferralEarningsLogUncheckedUpdateManyWithoutUserNestedInput
+    referralEarningsReceived?: ReferralEarningsLogUncheckedUpdateManyWithoutRefererNestedInput
+    partnerApplications?: PartnerApplicationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutPartnerTagInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    referralCode?: StringFieldUpdateOperationsInput | string
+    referrerId?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    enabled?: BoolFieldUpdateOperationsInput | boolean
+    totalReferralEarnings?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    withdrawableBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    totalReferredUsers?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PartnerApplicationAnswerCreateManyApplicationInput = {
+    id?: number
+    question: string
+    answer: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PartnerApplicationAnswerUpdateWithoutApplicationInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerApplicationAnswerUncheckedUpdateWithoutApplicationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PartnerApplicationAnswerUncheckedUpdateManyWithoutApplicationInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    answer?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

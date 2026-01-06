@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       await prisma.user.update({ where: { email }, data: { referrerId: referer.id } });
       // Create a referral log for this assignment
       try {
-        const updatedUser = await prisma.user.findUnique({ where: { email } });
+        const updatedUser = await prisma.user.findFirst({ where: { email } });
         if (updatedUser) {
           await prisma.referralLog.create({ data: { userId: updatedUser.id, codeUsed: mrc, refererId: referer.id } });
         }

@@ -179,7 +179,7 @@ export const DELETE = withAuth(async (request: NextRequest) => {
       }, { status: 400 });
     }
 
-    const question = await prisma.partnerApplicationQuestion.findUnique({
+    const question = await prisma.partnerApplicationQuestion.findFirst({
       where: { id: parseInt(id) },
     });
 

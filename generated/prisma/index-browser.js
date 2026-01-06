@@ -132,7 +132,8 @@ exports.Prisma.UserScalarFieldEnum = {
   enabled: 'enabled',
   totalReferralEarnings: 'totalReferralEarnings',
   withdrawableBalance: 'withdrawableBalance',
-  totalReferredUsers: 'totalReferredUsers'
+  totalReferredUsers: 'totalReferredUsers',
+  partnerTagId: 'partnerTagId'
 };
 
 exports.Prisma.EmailOtpScalarFieldEnum = {
@@ -192,7 +193,6 @@ exports.Prisma.ProductScalarFieldEnum = {
   sku: 'sku',
   inventoryQuantity: 'inventoryQuantity',
   available: 'available',
-  referralPercentage: 'referralPercentage',
   shopifyProductId: 'shopifyProductId',
   images: 'images',
   categoryId: 'categoryId',
@@ -211,7 +211,6 @@ exports.Prisma.ProductVariantScalarFieldEnum = {
   sku: 'sku',
   price: 'price',
   discountedPrice: 'discountedPrice',
-  referralPercentage: 'referralPercentage',
   available: 'available',
   inventoryQuantity: 'inventoryQuantity',
   images: 'images',
@@ -249,7 +248,51 @@ exports.Prisma.ReferralEarningsLogScalarFieldEnum = {
   refererId: 'refererId',
   shopifyOrderId: 'shopifyOrderId',
   amount: 'amount',
+  partnerTagReferralEarnings: 'partnerTagReferralEarnings',
+  partnerTagName: 'partnerTagName',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.PartnerTagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  referralPercentage: 'referralPercentage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.PartnerApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  instagramUrl: 'instagramUrl',
+  tiktokUrl: 'tiktokUrl',
+  facebookUrl: 'facebookUrl',
+  youtubeUrl: 'youtubeUrl',
+  approvalStatus: 'approvalStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
+};
+
+exports.Prisma.PartnerApplicationAnswerScalarFieldEnum = {
+  id: 'id',
+  applicationId: 'applicationId',
+  question: 'question',
+  answer: 'answer',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PartnerApplicationQuestionScalarFieldEnum = {
+  id: 'id',
+  question: 'question',
+  placeholder: 'placeholder',
+  required: 'required',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  enabled: 'enabled'
 };
 
 exports.Prisma.SortOrder = {
@@ -272,6 +315,12 @@ exports.UserRole = exports.$Enums.UserRole = {
   PARTNER: 'PARTNER'
 };
 
+exports.ApprovalStatus = exports.$Enums.ApprovalStatus = {
+  PENDING: 'PENDING',
+  DECLINED: 'DECLINED',
+  ACCEPTED: 'ACCEPTED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   EmailOtp: 'EmailOtp',
@@ -282,7 +331,11 @@ exports.Prisma.ModelName = {
   ProductVariant: 'ProductVariant',
   Tag: 'Tag',
   ReferralLog: 'ReferralLog',
-  ReferralEarningsLog: 'ReferralEarningsLog'
+  ReferralEarningsLog: 'ReferralEarningsLog',
+  PartnerTag: 'PartnerTag',
+  PartnerApplication: 'PartnerApplication',
+  PartnerApplicationAnswer: 'PartnerApplicationAnswer',
+  PartnerApplicationQuestion: 'PartnerApplicationQuestion'
 };
 
 /**
